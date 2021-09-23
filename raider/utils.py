@@ -131,7 +131,7 @@ def import_raider_objects() -> Dict[str, Any]:
 
     """
     hy_imports = {
-        "plugins.common": ("Empty " "Plugin " "Parser "),
+        "plugins.common": ("Empty " "Plugin " "Parser " "Processor "),
         "plugins.basic": (
             "Regex "
             "Html "
@@ -144,8 +144,9 @@ def import_raider_objects() -> Dict[str, Any]:
         ),
         "plugins.modifiers": ("Alter " "Combine "),
         "plugins.parsers": ("Parser " "UrlParser "),
+        "plugins.processors": ("Urlencode " "Urldecode "),
         "flow": "Flow",
-        "request": "Request PostBody Template",
+        "request": ("Request " "PostBody " "Template "),
         "operations": (
             "Http " "Grep " "Print " "Error " "NextStage " "Operation " "Save "
         ),

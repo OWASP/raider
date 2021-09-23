@@ -240,6 +240,24 @@ class Parser(Plugin):
         )
 
 
+class Processor(Plugin):
+    """Plugins that process (encode/decode/etc...) other plugins."""
+
+    def __init__(
+        self,
+        name: str,
+        function: Callable[[], Optional[str]],
+        value: str = None,
+    ) -> None:
+        """Initializes the Processor plugin."""
+        super().__init__(
+            name=name,
+            value=value,
+            function=function,
+            flags=Plugin.DEPENDS_ON_OTHER_PLUGINS,
+        )
+
+
 class Empty(Plugin):
     """Empty plugin to use for fuzzing new data."""
 
