@@ -385,7 +385,7 @@ class Save(Operation):
         else:
             mode = "w"
 
-        with open(self.filename, mode) as outfile:
+        with open(self.filename, mode, encoding="utf-8") as outfile:
             if isinstance(content, requests.models.Response):
                 outfile.write(content.text)
             elif isinstance(content, Plugin):

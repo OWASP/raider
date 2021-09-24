@@ -124,7 +124,7 @@ class Application:
         cookies = {}
         headers = {}
         data = {}
-        with open(filename, "w") as sess_file:
+        with open(filename, "w", encoding="utf-8") as sess_file:
             for username in self.users:
                 user = self.users[username]
                 cookies.update({username: user.cookies.to_dict()})
@@ -173,7 +173,7 @@ class Application:
         """
         filename = get_project_file(self.project, "_project.hy")
         value = ""
-        with open(filename, "w") as proj_file:
+        with open(filename, "w", encoding="utf-8") as proj_file:
             value += create_hy_expression(
                 "_active_user", self.active_user.username
             )
