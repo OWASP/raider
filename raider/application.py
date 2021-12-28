@@ -111,6 +111,21 @@ class Application:
         self.authentication.run_all(self.active_user, self.config)
         self.write_project_file()
 
+    def auth_step(self) -> None:
+        """Runs next authentication step.
+
+        Runs one the steps of the authentication process defined in the
+        hy config files for the application.
+
+        Args:
+          username:
+            A string with the user to be authenticated. If not supplied,
+            the last used username will be selected.
+
+        """
+        self.authentication.run_current_stage(self.active_user, self.config)
+        self.write_project_file()
+
     def write_session_file(self) -> None:
         """Saves session data.
 

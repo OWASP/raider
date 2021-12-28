@@ -126,10 +126,6 @@ class Authentication:
 
         """
         while self._current_stage >= 0:
-            logging.info(
-                "Running stage %s",
-                self.get_stage_name_by_id(self._current_stage),
-            )
             self.run_current_stage(user, config)
 
     def run_current_stage(self, user: User, config: Config) -> None:
@@ -147,6 +143,10 @@ class Authentication:
             A Config object with the global Raider settings.
 
         """
+        logging.info(
+            "Running stage %s",
+            self.get_stage_name_by_id(self._current_stage),
+        )
         self.run_stage(self._current_stage, user, config)
 
     def run_stage(

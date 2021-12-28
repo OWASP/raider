@@ -45,6 +45,7 @@
     requests = "^2.25.1"
     importlib-metadata = "^4.6.1"
     bs4 = "^0.0.1"
+funcparserlib = "1.0.0a0"
 
 [tool.poetry.dev-dependencies]
     pytest = "^5.2"
