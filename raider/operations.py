@@ -381,18 +381,18 @@ class Save(Operation):
 
         """
         if self.will_append:
-            mode = "a"
+            mode = "ab"
         else:
-            mode = "w"
+            mode = "wb"
 
-        with open(self.filename, mode, encoding="utf-8") as outfile:
+        with open(self.filename, mode) as outfile:
             if isinstance(content, requests.models.Response):
-                outfile.write(content.text)
+                outfile.write(content.content)
             elif isinstance(content, Plugin):
-                outfile.write(content.value)
+                outfile.write(bytes(content.value, "utf-8"))
             else:
-                outfile.write(content)
-            outfile.write("\n")
+                outfile.write(bytes(content, "utf-8"))
+            outfile.write(b"\n")
 
     @classmethod
     def append(cls, filename: str, plugin: Plugin) -> "Save":

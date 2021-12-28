@@ -17,6 +17,7 @@
 """
 
 import urllib
+from typing import Optional
 
 from raider.plugins.common import Plugin, Processor
 
@@ -49,9 +50,11 @@ class Urldecode(Processor):
         )
         self.plugins = [parent_plugin]
 
-    def urldecode(self) -> str:
+    def urldecode(self) -> Optional[str]:
         """URL decodes a plugin's value."""
 
         original = self.plugins[0].value
-        decoded = urllib.parse.unquote(original)
-        return decoded
+        if original:
+            decoded = urllib.parse.unquote(original)
+            return decoded
+        return None
