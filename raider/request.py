@@ -404,6 +404,7 @@ class Request:
                     verify=verify,
                     allow_redirects=False,
                 )
+            return req
 
         if self.method == "PUT":
             req = requests.put(
