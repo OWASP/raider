@@ -16,6 +16,7 @@
 """Plugins used to process data.
 """
 
+import base64
 import urllib
 from typing import Optional
 
@@ -57,4 +58,46 @@ class Urldecode(Processor):
         if original:
             decoded = urllib.parse.unquote(original)
             return decoded
+        return None
+
+
+class B64decode(Processor):
+    """Base64 Decode the plugin."""
+
+    def __init__(self, parent_plugin: Plugin) -> None:
+        """Initializes the B64decode plugin."""
+        super().__init__(
+            name=parent_plugin.name + "_b64decoded", function=self.b64decode
+        )
+        self.plugins = [parent_plugin]
+
+    def b64decode(self) -> Optional[str]:
+        """Base64 decodes a plugin's value."""
+
+        original = self.plugins[0].value
+        if original:
+            decoded = base64.b64decode(original).decode("utf-8")
+            return decoded
+        return None
+
+
+class B64encode(Processor):
+    """Base64 encode the plugin."""
+
+    def __init__(self, parent_plugin: Plugin) -> None:
+        """Initializes the B64encode plugin."""
+        super().__init__(
+            name=parent_plugin.name + "_b64encoded", function=self.b64encode
+        )
+        self.plugins = [parent_plugin]
+
+    def b64encode(self) -> Optional[str]:
+        """Base64 encodes a plugin's value."""
+
+        original = self.plugins[0].value
+        if original:
+            encoded = base64.b64encode(original.encode("utf-8")).decode(
+                "utf-8"
+            )
+            return encoded
         return None

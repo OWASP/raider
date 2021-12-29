@@ -145,7 +145,9 @@ def import_raider_objects() -> Dict[str, Any]:
         ),
         "plugins.modifiers": ("Alter " "Combine "),
         "plugins.parsers": ("Parser " "UrlParser "),
-        "plugins.processors": ("Urlencode " "Urldecode "),
+        "plugins.processors": (
+            "Urlencode " "Urldecode " "B64encode " "B64decode "
+        ),
         "flow": "Flow",
         "request": ("Request " "PostBody " "Template "),
         "operations": (
