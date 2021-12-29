@@ -141,6 +141,7 @@ def import_raider_objects() -> Dict[str, Any]:
             "Prompt "
             "Cookie "
             "Header "
+            "File "
         ),
         "plugins.modifiers": ("Alter " "Combine "),
         "plugins.parsers": ("Parser " "UrlParser "),

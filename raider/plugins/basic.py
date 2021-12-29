@@ -778,3 +778,30 @@ class Header(Plugin):
         header.plugins = [parent_plugin]
         header.function = lambda: header.plugins[0].value
         return header
+
+
+class File(Plugin):
+    """Plugin used to upload files.
+
+    Use this plugin when needing to upload a file.
+    """
+
+    def __init__(self, path: str) -> None:
+        """Initializes the File Plugin.
+
+        Creates a File Plugin which will set its value to the contents
+        of the file.
+
+        Args:
+          path:
+            A string containing the file path.
+
+        """
+        self.path = path
+        super().__init__(name=path, function=self.read_file, flags=0)
+
+    def read_file(self) -> bytes:
+        """Sets the plugin's value to the file content."""
+        with open(self.path, "rb") as finput:
+            self.value = finput.read()
+        return self.value

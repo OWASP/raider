@@ -28,7 +28,7 @@ import requests
 from urllib3.exceptions import InsecureRequestWarning
 
 from raider.config import Config
-from raider.plugins.basic import Cookie, Header
+from raider.plugins.basic import Cookie, File, Header
 from raider.plugins.common import Plugin
 from raider.structures import CookieStore, DataStore, HeaderStore
 from raider.user import User
@@ -179,7 +179,7 @@ class Request:
         path: Optional[Union[str, Plugin]] = None,
         cookies: Optional[List[Cookie]] = None,
         headers: Optional[List[Header]] = None,
-        data: Optional[Union[Dict[Any, Any], PostBody]] = None,
+        data: Optional[Union[Dict[Any, Any], PostBody, File]] = None,
     ) -> None:
         """Initializes the Request object.
 
@@ -226,6 +226,8 @@ class Request:
 
         self.data: Union[PostBody, DataStore]
         if isinstance(data, PostBody):
+            self.data = data
+        elif isinstance(data, File):
             self.data = data
         else:
             self.data = DataStore(data)
@@ -311,7 +313,10 @@ class Request:
 
         cookies = process_cookies(self.cookies, userdata)
         headers = process_headers(self.headers, userdata, config)
-        httpdata = process_data(self.data, userdata)
+        if isinstance(self.data, File):
+            httpdata = self.data.get_value(userdata)
+        else:
+            httpdata = process_data(self.data, userdata)
 
         return {"cookies": cookies, "data": httpdata, "headers": headers}
 
@@ -399,6 +404,17 @@ class Request:
                     verify=verify,
                     allow_redirects=False,
                 )
+
+        if self.method == "PUT":
+            req = requests.put(
+                self.url,
+                data=data,
+                headers=headers,
+                cookies=cookies,
+                proxies=proxies,
+                verify=verify,
+                allow_redirects=False,
+            )
 
             return req
 
