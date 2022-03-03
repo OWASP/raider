@@ -128,6 +128,8 @@ class Authentication:
         while self._current_stage >= 0:
             self.run_current_stage(user, config)
 
+        self._current_stage = 0
+
     def run_current_stage(self, user: User, config: Config) -> None:
         """Runs the current stage only.
 
