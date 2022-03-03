@@ -406,6 +406,32 @@ class Request:
                 )
             return req
 
+        if self.method == "PATCH":
+            if (
+                isinstance(self.data, PostBody)
+                and self.data.encoding == "json"
+            ):
+                req = requests.patch(
+                    self.url,
+                    json=data,
+                    headers=headers,
+                    cookies=cookies,
+                    proxies=proxies,
+                    verify=verify,
+                    allow_redirects=False,
+                )
+            else:
+                req = requests.patch(
+                    self.url,
+                    data=data,
+                    headers=headers,
+                    cookies=cookies,
+                    proxies=proxies,
+                    verify=verify,
+                    allow_redirects=False,
+                )
+            return req
+
         if self.method == "PUT":
             req = requests.put(
                 self.url,
