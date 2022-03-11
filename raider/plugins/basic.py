@@ -817,29 +817,38 @@ class File(Plugin):
 
     @classmethod
     def replace(
-        cls, path: str, old_value: Union[str, int], new_value: Union[str, int]
+        cls, path: str, old_value: str, new_value: Union[str, int, Plugin]
     ) -> "File":
         """Read a file and replace strings with new values."""
 
         def replace_string(
-            original: bytes, old_value: str, new_value: str
+            original: bytes, old: str, new: Union[str, int, Plugin]
         ) -> Optional[bytes]:
+            if isinstance(new, Plugin):
+                if not new.value:
+                    return None
+                return original.replace(
+                    old.encode("utf-8"), new.value.encode("utf-8")
+                )
             return original.replace(
-                old_value.encode("utf-8"), new_value.encode("utf-8")
+                old.encode("utf-8"), str(new).encode("utf-8")
             )
 
         with open(path, "rb") as finput:
             file_contents = finput.read()
 
-        new_plugin = cls(
+        file_replace_plugin = cls(
             path=path,
             function=partial(
                 replace_string,
                 original=file_contents,
-                old_value=str(old_value),
-                new_value=str(new_value),
+                old=old_value,
+                new=new_value,
             ),
             flags=Plugin.DEPENDS_ON_OTHER_PLUGINS,
         )
 
-        return new_plugin
+        if isinstance(new_value, Plugin):
+            file_replace_plugin.plugins.append(new_value)
+
+        return file_replace_plugin
