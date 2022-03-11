@@ -786,7 +786,7 @@ class File(Plugin):
     Use this plugin when needing to upload a file.
     """
 
-    def __init__(self, path: str) -> None:
+    def __init__(self, path: str, function=None, flags=0) -> None:
         """Initializes the File Plugin.
 
         Creates a File Plugin which will set its value to the contents
@@ -798,10 +798,33 @@ class File(Plugin):
 
         """
         self.path = path
-        super().__init__(name=path, function=self.read_file, flags=0)
+
+        if not function:
+            super().__init__(name=path, function=self.read_file, flags=flags)
+        else:
+            super().__init__(name=path, function=function, flags=flags)
 
     def read_file(self) -> bytes:
         """Sets the plugin's value to the file content."""
         with open(self.path, "rb") as finput:
             self.value = finput.read()
         return self.value
+
+
+    @classmethod
+    def replace(cls, path:str, old_value:str, new_value:str) -> "File":
+        def replace_string(original:bytes, old_value:str, new_value:str) -> bytes:
+            return original.replace(old_value.encode("utf-8"),
+                                    new_value.encode("utf-8"))
+
+        file_contents = open(path, "rb").read()
+        new_plugin = cls(path=path,
+                         function=partial(replace_string,
+                                          original=file_contents,
+                                          old_value=old_value,
+                                          new_value=new_value),
+                         flags=Plugin.DEPENDS_ON_OTHER_PLUGINS)
+
+        
+
+        return new_plugin
