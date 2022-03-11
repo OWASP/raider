@@ -21,7 +21,7 @@ import os
 import re
 from base64 import b64encode
 from functools import partial
-from typing import Callable, Dict, Optional
+from typing import Callable, Dict, Optional, Union
 
 import hy
 import requests
@@ -786,7 +786,12 @@ class File(Plugin):
     Use this plugin when needing to upload a file.
     """
 
-    def __init__(self, path: str, function=None, flags=0) -> None:
+    def __init__(
+        self,
+        path: str,
+        function: Callable[..., Optional[Union[str, bytes]]] = None,
+        flags: int = 0,
+    ) -> None:
         """Initializes the File Plugin.
 
         Creates a File Plugin which will set its value to the contents
@@ -810,21 +815,31 @@ class File(Plugin):
             self.value = finput.read()
         return self.value
 
-
     @classmethod
-    def replace(cls, path:str, old_value:str, new_value:str) -> "File":
-        def replace_string(original:bytes, old_value:str, new_value:str) -> bytes:
-            return original.replace(old_value.encode("utf-8"),
-                                    new_value.encode("utf-8"))
+    def replace(
+        cls, path: str, old_value: Union[str, int], new_value: Union[str, int]
+    ) -> "File":
+        """Read a file and replace strings with new values."""
 
-        file_contents = open(path, "rb").read()
-        new_plugin = cls(path=path,
-                         function=partial(replace_string,
-                                          original=file_contents,
-                                          old_value=old_value,
-                                          new_value=new_value),
-                         flags=Plugin.DEPENDS_ON_OTHER_PLUGINS)
+        def replace_string(
+            original: bytes, old_value: str, new_value: str
+        ) -> Optional[bytes]:
+            return original.replace(
+                old_value.encode("utf-8"), new_value.encode("utf-8")
+            )
 
-        
+        with open(path, "rb") as finput:
+            file_contents = finput.read()
+
+        new_plugin = cls(
+            path=path,
+            function=partial(
+                replace_string,
+                original=file_contents,
+                old_value=str(old_value),
+                new_value=str(new_value),
+            ),
+            flags=Plugin.DEPENDS_ON_OTHER_PLUGINS,
+        )
 
         return new_plugin
