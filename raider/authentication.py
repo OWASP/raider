@@ -21,7 +21,7 @@ import sys
 from typing import List, Optional, Union
 
 from raider.config import Config
-from raider.flow import Flow
+from raider.flow import AuthFlow, Flow
 from raider.plugins.basic import Cookie, Header, Html, Json, Regex
 from raider.user import User
 
@@ -38,7 +38,7 @@ class Authentication:
 
     """
 
-    def __init__(self, stages: List[Flow]) -> None:
+    def __init__(self, stages: List[AuthFlow]) -> None:
         """Initializes the Authentication object.
 
         Creates an object to handle the authentication process.

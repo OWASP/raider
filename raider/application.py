@@ -20,6 +20,7 @@ import logging
 
 from raider.authentication import Authentication
 from raider.config import Config
+from raider.flow import AuthFlow, Flow
 from raider.functions import Functions
 from raider.user import UserStore
 from raider.utils import create_hy_expression, eval_file, get_project_file
@@ -88,10 +89,17 @@ class Application:
         else:
             self.active_user = self.users.active
 
-        self.authentication = Authentication(output["_authentication"])
-        functions = output.get("_functions")
-        if functions:
-            self.functions = Functions(functions)
+        auth_flows = []
+        func_flows = []
+        for value in output.values():
+            if isinstance(value, AuthFlow):
+                auth_flows.append(value)
+            elif isinstance(value, Flow):
+                func_flows.append(value)
+
+        self.authentication = Authentication(auth_flows)
+        if func_flows:
+            self.functions = Functions(func_flows)
         self.base_url = output.get("_base_url")
 
     def authenticate(self, username: str = None) -> None:
