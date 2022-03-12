@@ -51,7 +51,7 @@
     pytest-cov = "^2.12.1"
     pre-commit = "^2.17.0"
     flake8 = "^3.9.2"
-    pylint = "^2.9.3"
+    pylint = "^2.12.2"
     black = {version = "^22.1", allow-prereleases = true}
     isort = "^5.9.1"
     sphinxcontrib-needs = "^0.7.0"
