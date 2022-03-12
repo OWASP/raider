@@ -131,7 +131,7 @@ def import_raider_objects() -> Dict[str, Any]:
 
     """
     hy_imports = {
-        "plugins.common": ("Empty " "Plugin " "Parser "),
+        "plugins.common": ("Empty " "Plugin " "Parser " "Processor "),
         "plugins.basic": (
             "Regex "
             "Html "
@@ -141,11 +141,15 @@ def import_raider_objects() -> Dict[str, Any]:
             "Prompt "
             "Cookie "
             "Header "
+            "File "
         ),
         "plugins.modifiers": ("Alter " "Combine "),
         "plugins.parsers": ("Parser " "UrlParser "),
-        "flow": "Flow",
-        "request": "Request PostBody Template",
+        "plugins.processors": (
+            "Urlencode " "Urldecode " "B64encode " "B64decode "
+        ),
+        "flow": "Flow " "AuthFlow ",
+        "request": ("Request " "PostBody " "Template "),
         "operations": (
             "Http " "Grep " "Print " "Error " "NextStage " "Operation " "Save "
         ),
@@ -281,15 +285,15 @@ def serialize_hy(
     elif isinstance(form, hy.models.HyList):
         hystring = "[" + " ".join([serialize_hy(x) for x in form]) + "]"
     elif isinstance(form, hy.models.HySymbol):
-        hystring = "{}".format(form)
+        hystring = f"{form}"
     elif isinstance(form, hy.models.HyInteger):
-        hystring = "{}".format(int(form))
+        hystring = f"{int(form)}"
     elif isinstance(form, hy.models.HyKeyword):
-        hystring = "{}".format(form.name)
+        hystring = f"{form.name}"
     elif isinstance(form, hy.models.HyString):
-        hystring = '"{}"'.format(form)
+        hystring = f'"{form}"'
     else:
-        hystring = "{}".format(form)
+        hystring = f"{form}"
 
     return hystring
 
@@ -319,7 +323,7 @@ def eval_file(
         locals().update(shared_locals)
 
     logging.debug("Loading %s", filename)
-    with open(filename) as hyfile:
+    with open(filename, encoding="utf-8") as hyfile:
         try:
             while True:
                 expr = hy.read(hyfile)

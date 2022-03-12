@@ -21,7 +21,7 @@ import sys
 from typing import List, Optional, Union
 
 from raider.config import Config
-from raider.flow import Flow
+from raider.flow import AuthFlow, Flow
 from raider.plugins.basic import Cookie, Header, Html, Json, Regex
 from raider.user import User
 
@@ -38,7 +38,7 @@ class Authentication:
 
     """
 
-    def __init__(self, stages: List[Flow]) -> None:
+    def __init__(self, stages: List[AuthFlow]) -> None:
         """Initializes the Authentication object.
 
         Creates an object to handle the authentication process.
@@ -126,11 +126,9 @@ class Authentication:
 
         """
         while self._current_stage >= 0:
-            logging.info(
-                "Running stage %s",
-                self.get_stage_name_by_id(self._current_stage),
-            )
             self.run_current_stage(user, config)
+
+        self._current_stage = 0
 
     def run_current_stage(self, user: User, config: Config) -> None:
         """Runs the current stage only.
@@ -147,6 +145,10 @@ class Authentication:
             A Config object with the global Raider settings.
 
         """
+        logging.info(
+            "Running stage %s",
+            self.get_stage_name_by_id(self._current_stage),
+        )
         self.run_stage(self._current_stage, user, config)
 
     def run_stage(

@@ -45,18 +45,20 @@
     requests = "^2.25.1"
     importlib-metadata = "^4.6.1"
     bs4 = "^0.0.1"
+    funcparserlib = "^1.0.0a0"
 
 [tool.poetry.dev-dependencies]
     pytest = "^5.2"
     pytest-cov = "^2.12.1"
     pre-commit = "^2.17.0"
     flake8 = "^3.9.2"
-    pylint = "^2.12.2"
-    black = {version = "^22.1", allow-prereleases = true}
+    pylint = "^2.9.3"
+    black = "^22.1.0"
     isort = "^5.9.1"
     sphinxcontrib-needs = "^0.7.0"
     sphinx-autodoc-typehints = "^1.12.0"
     sphinx-rtd-theme = "^1.0.0"
+    Pillow = "^9.0.1"
 
 [build-system]
     requires = ["poetry-core>=1.0.0"]

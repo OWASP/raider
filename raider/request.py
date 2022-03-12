@@ -28,7 +28,7 @@ import requests
 from urllib3.exceptions import InsecureRequestWarning
 
 from raider.config import Config
-from raider.plugins.basic import Cookie, Header
+from raider.plugins.basic import Cookie, File, Header
 from raider.plugins.common import Plugin
 from raider.structures import CookieStore, DataStore, HeaderStore
 from raider.user import User
@@ -63,6 +63,75 @@ class PostBody(DataStore):
         """
         self.encoding = encoding
         super().__init__(data)
+
+
+def process_cookies(
+    raw_cookies: CookieStore, userdata: Dict[str, str]
+) -> Dict[str, str]:
+    """Process the raw cookies and replace with the real data."""
+    cookies = raw_cookies.to_dict().copy()
+    for key in raw_cookies:
+        name = raw_cookies[key].name
+        if raw_cookies[key].name_not_known_in_advance:
+            cookies.pop(key)
+        value = raw_cookies[key].get_value(userdata)
+        if value:
+            cookies.update({name: value})
+        else:
+            cookies.pop(key)
+    return cookies
+
+
+def process_headers(
+    raw_headers: HeaderStore, userdata: Dict[str, str], config: Config
+) -> Dict[str, str]:
+    """Process the raw headers and replace with the real data."""
+    headers = raw_headers.to_dict().copy()
+    headers.update({"user-agent": config.user_agent})
+    for key in raw_headers:
+        name = raw_headers[key].name
+        if raw_headers[key].name_not_known_in_advance:
+            headers.pop(key)
+        value = raw_headers[key].get_value(userdata)
+        if value:
+            headers.update({name: value})
+        else:
+            headers.pop(name.lower())
+    return headers
+
+
+def process_data(
+    raw_data: Union[PostBody, DataStore], userdata: Dict[str, str]
+) -> Dict[str, str]:
+    """Process the raw HTTP data and replace with the real data."""
+
+    def traverse_dict(data: Dict[str, Any], userdata: Dict[str, str]) -> None:
+        """Traverse a dictionary recursively and replace plugins
+        with real data
+        """
+        for key in list(data):
+            value = data[key]
+            if isinstance(value, Plugin):
+                new_value = value.get_value(userdata)
+                if new_value:
+                    data.update({key: new_value})
+                else:
+                    data.pop(key)
+            elif isinstance(value, dict):
+                traverse_dict(value, userdata)
+
+            if isinstance(key, Plugin):
+                new_value = data.pop(key)
+                new_key = key.get_value(userdata)
+                if new_key:
+                    data.update({new_key: new_value})
+                else:
+                    data.pop(key)
+
+    httpdata = raw_data.to_dict().copy()
+    traverse_dict(httpdata, userdata)
+
+    return httpdata
 
 
 # Request needs many arguments
@@ -110,7 +179,7 @@ class Request:
         path: Optional[Union[str, Plugin]] = None,
         cookies: Optional[List[Cookie]] = None,
         headers: Optional[List[Header]] = None,
-        data: Optional[Union[Dict[Any, Any], PostBody]] = None,
+        data: Optional[Union[Dict[Any, Any], PostBody, File]] = None,
     ) -> None:
         """Initializes the Request object.
 
@@ -157,6 +226,8 @@ class Request:
 
         self.data: Union[PostBody, DataStore]
         if isinstance(data, PostBody):
+            self.data = data
+        elif isinstance(data, File):
             self.data = data
         else:
             self.data = DataStore(data)
@@ -206,9 +277,6 @@ class Request:
 
         return inputs
 
-    # pylint: disable=W0511
-    # TODO: Will redesign this function later.
-    # pylint: disable=R0912
     def process_inputs(
         self, user: User, config: Config
     ) -> Dict[str, Dict[str, str]]:
@@ -229,11 +297,8 @@ class Request:
           from processing the inputs.
 
         """
-        userdata = user.to_dict()
 
-        cookies = self.cookies.to_dict().copy()
-        headers = self.headers.to_dict().copy()
-        httpdata = self.data.to_dict().copy()
+        userdata = user.to_dict()
 
         if self.path:
             base_url = config.project_config["_base_url"]
@@ -246,36 +311,12 @@ class Request:
         if isinstance(self.url, Plugin):
             self.url = self.url.get_value(userdata)
 
-        headers.update({"user-agent": config.user_agent})
-
-        for key in self.cookies:
-            name = self.cookies[key].name
-            if self.cookies[key].name_not_known_in_advance:
-                cookies.pop(key)
-            value = self.cookies[key].get_value(userdata)
-            if value:
-                cookies.update({name: value})
-
-        for key in self.headers:
-            name = self.headers[key].name
-            if self.headers[key].name_not_known_in_advance:
-                headers.pop(key)
-            value = self.headers[key].get_value(userdata)
-            if value:
-                headers.update({name: value})
-
-        for key in list(httpdata):
-            value = httpdata[key]
-            if isinstance(value, Plugin):
-                new_value = value.get_value(userdata)
-                if new_value:
-                    httpdata.update({key: new_value})
-
-            if isinstance(key, Plugin):
-                new_value = httpdata.pop(key)
-                new_key = key.get_value(userdata)
-                if new_key:
-                    httpdata.update({new_key: new_value})
+        cookies = process_cookies(self.cookies, userdata)
+        headers = process_headers(self.headers, userdata, config)
+        if isinstance(self.data, File):
+            httpdata = self.data.get_value(userdata)
+        else:
+            httpdata = process_data(self.data, userdata)
 
         return {"cookies": cookies, "data": httpdata, "headers": headers}
 
@@ -363,6 +404,44 @@ class Request:
                     verify=verify,
                     allow_redirects=False,
                 )
+            return req
+
+        if self.method == "PATCH":
+            if (
+                isinstance(self.data, PostBody)
+                and self.data.encoding == "json"
+            ):
+                req = requests.patch(
+                    self.url,
+                    json=data,
+                    headers=headers,
+                    cookies=cookies,
+                    proxies=proxies,
+                    verify=verify,
+                    allow_redirects=False,
+                )
+            else:
+                req = requests.patch(
+                    self.url,
+                    data=data,
+                    headers=headers,
+                    cookies=cookies,
+                    proxies=proxies,
+                    verify=verify,
+                    allow_redirects=False,
+                )
+            return req
+
+        if self.method == "PUT":
+            req = requests.put(
+                self.url,
+                data=data,
+                headers=headers,
+                cookies=cookies,
+                proxies=proxies,
+                verify=verify,
+                allow_redirects=False,
+            )
 
             return req
 

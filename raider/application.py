@@ -20,6 +20,7 @@ import logging
 
 from raider.authentication import Authentication
 from raider.config import Config
+from raider.flow import AuthFlow, Flow
 from raider.functions import Functions
 from raider.user import UserStore
 from raider.utils import create_hy_expression, eval_file, get_project_file
@@ -88,10 +89,17 @@ class Application:
         else:
             self.active_user = self.users.active
 
-        self.authentication = Authentication(output["_authentication"])
-        functions = output.get("_functions")
-        if functions:
-            self.functions = Functions(functions)
+        auth_flows = []
+        func_flows = []
+        for value in output.values():
+            if isinstance(value, AuthFlow):
+                auth_flows.append(value)
+            elif isinstance(value, Flow):
+                func_flows.append(value)
+
+        self.authentication = Authentication(auth_flows)
+        if func_flows:
+            self.functions = Functions(func_flows)
         self.base_url = output.get("_base_url")
 
     def authenticate(self, username: str = None) -> None:
@@ -111,6 +119,21 @@ class Application:
         self.authentication.run_all(self.active_user, self.config)
         self.write_project_file()
 
+    def auth_step(self) -> None:
+        """Runs next authentication step.
+
+        Runs one the steps of the authentication process defined in the
+        hy config files for the application.
+
+        Args:
+          username:
+            A string with the user to be authenticated. If not supplied,
+            the last used username will be selected.
+
+        """
+        self.authentication.run_current_stage(self.active_user, self.config)
+        self.write_project_file()
+
     def write_session_file(self) -> None:
         """Saves session data.
 
@@ -124,7 +147,7 @@ class Application:
         cookies = {}
         headers = {}
         data = {}
-        with open(filename, "w") as sess_file:
+        with open(filename, "w", encoding="utf-8") as sess_file:
             for username in self.users:
                 user = self.users[username]
                 cookies.update({username: user.cookies.to_dict()})
@@ -173,7 +196,7 @@ class Application:
         """
         filename = get_project_file(self.project, "_project.hy")
         value = ""
-        with open(filename, "w") as proj_file:
+        with open(filename, "w", encoding="utf-8") as proj_file:
             value += create_hy_expression(
                 "_active_user", self.active_user.username
             )

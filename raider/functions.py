@@ -71,8 +71,17 @@ class Functions:
                 return function
         return None
 
-    def run(self, name: str, user: User, config: Config) -> None:
-        """Runs a Function.
+    def get_flow_index(self, name: str) -> Optional[int]:
+        """Returns the index of Flow in the Functions array."""
+        if not name:
+            return -1
+        for function in self.functions:
+            if function.name == name:
+                return self.functions.index(function)
+        return None
+
+    def run_flow(self, name: str, user: User, config: Config) -> Optional[str]:
+        """Runs a single Flow.
 
         Executes the given function, in the context of the specified
         user, and applies the global Raider configuration.
@@ -96,8 +105,30 @@ class Functions:
                     if item.value:
                         user.set_data(item)
 
-            function.run_operations()
+            next_stage = function.run_operations()
+            return next_stage
 
-        else:
-            logging.critical("Function %s not defined. Cannot continue", name)
-            sys.exit()
+        logging.critical("Function %s not defined. Cannot continue", name)
+        sys.exit()
+
+    def run_chain(self, name: str, user: User, config: Config) -> None:
+        """Runs a Function, and follows the NextStage.
+
+        Executes the given function, in the context of the specified
+        user, and applies the global Raider configuration. Runs the next
+        defined stage.
+
+
+        Args:
+          name:
+            A string with the name of the function to run.
+          user:
+            A User object containing all the data needed to run the
+            function in this user's context.
+          config:
+            A Config object with the global Raider configuration.
+
+        """
+        next_stage = name
+        while next_stage:
+            next_stage = self.run_flow(next_stage, user, config) or ""

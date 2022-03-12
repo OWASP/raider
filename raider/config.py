@@ -144,7 +144,7 @@ class Config:
         """
         filename = get_config_file("common.hy")
         data = ""
-        with open(filename, "w") as conf_file:
+        with open(filename, "w", encoding="utf-8") as conf_file:
             data += create_hy_expression("proxy", self.proxy)
             data += create_hy_expression("user_agent", self.user_agent)
             data += create_hy_expression("loglevel", self.loglevel)

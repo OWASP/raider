@@ -21,7 +21,7 @@ import os
 import re
 from base64 import b64encode
 from functools import partial
-from typing import Callable, Dict, Optional
+from typing import Callable, Dict, Optional, Union
 
 import hy
 import requests
@@ -35,8 +35,8 @@ class Regex(Plugin):
     """Plugin to extract something using regular expressions.
 
     This plugin will match the regex provided, and extract the value
-    inside the matched group, which by default is the first one. A group
-    is the string that matched inside the brackets.
+    inside the first matched group . A group is the string that matched
+    inside the brackets.
 
     For example if the regular expression is:
 
@@ -52,11 +52,16 @@ class Regex(Plugin):
     Attributes:
       regex:
         A string containing the regular expression to be matched.
-      extract:
-        An integer with the group number that needs to be extracted.
+
     """
 
-    def __init__(self, name: str, regex: str, extract: int = 0) -> None:
+    def __init__(
+        self,
+        name: str,
+        regex: str,
+        function: Callable[[str], Optional[str]] = None,
+        flags: int = Plugin.NEEDS_RESPONSE,
+    ) -> None:
         """Initializes the Regex Plugin.
 
         Creates a Regex Plugin with the given regular expression, and
@@ -68,22 +73,35 @@ class Regex(Plugin):
             A string with the name of the Plugin.
           regex:
             A string containing the regular expression to be matched.
-          extract:
-            An optional integer with the number of the group to be
-            extracted. By default the first group will be assumed.
-
         """
-        super().__init__(
-            name=name,
-            function=self.extract_regex,
-            flags=Plugin.NEEDS_RESPONSE,
-        )
-        self.regex = regex
-        self.extract = extract
+        if not function:
+            super().__init__(
+                name=name,
+                function=self.extract_regex_from_response,
+                flags=flags,
+            )
+        else:
+            super().__init__(
+                name=name,
+                function=function,
+                flags=flags,
+            )
 
-    def extract_regex(
+        self.regex = regex
+
+    def extract_regex_from_response(
         self, response: requests.models.Response
     ) -> Optional[str]:
+        """Extracts regex from a HTTP response."""
+        return self.extract_regex(response.text)
+
+    def extract_regex_from_plugin(self) -> Optional[str]:
+        """Extracts regex from a Plugin."""
+        if self.plugins[0].value:
+            return self.extract_regex(self.plugins[0].value)
+        return None
+
+    def extract_regex(self, text: str) -> Optional[str]:
         """Extracts defined regular expression from a text.
 
         Given a text to be searched for matches, return the string
@@ -99,10 +117,10 @@ class Regex(Plugin):
           if there are no matches.
 
         """
-        matches = re.search(self.regex, response.text)
+        matches = re.search(self.regex, text)
         if matches:
             groups = matches.groups()
-            self.value = groups[self.extract]
+            self.value = groups[0]
             logging.debug("Regex %s: %s", self.name, str(self.value))
         else:
             logging.warning(
@@ -111,9 +129,21 @@ class Regex(Plugin):
 
         return self.value
 
+    @classmethod
+    def from_plugin(cls, parent_plugin: Plugin, regex: str) -> "Regex":
+        """Extracts Regex from another plugin's value."""
+        regex_plugin = cls(
+            name=regex,
+            regex=regex,
+            flags=Plugin.DEPENDS_ON_OTHER_PLUGINS,
+        )
+        regex_plugin.plugins = [parent_plugin]
+        regex_plugin.function = regex_plugin.extract_regex_from_plugin
+        return regex_plugin
+
     def __str__(self) -> str:
         """Returns a string representation of the Plugin."""
-        return "Regex:" + self.regex + ":" + str(self.extract)
+        return "Regex:" + self.regex
 
 
 class Html(Plugin):
@@ -748,3 +778,77 @@ class Header(Plugin):
         header.plugins = [parent_plugin]
         header.function = lambda: header.plugins[0].value
         return header
+
+
+class File(Plugin):
+    """Plugin used to upload files.
+
+    Use this plugin when needing to upload a file.
+    """
+
+    def __init__(
+        self,
+        path: str,
+        function: Callable[..., Optional[Union[str, bytes]]] = None,
+        flags: int = 0,
+    ) -> None:
+        """Initializes the File Plugin.
+
+        Creates a File Plugin which will set its value to the contents
+        of the file.
+
+        Args:
+          path:
+            A string containing the file path.
+
+        """
+        self.path = path
+
+        if not function:
+            super().__init__(name=path, function=self.read_file, flags=flags)
+        else:
+            super().__init__(name=path, function=function, flags=flags)
+
+    def read_file(self) -> bytes:
+        """Sets the plugin's value to the file content."""
+        with open(self.path, "rb") as finput:
+            self.value = finput.read()
+        return self.value
+
+    @classmethod
+    def replace(
+        cls, path: str, old_value: str, new_value: Union[str, int, Plugin]
+    ) -> "File":
+        """Read a file and replace strings with new values."""
+
+        def replace_string(
+            original: bytes, old: str, new: Union[str, int, Plugin]
+        ) -> Optional[bytes]:
+            if isinstance(new, Plugin):
+                if not new.value:
+                    return None
+                return original.replace(
+                    old.encode("utf-8"), new.value.encode("utf-8")
+                )
+            return original.replace(
+                old.encode("utf-8"), str(new).encode("utf-8")
+            )
+
+        with open(path, "rb") as finput:
+            file_contents = finput.read()
+
+        file_replace_plugin = cls(
+            path=path,
+            function=partial(
+                replace_string,
+                original=file_contents,
+                old=old_value,
+                new=new_value,
+            ),
+            flags=Plugin.DEPENDS_ON_OTHER_PLUGINS,
+        )
+
+        if isinstance(new_value, Plugin):
+            file_replace_plugin.plugins.append(new_value)
+
+        return file_replace_plugin

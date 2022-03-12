@@ -118,7 +118,28 @@ class Raider:
         if self.session_loaded:
             self.fix_function_plugins(function)
 
-        self.functions.run(function, self.user, self.config)
+        self.functions.run_flow(function, self.user, self.config)
+
+    def run_chain(self, function: str) -> None:
+        """Runs a function, and follows the NextStage Operations.
+
+        With the selected application and user run the function from the
+        argument.
+
+        Args:
+          function:
+            A string with the function identifier as defined in
+            "_functions" variable.
+
+        """
+        if not hasattr(self, "functions"):
+            logging.critical("No functions defined. Cannot continue.")
+            sys.exit()
+
+        if self.session_loaded:
+            self.fix_function_plugins(function)
+
+        self.functions.run_chain(function, self.user, self.config)
 
     def fuzz(
         self,

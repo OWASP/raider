@@ -168,3 +168,20 @@ class Flow:
                     break
 
         return next_stage
+
+
+class AuthFlow(Flow):
+    """Flow object that affects authentication state."""
+
+    def __init__(
+        self,
+        name: str,
+        request: Request,
+        outputs: List[Plugin] = None,
+        operations: List[Operation] = None,
+    ) -> None:
+
+        super().__init__(
+            name=name, request=request, outputs=outputs, operations=operations
+        )
+        self.logger = logging.getLogger(self.name)

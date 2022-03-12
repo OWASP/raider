@@ -114,7 +114,7 @@ class Fuzz:
               A list of final strings to be fuzzed.
             """
             fuzzstrings = []
-            with open(filename) as contents:
+            with open(filename, encoding="utf-8") as contents:
                 for item in contents.readlines():
                     if prepend:
                         fuzzstrings.append(item.strip() + value)
