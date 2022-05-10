@@ -837,11 +837,11 @@ test = ["pytest", "flake8", "mypy"]
 
 [[package]]
 name = "sphinxcontrib-needs"
-version = "0.7.7"
+version = "0.7.9"
 description = "Sphinx needs extension for managing needs/requirements and specifications"
 category = "dev"
 optional = false
-python-versions = ">=3.6,<4.0"
+python-versions = ">3.6.2,<4.0"
 
 [package.dependencies]
 jsonschema = "3.2.0"
@@ -953,6 +953,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytest-
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
+content-hash = "42ad0173c616cc0e0f26af1a3aa2c788d0ec636c0c242ef203302974aec2e7ad"
 
 [metadata.files]
 alabaster = [
@@ -1555,8 +1556,8 @@ sphinxcontrib-jsmath = [
     {file = "sphinxcontrib_jsmath-1.0.1-py2.py3-none-any.whl", hash = "sha256:2ec2eaebfb78f3f2078e73666b1415417a116cc848b72e5172e596c871103178"},
 ]
 sphinxcontrib-needs = [
-    {file = "sphinxcontrib-needs-0.7.7.tar.gz", hash = "sha256:8b4a23b4ddb05d9162310acd23d79973d00ae3668025d009a771662aeac7e88e"},
-    {file = "sphinxcontrib_needs-0.7.7-py3-none-any.whl", hash = "sha256:98467a0ed5215f820c7ab3af82f66cc4672bb1c8cc9a81657329ece59a29f183"},
+    {file = "sphinxcontrib-needs-0.7.9.tar.gz", hash = "sha256:27c18f32c72ea3eb8f4662d54e4dcb7bb3261aa2ff4b77b54b2ee6688c3b7f47"},
+    {file = "sphinxcontrib_needs-0.7.9-py3-none-any.whl", hash = "sha256:fcbd5688e6114716673e04dde123ba3386c7435dc0667cb8cf70354f46eb79ff"},
 ]
 sphinxcontrib-qthelp = [
     {file = "sphinxcontrib-qthelp-1.0.3.tar.gz", hash = "sha256:4c33767ee058b70dba89a6fc5c1892c0d57a54be67ddd3e7875a18d14cba5a72"},
