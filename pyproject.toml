@@ -8,8 +8,8 @@
     ]
     license = "GPL-3.0-or-later"
     readme = "README.md"
-    homepage = "https://github.com/DigeeX/raider"
-    repository = "https://github.com/DigeeX/raider"
+    homepage = "https://github.com/OWASP/raider"
+    repository = "https://github.com/OWASP/raider"
     documentation = "https://raider.readthedocs.io/en/latest/"
     include = [
       "LICENSE",
