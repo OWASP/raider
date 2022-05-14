@@ -1,7 +1,10 @@
-.. _tutorial:
+.. _tutorials:
 
-Tutorial
+Tutorials
 ========
+
+This section will include tutorials with examples to give you a
+starting point when building your own configuration.
 
 Preparation
 -----------
