@@ -131,5 +131,5 @@ Then start writing new Plugins and Operations and share them either on
 Once you're familiar with the structure of the project, you can start
 by fixing bugs and writing new features.
 
-.. _privately with me: raider@digeex.de
-.. _Github: https://github.com/DigeeX/raider
+.. _privately with me: raider@raiderauth.com
+.. _Github: https://github.com/OWASP/raider

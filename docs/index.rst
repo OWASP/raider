@@ -5,9 +5,9 @@ Welcome to Raider's documentation!
    This documentation and the entire Raider framework is still work in
    progress. Many things are not finished, stuff is missing, other stuff
    is not working as expected, and so on...  Meanwhile, `read the source
-   code <https://github.com/DigeeX/raider>`_ to understand better how
+   code <https://github.com/OWASP/raider>`_ to understand better how
    Raider works, `open Github issues
-   <https://github.com/DigeeX/raider/issues>`_ if you find some
+   <https://github.com/OWASP/raider/issues>`_ if you find some
    mistakes, or come `talk to us in the community forum
    <https://community.raiderauth.com/>`_.
 
