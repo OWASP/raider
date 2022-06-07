@@ -13,7 +13,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-"""Attacks to be run on Flows.
+"""Fuzzing attacks to be run on Flows.
 """
 
 import logging
