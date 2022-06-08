@@ -18,6 +18,10 @@
 
 import argparse
 
+from IPython import embed
+
+from raider.raider import Raider
+
 
 def main() -> None:
     parser = argparse.ArgumentParser()
@@ -27,8 +31,20 @@ def main() -> None:
     parser.add_argument(
         "--verbose", "-v", action="store_true", help="Verbose mode"
     )
+
+    parser.add_argument("project", help="Project name")
+
     args = parser.parse_args()
     print(args)
+
+    raider = Raider(args.project)
+    if args.proxy:
+        raider.config.proxy = args.proxy
+    else:
+        raider.config.proxy = None
+
+    raider.authenticate()
+    embed(colors="neutral")
 
 
 if __name__ == "__main__":
