@@ -21,6 +21,7 @@ import argparse
 from IPython import embed
 
 from raider.raider import Raider
+from raider.utils import list_projects
 
 
 def main() -> None:
@@ -32,19 +33,41 @@ def main() -> None:
         "--verbose", "-v", action="store_true", help="Verbose mode"
     )
 
-    parser.add_argument("project", help="Project name")
+    subparsers = parser.add_subparsers(help="Command", dest="command")
+
+    shell_parser = subparsers.add_parser(
+        "shell", help="Run commands in an interactive shell"
+    )
+    auth_parser = subparsers.add_parser(
+        "authenticate", help="Authenticate and exit"
+    )
+    func_parser = subparsers.add_parser(
+        "function", help="Authenticate, run function and exit"
+    )
+    ls_parser = subparsers.add_parser("ls", help="List configured projects")
+
+    shell_parser.add_argument("project", help="Project name")
+    auth_parser.add_argument("project", help="Project name")
+    func_parser.add_argument("project", help="Project name")
 
     args = parser.parse_args()
-    print(args)
 
-    raider = Raider(args.project)
-    if args.proxy:
-        raider.config.proxy = args.proxy
-    else:
-        raider.config.proxy = None
+    if args.command in ["shell", "authenticate", "function"]:
+        raider = Raider(args.project)
+        if args.proxy:
+            raider.config.proxy = args.proxy
+        else:
+            raider.config.proxy = None
 
-    raider.authenticate()
-    embed(colors="neutral")
+        raider.authenticate()
+
+        if args.command == "shell":
+            embed(colors="neutral")
+
+    elif args.command == "ls":
+        print("Configured projects")
+        for item in list_projects():
+            print("  - " + item)
 
 
 if __name__ == "__main__":
