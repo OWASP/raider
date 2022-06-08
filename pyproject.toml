@@ -36,8 +36,8 @@
       "Topic :: Software Development :: Testing",
     ]
 
-# [tool.poetry.scripts]
-#     raider = "raider.cli:main"
+[tool.poetry.scripts]
+    raider = "raider.cli:main"
 
 [tool.poetry.dependencies]
     python = "^3.8"
