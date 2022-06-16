@@ -22,7 +22,7 @@ from raider.authentication import Authentication
 from raider.config import Config
 from raider.flow import AuthFlow, Flow
 from raider.functions import Functions
-from raider.user import UserStore
+from raider.user import Users
 from raider.utils import create_hy_expression, eval_file, get_project_file
 
 
@@ -82,8 +82,12 @@ class Application:
             self.project = self.config.active_project
 
         output = self.config.load_project(project)
-        self.users = UserStore(output["_users"])
-        active_user = output.get("_active_user")
+
+        for value in output.values():
+            if isinstance(value, Users):
+                self.users = value
+
+        active_user = self.users.active_user
         if active_user and active_user in self.users:
             self.active_user = self.users[active_user]
         else:

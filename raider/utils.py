@@ -149,6 +149,7 @@ def import_raider_objects() -> Dict[str, Any]:
             "Urlencode " "Urldecode " "B64encode " "B64decode "
         ),
         "flow": "Flow " "AuthFlow ",
+        "user": "Users ",
         "request": ("Request " "PostBody " "Template "),
         "operations": (
             "Http " "Grep " "Print " "Error " "NextStage " "Operation " "Save "

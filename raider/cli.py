@@ -42,17 +42,19 @@ def main() -> None:
         "authenticate", help="Authenticate and exit"
     )
     func_parser = subparsers.add_parser(
-        "function", help="Authenticate, run function and exit"
+        "run-function", help="Authenticate, run function and exit"
     )
-    ls_parser = subparsers.add_parser("ls", help="List configured projects")
+    subparsers.add_parser("ls", help="List configured projects")
 
     shell_parser.add_argument("project", help="Project name")
     auth_parser.add_argument("project", help="Project name")
     func_parser.add_argument("project", help="Project name")
 
+    func_parser.add_argument("function", help="Function name to run")
+
     args = parser.parse_args()
 
-    if args.command in ["shell", "authenticate", "function"]:
+    if args.command in ["shell", "authenticate", "run-function"]:
         raider = Raider(args.project)
         if args.proxy:
             raider.config.proxy = args.proxy
@@ -60,6 +62,9 @@ def main() -> None:
             raider.config.proxy = None
 
         raider.authenticate()
+
+        if args.command == "run-function":
+            raider.run_function(args.function)
 
         if args.command == "shell":
             embed(colors="neutral")
