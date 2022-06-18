@@ -211,7 +211,7 @@ class Users(DataStore):
 
     """
 
-    def __init__(self, users: List[Dict[hy.HyKeyword, str]]) -> None:
+    def __init__(self, users: List[Dict[hy.models.Keyword, str]]) -> None:
         """Initializes the UserStore object.
 
         Given a list of dictionaries, map them to a User object and

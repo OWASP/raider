@@ -170,7 +170,7 @@ class Html(Plugin):
         self,
         name: str,
         tag: str,
-        attributes: Dict[hy.HyKeyword, str],
+        attributes: Dict[hy.models.Keyword, str],
         extract: str,
     ) -> None:
         """Initializes the Html Plugin.

@@ -157,29 +157,27 @@ def import_raider_objects() -> Dict[str, Any]:
     }
 
     for module, classes in hy_imports.items():
-        expr = hy.read_str(
-            "(import [raider." + module + " [" + classes + "]])"
-        )
+        expr = hy.read_str("(import raider." + module + " [" + classes + "])")
         logging.debug("expr = %s", str(expr).replace("\n", " "))
         hy.eval(expr)
 
     return locals()
 
 
-def hy_dict_to_python(hy_dict: Dict[hy.HyKeyword, Any]) -> Dict[str, Any]:
+def hy_dict_to_python(hy_dict: Dict[hy.models.Keyword, Any]) -> Dict[str, Any]:
     """Converts a hy dictionary to a python dictionary.
 
     When creating dictionaries in hylang using :parameters they become
-    hy.HyKeyword objects. This function converts them to normal python
+    hy.models.Keyword objects. This function converts them to normal python
     dictionaries.
 
     Args:
       hy_dict:
-        A dictionary created in hy, which uses hy.HyKeyword instead of
+        A dictionary created in hy, which uses hy.models.Keyword instead of
         simple strings as keys.
 
     Returns:
-      A dictionary with the same elements only with hy.HyKeyword keys
+      A dictionary with the same elements only with hy.models.Keyword keys
       converted into normal strings.
 
     """
@@ -193,7 +191,7 @@ def hy_dict_to_python(hy_dict: Dict[hy.HyKeyword, Any]) -> Dict[str, Any]:
 
 def py_dict_to_hy_list(
     data: Dict[str, Any]
-) -> List[Union[hy.HyString, hy.HyDict, hy.HySymbol]]:
+) -> List[Union[hy.models.String, hy.models.Dict, hy.models.Symbol]]:
     """Converts a python dictionary to a hylang list.
 
     In hy, dictionaries are created out of lists, and this function
@@ -211,13 +209,13 @@ def py_dict_to_hy_list(
     value = []
     for key in data:
         if isinstance(key, str):
-            value.append(hy.HyString(key))
+            value.append(hy.models.String(key))
             if isinstance(data[key], dict):
-                value.append(hy.HyDict(py_dict_to_hy_list(data[key])))
+                value.append(hy.models.Dict(py_dict_to_hy_list(data[key])))
             elif isinstance(data[key], str):
-                value.append(hy.HyString(data[key]))
+                value.append(hy.models.String(data[key]))
             else:
-                value.append(hy.HySymbol(data[key]))
+                value.append(hy.models.Symbol(data[key]))
 
     return value
 
@@ -240,30 +238,30 @@ def create_hy_expression(
       A string with the valid hy expression.
     """
     data = []
-    data.append(hy.HySymbol("setv"))
-    data.append(hy.HySymbol(variable))
+    data.append(hy.models.Symbol("setv"))
+    data.append(hy.models.Symbol(variable))
 
     if isinstance(value, dict):
-        data.append(hy.HyDict(py_dict_to_hy_list(value)))
+        data.append(hy.models.Dict(py_dict_to_hy_list(value)))
     elif isinstance(value, list):
-        data.append(hy.HyList(value))
+        data.append(hy.models.List(value))
     elif isinstance(value, str):
-        data.append(hy.HyString(value))
+        data.append(hy.models.String(value))
     else:
-        data.append(hy.HySymbol(value))
+        data.append(hy.models.Symbol(value))
 
-    return serialize_hy(hy.HyExpression(data)) + "\n"
+    return serialize_hy(hy.models.Expression(data)) + "\n"
 
 
 def serialize_hy(
     form: Union[
-        hy.models.HyExpression,
-        hy.models.HyDict,
-        hy.models.HyList,
-        hy.models.HySymbol,
-        hy.models.HyInteger,
-        hy.models.HyKeyword,
-        hy.models.HyString,
+        hy.models.Expression,
+        hy.models.Dict,
+        hy.models.List,
+        hy.models.Symbol,
+        hy.models.Integer,
+        hy.models.Keyword,
+        hy.models.String,
     ]
 ) -> str:
     """Serializes hy expression.
@@ -279,19 +277,19 @@ def serialize_hy(
       A string with the serialized form.
 
     """
-    if isinstance(form, hy.models.HyExpression):
+    if isinstance(form, hy.models.Expression):
         hystring = "(" + " ".join([serialize_hy(x) for x in form]) + ")"
-    elif isinstance(form, hy.models.HyDict):
+    elif isinstance(form, hy.models.Dict):
         hystring = "{" + " ".join([serialize_hy(x) for x in form]) + "}"
-    elif isinstance(form, hy.models.HyList):
+    elif isinstance(form, hy.models.List):
         hystring = "[" + " ".join([serialize_hy(x) for x in form]) + "]"
-    elif isinstance(form, hy.models.HySymbol):
+    elif isinstance(form, hy.models.Symbol):
         hystring = f"{form}"
-    elif isinstance(form, hy.models.HyInteger):
+    elif isinstance(form, hy.models.Integer):
         hystring = f"{int(form)}"
-    elif isinstance(form, hy.models.HyKeyword):
+    elif isinstance(form, hy.models.Keyword):
         hystring = f"{form.name}"
-    elif isinstance(form, hy.models.HyString):
+    elif isinstance(form, hy.models.String):
         hystring = f'"{form}"'
     else:
         hystring = f"{form}"

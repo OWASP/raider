@@ -41,8 +41,8 @@
     raider = "raider.cli:main"
 
 [tool.poetry.dependencies]
-    python = "^3.8"
-    hy = "^0.20.0"
+    python = ">=3.8,<3.11"
+    hy = "^1.0.a4"
     requests = "^2.25.1"
     importlib-metadata = "^4.6.1"
     bs4 = "^0.0.1"
