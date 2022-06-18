@@ -24,9 +24,8 @@ files for each new project. Those files contain information describing
 the authentication process. **Raider** evaluates them, and gives you
 back a Python object to interact with the application.
 
-Read the :ref:`Architecture <architecture>` and `Tutorials
-<https://community.raiderauth.com/c/tutorials/5>`_ for more information and
-examples.
+Read the `Tutorials <https://community.raiderauth.com/c/tutorials/5>`_
+for more information and examples.
 
 .. _faq_eval:
 
@@ -131,5 +130,5 @@ Then start writing new Plugins and Operations and share them either on
 Once you're familiar with the structure of the project, you can start
 by fixing bugs and writing new features.
 
-.. _privately with me: raider@digeex.de
-.. _Github: https://github.com/DigeeX/raider
+.. _privately with me: raider@raiderauth.com
+.. _Github: https://github.com/OWASP/raider

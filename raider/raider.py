@@ -1,4 +1,4 @@
-# Copyright (C) 2021 DigeeX
+# Copyright (C) 2022 DigeeX
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -21,9 +21,9 @@ import sys
 from typing import Optional
 
 from raider.application import Application
-from raider.attacks import Fuzz
 from raider.authentication import Authentication
 from raider.config import Config
+from raider.fuzzing import Fuzz
 from raider.plugins.common import Plugin
 from raider.user import User
 
