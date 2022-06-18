@@ -723,7 +723,7 @@ python-versions = ">=3.5"
 
 [[package]]
 name = "pylint"
-version = "2.14.2"
+version = "2.14.3"
 description = "python code static checker"
 category = "dev"
 optional = false
@@ -731,7 +731,7 @@ python-versions = ">=3.7.2"
 
 [package.dependencies]
 astroid = ">=2.11.6,<=2.12.0-dev0"
-colorama = {version = "*", markers = "sys_platform == \"win32\""}
+colorama = {version = ">=0.4.5", markers = "sys_platform == \"win32\""}
 dill = ">=0.2"
 isort = ">=4.2.5,<6"
 mccabe = ">=0.6,<0.8"
@@ -1241,7 +1241,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytest-
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "5e29a86daa8d67791ace2c6c81bef0e7a26dd8e9e5735757676d66256ba78fd1"
+content-hash = "48aa927f410d3691cb511a9de4bc218aba0547f49e5f6dad11e9bb06f73b18ce"
 
 [metadata.files]
 alabaster = [
