@@ -42,6 +42,7 @@ python-versions = ">=3.6.2"
 lazy-object-proxy = ">=1.4.0"
 typing-extensions = {version = ">=3.10", markers = "python_version < \"3.10\""}
 wrapt = ">=1.11,<2"
+
 [[package]]
 name = "asttokens"
 version = "2.0.5"
@@ -717,38 +718,7 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 name = "pygments"
 version = "2.12.0"
 description = "Pygments is a syntax highlighting package written in Python."
-category = "dev"
-optional = false
-python-versions = ">=3.5"
-
-[[package]]
-name = "pylint"
-version = "2.14.2"
-description = "python code static checker"
-category = "dev"
-optional = false
-python-versions = ">=3.7.2"
-
-[package.dependencies]
-astroid = ">=2.11.6,<=2.12.0-dev0"
-colorama = {version = "*", markers = "sys_platform == \"win32\""}
-dill = ">=0.2"
-isort = ">=4.2.5,<6"
-mccabe = ">=0.6,<0.8"
-platformdirs = ">=2.2.0"
-tomli = {version = ">=1.1.0", markers = "python_version < \"3.11\""}
-tomlkit = ">=0.10.1"
-typing-extensions = {version = ">=3.10.0", markers = "python_version < \"3.10\""}
-
-[package.extras]
-spelling = ["pyenchant (>=3.2,<4.0)"]
-testutils = ["gitpython (>3)"]
-
-[[package]]
-name = "pyparsing"
-version = "3.0.7"
-description = "Python parsing module"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.6"
 
@@ -1153,14 +1123,6 @@ optional = false
 python-versions = ">=3.6,<4.0"
 
 [[package]]
-name = "typing-extensions"
-version = "4.1.1"
-description = "Backported and Experimental Type Hints for Python 3.6+"
-category = "dev"
-optional = false
-python-versions = ">=3.6,<4.0"
-
-[[package]]
 name = "traitlets"
 version = "5.3.0"
 description = ""
@@ -1241,7 +1203,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytest-
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "5e29a86daa8d67791ace2c6c81bef0e7a26dd8e9e5735757676d66256ba78fd1"
+content-hash = "473b37f8a3cec151d8fcf58557497bb9981517ac055aabb1a728ba2dd66184d0"
 
 [metadata.files]
 alabaster = [
