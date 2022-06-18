@@ -18,8 +18,7 @@ authentication systems.
 
 Raider is still a work in progress. Bugs and missing features are to
 be expected. If you find something that doesn't work as expected, open
-a Github issue and let us know. You can also [join the community
-forum](https://community.raiderauth.com/) and start asking questions there.
+a Github issue and let us know.
 
 
 # Features
@@ -91,5 +90,3 @@ those in mind:
 
 
 # The Documentation is available on [Read the Docs](https://docs.raiderauth.com/en/latest/).
-
-# Come talk to us in the [community forum](https://community.raiderauth.com/).
