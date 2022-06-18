@@ -1,6 +1,6 @@
-.. _attacks:
+.. _fuzzing:
 
-.. module:: raider.attacks
+.. module:: raider.fuzzing
 
 Fuzzing
 -------

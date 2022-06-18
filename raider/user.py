@@ -1,4 +1,4 @@
-# Copyright (C) 2021 DigeeX
+# Copyright (C) 2022 DigeeX
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -31,11 +31,11 @@ class User:
     """Class holding user related information.
 
     User objects are created inside the UserStore. Each User object
-    contains at least the username and the password. Every time a Plugin
-    generates an output, it is saved in the User object. If the Plugin
-    is a Cookie or a Header, the output will be stored in the the
-    "cookies" and "headers" attributes respectively. Otherwise they'll
-    be saved inside "data".
+    contains at least the username and the password. Every time a
+    Plugin generates an output, it is saved in the User object. If the
+    Plugin is a Cookie or a Header, the output will be stored in the
+    the "cookies" and "headers" attributes respectively. Otherwise
+    they'll be saved inside "data".
 
     Attributes:
       username:
@@ -194,10 +194,10 @@ class User:
         return data
 
 
-class UserStore(DataStore):
+class Users(DataStore):
     """Class holding all the users of the Application.
 
-    UserStore inherits from DataStore, and contains the users set up in
+    Users inherits from DataStore, and contains the users set up in
     the "_users" variable from the hy configuration file. Each user is
     an User object. The data from a UserStore object can be accessed
     same way like from the DataStore.
@@ -211,9 +211,7 @@ class UserStore(DataStore):
 
     """
 
-    def __init__(
-        self, users: List[Dict[hy.HyKeyword, str]], active_user: str = None
-    ) -> None:
+    def __init__(self, users: List[Dict[hy.HyKeyword, str]]) -> None:
         """Initializes the UserStore object.
 
         Given a list of dictionaries, map them to a User object and
@@ -223,20 +221,18 @@ class UserStore(DataStore):
           users:
             A list of dictionaries. Dictionary's data is mapped to a
             User object.
-          active_user:
-            An optional string specifying the active user to be set.
-
         """
-        if active_user:
-            self.active_user = active_user
-        else:
-            self.active_user = hy_dict_to_python(users[0])["username"]
+        # Set first user as the active one
+        self.active_user = list(users[0].keys())[0]
 
         values = {}
         for item in users:
-            userdata = hy_dict_to_python(item)
-            username = userdata["username"]
-            user = User(**userdata)
+            username = list(item.keys())[0]
+            password = item[username]
+            item.pop(username)
+            user = User(
+                username, password, **{"data": hy_dict_to_python(item)}
+            )
             values[username] = user
 
         super().__init__(values)

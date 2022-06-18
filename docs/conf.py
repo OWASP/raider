@@ -20,7 +20,7 @@ import raider
 # -- Project information -----------------------------------------------------
 
 project = "raider"
-copyright = "2021, DigeeX"
+copyright = "2022, OWASP"
 author = "Daniel Neagaru"
 version = raider.__version__
 release = raider.__version__

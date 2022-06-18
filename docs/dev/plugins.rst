@@ -24,6 +24,11 @@ Parser
 
 .. autoclass:: Parser
 
+Processor
++++++++++
+
+.. autoclass:: Processor
+
 Empty
 +++++
 
@@ -71,8 +76,6 @@ Example:
 .. autoclass:: Prompt
    :members:	       
 
-.. _plugin_command:
-
 .. _plugin_cookie:      
 
 Cookie
@@ -119,6 +122,20 @@ Example:
 .. autoclass:: Header
    :members:	       
 
+
+
+File
+++++
+
+TODO
+
+Example:
+
+.. autoclass:: File
+   :members:	       
+
+
+.. _plugin_command:
 
 Command
 +++++++

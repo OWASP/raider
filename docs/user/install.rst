@@ -14,7 +14,7 @@ can do so. You will need to do that anyways if you want to contribute
 to the development.
 
 First start by clonning the repository with ``git clone
-https://github.com/DigeeX/raider``.
+https://github.com/OWASP/raider``.
 
 Using a python virtual environment is recommended to avoid weird
 issues with python incompatibilities when working on the code. However

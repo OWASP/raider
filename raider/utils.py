@@ -1,4 +1,4 @@
-# Copyright (C) 2021 DigeeX
+# Copyright (C) 2022 DigeeX
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -149,6 +149,7 @@ def import_raider_objects() -> Dict[str, Any]:
             "Urlencode " "Urldecode " "B64encode " "B64decode "
         ),
         "flow": "Flow " "AuthFlow ",
+        "user": "Users ",
         "request": ("Request " "PostBody " "Template "),
         "operations": (
             "Http " "Grep " "Print " "Error " "NextStage " "Operation " "Save "
