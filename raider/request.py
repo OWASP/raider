@@ -22,7 +22,6 @@ import sys
 import urllib
 from copy import deepcopy
 from typing import Any, Dict, List, Optional, Union
-from urllib import parse
 
 import requests
 from urllib3.exceptions import InsecureRequestWarning
@@ -139,10 +138,9 @@ def process_data(
 class Request:
     """Class holding the elements of the HTTP request.
 
-    When a Flow object is created, it defines a Request object with the
-    information necessary to create a HTTP request. The "method"
-    attribute is required. One and only one of "url" and "path" is
-    required too. Everything else is optional.
+    When a Flow object is created, it defines a Request object with
+    the information necessary to create a HTTP request. The "method"
+    and "url" attributes are required. Everything else is optional.
 
     The Request object can contain Plugins which will be evaluated and
     its value replaced in the HTTP request.
@@ -152,12 +150,7 @@ class Request:
         A string with the HTTP request method. Only GET and POST is
         supported for now.
       url:
-        A string with the URL of the HTTP request. Cannot be used if
-        "path" is used.
-      path:
-        A string with the path of the HTTP request. The base URL is
-        defined in the "_base_url" variable from the hy configuration
-        files of the project. If "path" is defined "url" cannot be used.
+        A string with the URL of the HTTP request.
       cookies:
         A list of Cookie objects to be sent with the HTTP request.
       headers:
@@ -176,7 +169,6 @@ class Request:
         self,
         method: str,
         url: Optional[Union[str, Plugin]] = None,
-        path: Optional[Union[str, Plugin]] = None,
         cookies: Optional[List[Cookie]] = None,
         headers: Optional[List[Header]] = None,
         data: Optional[Union[Dict[Any, Any], PostBody, File]] = None,
@@ -187,14 +179,7 @@ class Request:
           method:
             A string with the HTTP method. Can be either "GET" or "POST".
           url:
-            A string with the full URL of the Request. Cannot be defined
-            together with "path" argument.
-          path:
-            A string with the partial path pointing to the endpoint the
-            Request needs to be sent. This value will be prepended by
-            the "_base_url" variable set up in hy configuration files to
-            create the full URL. If "path" is defined, the "url"
-            argument cannot be defined.
+            A string with the full URL of the Request.
           cookies:
             A list of Cookie Plugins. Its values will be calculated and
             inserted into the HTTP Request on runtime.
@@ -212,14 +197,11 @@ class Request:
         if not self.method:
             logging.critical("Required :method parameter, can't run without")
 
-        if not bool(url) ^ bool(path):
-            logging.critical(
-                "One and only one of :path and :url parameters required"
-            )
+        if not url:
+            logging.critical("Required :url parameter, can't run without")
             sys.exit()
 
         self.url = url
-        self.path = path
 
         self.headers = HeaderStore(headers)
         self.cookies = CookieStore(cookies)
@@ -253,9 +235,6 @@ class Request:
         if isinstance(self.url, Plugin):
             inputs.update({self.url.name: self.url})
             inputs.update(get_children_plugins(self.url))
-        if isinstance(self.path, Plugin):
-            inputs.update({self.path.name: self.path})
-            inputs.update(get_children_plugins(self.path))
 
         for name in self.cookies:
             cookie = self.cookies[name]
@@ -299,14 +278,6 @@ class Request:
         """
 
         userdata = user.to_dict()
-
-        if self.path:
-            base_url = config.project_config["_base_url"]
-            if isinstance(self.path, Plugin):
-                path = self.path.get_value(userdata)
-            else:
-                path = self.path
-            self.url = parse.urljoin(base_url, path)
 
         if isinstance(self.url, Plugin):
             self.url = self.url.get_value(userdata)
@@ -463,7 +434,6 @@ class Template(Request):
         self,
         method: str,
         url: Optional[Union[str, Plugin]] = None,
-        path: Optional[Union[str, Plugin]] = None,
         cookies: Optional[List[Cookie]] = None,
         headers: Optional[List[Header]] = None,
         data: Optional[Union[Dict[Any, Any], PostBody]] = None,
@@ -472,7 +442,6 @@ class Template(Request):
         super().__init__(
             method=method,
             url=url,
-            path=path,
             cookies=cookies,
             headers=headers,
             data=data,
@@ -482,7 +451,6 @@ class Template(Request):
         self,
         method: Optional[str] = None,
         url: Optional[Union[str, Plugin]] = None,
-        path: Optional[Union[str, Plugin]] = None,
         cookies: Optional[List[Cookie]] = None,
         headers: Optional[List[Header]] = None,
         data: Optional[Union[Dict[Any, Any], PostBody]] = None,
@@ -494,12 +462,6 @@ class Template(Request):
         of itself with the modified parameters.
 
         """
-        if bool(url) & bool(path):
-            logging.critical(
-                "One and only one of :path and :url parameters allowed"
-            )
-            sys.exit()
-
         template = deepcopy(self)
 
         if method:
@@ -507,9 +469,6 @@ class Template(Request):
 
         if url:
             template.url = url
-
-        if path:
-            template.path = path
 
         if cookies:
             template.cookies.merge(CookieStore(cookies))

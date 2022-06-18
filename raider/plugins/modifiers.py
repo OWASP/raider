@@ -17,6 +17,7 @@
 
 from functools import partial
 from typing import Callable, Optional, Union
+from urllib.parse import urljoin
 
 from raider.plugins.common import Plugin
 
@@ -162,3 +163,10 @@ class Combine(Plugin):
             elif item.value:
                 combined += item.value
         return combined
+
+    @classmethod
+    def url(cls, base_url: str, path: str) -> "Combine":
+        """Combine elements of an URL."""
+        urlcombine = cls(*(base_url, path))
+        urlcombine.function = lambda: urljoin(*urlcombine.args)  # type:ignore
+        return urlcombine
