@@ -200,7 +200,7 @@ optional = false
 python-versions = ">=3.7"
 
 [package.dependencies]
-tomli = {version = "*", optional = true, markers = "extra == \"toml\""}
+tomli = {version = "*", optional = true, markers = "python_full_version <= \"3.11.0a6\" and extra == \"toml\""}
 
 [package.extras]
 toml = ["tomli"]
@@ -214,8 +214,6 @@ optional = false
 python-versions = ">=3.6"
 
 [[package]]
-<<<<<<< HEAD
-=======
 name = "decorator"
 version = "5.1.1"
 description = "Decorators for Humans"
@@ -224,7 +222,6 @@ optional = false
 python-versions = ">=3.5"
 
 [[package]]
->>>>>>> dev
 name = "dill"
 version = "0.3.5.1"
 description = "serialize all of python"
@@ -720,7 +717,6 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 name = "pygments"
 version = "2.12.0"
 description = "Pygments is a syntax highlighting package written in Python."
-<<<<<<< HEAD
 category = "dev"
 optional = false
 python-versions = ">=3.5"
@@ -753,9 +749,6 @@ name = "pyparsing"
 version = "3.0.7"
 description = "Python parsing module"
 category = "dev"
-=======
-category = "main"
->>>>>>> dev
 optional = false
 python-versions = ">=3.6"
 
@@ -1155,7 +1148,6 @@ python-versions = ">=3.7"
 name = "tomlkit"
 version = "0.11.0"
 description = "Style preserving TOML library"
-<<<<<<< HEAD
 category = "dev"
 optional = false
 python-versions = ">=3.6,<4.0"
@@ -1164,8 +1156,6 @@ python-versions = ">=3.6,<4.0"
 name = "typing-extensions"
 version = "4.1.1"
 description = "Backported and Experimental Type Hints for Python 3.6+"
-=======
->>>>>>> dev
 category = "dev"
 optional = false
 python-versions = ">=3.6,<4.0"
@@ -1250,13 +1240,8 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytest-
 
 [metadata]
 lock-version = "1.1"
-<<<<<<< HEAD
 python-versions = "^3.8"
-content-hash = "3d63b4a6b586ec0cb9b054a497bd0fcf9e5ac11c3d2eadea0abe5e8dbb0fde64"
-=======
-    python-versions = "^3.8"
-content-hash = "b2569cea415031d2fad9edefbdd3b75a6b7c1e3712daa7b2a0766728f4f92e5b"
->>>>>>> dev
+content-hash = "5e29a86daa8d67791ace2c6c81bef0e7a26dd8e9e5735757676d66256ba78fd1"
 
 [metadata.files]
 alabaster = [
@@ -1278,13 +1263,10 @@ astor = [
 astroid = [
     {file = "astroid-2.11.6-py3-none-any.whl", hash = "sha256:ba33a82a9a9c06a5ceed98180c5aab16e29c285b828d94696bf32d6015ea82a9"},
     {file = "astroid-2.11.6.tar.gz", hash = "sha256:4f933d0bf5e408b03a6feb5d23793740c27e07340605f236496cd6ce552043d6"},
-<<<<<<< HEAD
-=======
 ]
 asttokens = [
     {file = "asttokens-2.0.5-py2.py3-none-any.whl", hash = "sha256:0844691e88552595a6f4a4281a9f7f79b8dd45ca4ccea82e5e05b4bbdb76705c"},
     {file = "asttokens-2.0.5.tar.gz", hash = "sha256:9a54c114f02c7a9480d56550932546a3f1fe71d8a02f1bc7ccd0ee3ee35cf4d5"},
->>>>>>> dev
 ]
 atomicwrites = [
     {file = "atomicwrites-1.4.0-py2.py3-none-any.whl", hash = "sha256:6d1784dea7c0c8d4a5172b6c620f40b6e4cbfdf96d783691f2e1302a7b88e197"},
@@ -1401,13 +1383,10 @@ cycler = [
     {file = "cycler-0.11.0-py3-none-any.whl", hash = "sha256:3a27e95f763a428a739d2add979fa7494c912a32c17c4c38c4d5f082cad165a3"},
     {file = "cycler-0.11.0.tar.gz", hash = "sha256:9c87405839a19696e837b3b818fed3f5f69f16f1eec1a1ad77e043dcea9c772f"},
 ]
-<<<<<<< HEAD
-=======
 decorator = [
     {file = "decorator-5.1.1-py3-none-any.whl", hash = "sha256:b8c3f85900b9dc423225913c5aace94729fe1fa9763b38939a95226f02d37186"},
     {file = "decorator-5.1.1.tar.gz", hash = "sha256:637996211036b6385ef91435e4fae22989472f9d571faba8927ba8253acbc330"},
 ]
->>>>>>> dev
 dill = [
     {file = "dill-0.3.5.1-py2.py3-none-any.whl", hash = "sha256:33501d03270bbe410c72639b350e941882a8b0fd55357580fbc873fba0c59302"},
     {file = "dill-0.3.5.1.tar.gz", hash = "sha256:d75e41f3eff1eee599d738e76ba8f4ad98ea229db8b085318aa2b3333a208c86"},
@@ -1758,8 +1737,6 @@ pluggy = [
 pre-commit = [
     {file = "pre_commit-2.19.0-py2.py3-none-any.whl", hash = "sha256:10c62741aa5704faea2ad69cb550ca78082efe5697d6f04e5710c3c229afdd10"},
     {file = "pre_commit-2.19.0.tar.gz", hash = "sha256:4233a1e38621c87d9dda9808c6606d7e7ba0e087cd56d3fe03202a01d2919615"},
-<<<<<<< HEAD
-=======
 ]
 prompt-toolkit = [
     {file = "prompt_toolkit-3.0.29-py3-none-any.whl", hash = "sha256:62291dad495e665fca0bda814e342c69952086afb0f4094d0893d357e5c78752"},
@@ -1772,7 +1749,6 @@ ptyprocess = [
 pure-eval = [
     {file = "pure_eval-0.2.2-py3-none-any.whl", hash = "sha256:01eaab343580944bc56080ebe0a674b39ec44a945e6d09ba7db3cb8cec289350"},
     {file = "pure_eval-0.2.2.tar.gz", hash = "sha256:2b45320af6dfaa1750f543d714b6d1c520a1688dec6fd24d339063ce0aaa9ac3"},
->>>>>>> dev
 ]
 py = [
     {file = "py-1.11.0-py2.py3-none-any.whl", hash = "sha256:607c53218732647dff4acdfcd50cb62615cedf612e72d1724fb1a0cc6405b378"},
@@ -1791,13 +1767,8 @@ pygments = [
     {file = "Pygments-2.12.0.tar.gz", hash = "sha256:5eb116118f9612ff1ee89ac96437bb6b49e8f04d8a13b514ba26f620208e26eb"},
 ]
 pylint = [
-<<<<<<< HEAD
-    {file = "pylint-2.14.2-py3-none-any.whl", hash = "sha256:592d0a4d2ffa8e33020209d255827c5a310499cdc023d156187bc677d86bd495"},
-    {file = "pylint-2.14.2.tar.gz", hash = "sha256:482f1329d4b6b9e52599754a2e502c0ed91ebdfd0992a2299b7fa136a6c12349"},
-=======
     {file = "pylint-2.14.3-py3-none-any.whl", hash = "sha256:6757a027e15816be23625b079ebc45464e4c9d9dde0c826d18beee53fe22a2e7"},
     {file = "pylint-2.14.3.tar.gz", hash = "sha256:4e1378f815c63e7e44590d0d339ed6435f5281d0a0cc357d29a86ea0365ef868"},
->>>>>>> dev
 ]
 pyparsing = [
     {file = "pyparsing-3.0.9-py3-none-any.whl", hash = "sha256:5026bae9a10eeaefb61dab2f09052b9f4307d44aee4eda64b309723d8d206bbc"},
@@ -1939,12 +1910,9 @@ sphinxcontrib-jsmath = [
 sphinxcontrib-needs = [
     {file = "sphinxcontrib-needs-0.7.9.tar.gz", hash = "sha256:27c18f32c72ea3eb8f4662d54e4dcb7bb3261aa2ff4b77b54b2ee6688c3b7f47"},
     {file = "sphinxcontrib_needs-0.7.9-py3-none-any.whl", hash = "sha256:fcbd5688e6114716673e04dde123ba3386c7435dc0667cb8cf70354f46eb79ff"},
-<<<<<<< HEAD
-=======
 ]
 sphinxcontrib-plantuml = [
     {file = "sphinxcontrib-plantuml-0.23.tar.gz", hash = "sha256:1d55518f0a86ecd6c96ba8ff8c884adca05bac3e58e76a692a3cd19aa7f42acf"},
->>>>>>> dev
 ]
 sphinxcontrib-qthelp = [
     {file = "sphinxcontrib-qthelp-1.0.3.tar.gz", hash = "sha256:4c33767ee058b70dba89a6fc5c1892c0d57a54be67ddd3e7875a18d14cba5a72"},
@@ -1970,13 +1938,10 @@ tomlkit = [
     {file = "tomlkit-0.11.0-py3-none-any.whl", hash = "sha256:0f4050db66fd445b885778900ce4dd9aea8c90c4721141fde0d6ade893820ef1"},
     {file = "tomlkit-0.11.0.tar.gz", hash = "sha256:71ceb10c0eefd8b8f11fe34e8a51ad07812cb1dc3de23247425fbc9ddc47b9dd"},
 ]
-<<<<<<< HEAD
-=======
 traitlets = [
     {file = "traitlets-5.3.0-py3-none-any.whl", hash = "sha256:65fa18961659635933100db8ca120ef6220555286949774b9cfc106f941d1c7a"},
     {file = "traitlets-5.3.0.tar.gz", hash = "sha256:0bb9f1f9f017aa8ec187d8b1b2a7a6626a2a1d877116baba52a129bfa124f8e2"},
 ]
->>>>>>> dev
 typing-extensions = [
     {file = "typing_extensions-4.2.0-py3-none-any.whl", hash = "sha256:6657594ee297170d19f67d55c05852a874e7eb634f4f753dbd667855e07c1708"},
     {file = "typing_extensions-4.2.0.tar.gz", hash = "sha256:f1c24655a0da0d1b67f07e17a5e6b2a105894e6824b92096378bb3668ef02376"},
