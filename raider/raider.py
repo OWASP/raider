@@ -163,9 +163,9 @@ class Raider:
 
         """
         is_authentication = False
-        flow = self.functions.get_function_by_name(flow_name)
+        flow = self.functions[flow_name]
         if not flow:
-            flow = self.authentication.get_stage_by_name(flow_name)
+            flow = self.authentication[flow_name]
             is_authentication = True
         if flow:
             if self.session_loaded:
@@ -202,7 +202,7 @@ class Raider:
         extracted data instead of extracting it again.
 
         """
-        flow = self.functions.get_function_by_name(function)
+        flow = self.functions[function]
         if not flow:
             logging.critical(
                 "Function %s not found. Cannot continue.", function

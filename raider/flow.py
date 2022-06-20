@@ -16,7 +16,6 @@
 """Flow class holding the information exchanged between server and client.
 """
 
-import logging
 from typing import List, Optional
 
 import requests
@@ -46,8 +45,6 @@ class Flow:
     doesn't affect the authentication state.
 
     Attributes:
-      name:
-        A string used as a unique identifier for the defined Flow.
       request:
         A :class:`Request <raider.request.Request>` object detailing the
         HTTP request with its elements.
@@ -72,7 +69,6 @@ class Flow:
 
     def __init__(
         self,
-        name: str,
         request: Request,
         outputs: List[Plugin] = None,
         operations: List[Operation] = None,
@@ -83,8 +79,6 @@ class Flow:
         to be extracted, and the operations to be run upon completion.
 
         Args:
-          name:
-            A string with a unique identifier for this Flow.
           request:
             A Request object associated with this Flow.
           outputs:
@@ -95,15 +89,11 @@ class Flow:
             received.
 
         """
-        self.name = name
-
         self.outputs = outputs
         self.operations = operations
 
         self.request = request
         self.response: requests.models.Response = None
-
-        self.logger = logging.getLogger(self.name)
 
     def execute(self, user: User, config: Config) -> None:
         """Sends the request and extracts the outputs.
@@ -175,13 +165,11 @@ class AuthFlow(Flow):
 
     def __init__(
         self,
-        name: str,
         request: Request,
         outputs: List[Plugin] = None,
         operations: List[Operation] = None,
     ) -> None:
 
         super().__init__(
-            name=name, request=request, outputs=outputs, operations=operations
+            request=request, outputs=outputs, operations=operations
         )
-        self.logger = logging.getLogger(self.name)

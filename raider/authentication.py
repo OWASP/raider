@@ -18,7 +18,7 @@
 
 import logging
 import sys
-from typing import List, Optional, Union
+from typing import Dict, Optional, Union
 
 from raider.config import Config
 from raider.flow import AuthFlow, Flow
@@ -38,7 +38,7 @@ class Authentication:
 
     """
 
-    def __init__(self, stages: List[AuthFlow]) -> None:
+    def __init__(self, stages: Dict[str, AuthFlow]) -> None:
         """Initializes the Authentication object.
 
         Creates an object to handle the authentication process.
@@ -52,23 +52,10 @@ class Authentication:
         self.stages = stages
         self._current_stage = 0
 
-    def get_stage_by_name(self, name: str) -> Optional[Flow]:
-        """Returns the Flow object given the name.
-
-        Args:
-          name:
-            A string with the name of the Flow as defined in the hy
-            configuration files.
-
-        Returns:
-          A Flow object matching the name supplied to the function, or
-          None if there are no such object.
-
-        """
-        for stage in self.stages:
-            if stage.name == name:
-                return stage
-        return None
+    def __getitem__(self, key: str) -> Optional[AuthFlow]:
+        if key not in self.stages.keys():
+            return None
+        return self.stages[key]
 
     def get_stage_name_by_id(self, stage_id: int) -> str:
         """Returns the stage name given its number.
@@ -85,7 +72,7 @@ class Authentication:
           A string with the name of the Flow in the position "stage_id".
 
         """
-        return self.stages[stage_id].name
+        return list(self.stages.keys())[stage_id]
 
     def get_stage_index(self, name: str) -> int:
         """Returns the index of the stage given its name.
@@ -102,13 +89,12 @@ class Authentication:
         Returns:
           An integer with the index of the Flow with the specified "name".
         """
-        if not name:
-            return -1
-        for stage in self.stages:
-            if stage.name == name:
-                return self.stages.index(stage)
+        keys = list(self.stages.keys())
 
-        return -1
+        if not name or name not in keys:
+            return -1
+
+        return keys.index(name)
 
     def run_all(self, user: User, config: Config) -> None:
         """Runs all authentication stages.
@@ -180,9 +166,10 @@ class Authentication:
 
         stage: Optional[Flow]
         if isinstance(stage_id, int):
-            stage = self.stages[stage_id]
+            stage_name = self.get_stage_name_by_id(stage_id)
+            stage = self.stages[stage_name]
         elif isinstance(stage_id, str):
-            stage = self.get_stage_by_name(stage_id)
+            stage = self.stages[stage_id]
 
         if not stage:
             logging.critical("Stage %s not defined. Cannot continue", stage_id)

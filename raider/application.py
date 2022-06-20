@@ -93,13 +93,13 @@ class Application:
         else:
             self.active_user = self.users.active
 
-        auth_flows = []
-        func_flows = []
-        for value in output.values():
+        auth_flows = {}
+        func_flows = {}
+        for key, value in output.items():
             if isinstance(value, AuthFlow):
-                auth_flows.append(value)
+                auth_flows.update({key: value})
             elif isinstance(value, Flow):
-                func_flows.append(value)
+                func_flows.update({key: value})
 
         self.authentication = Authentication(auth_flows)
         if func_flows:

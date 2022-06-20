@@ -19,7 +19,7 @@
 
 import logging
 import sys
-from typing import List, Optional
+from typing import Dict, Optional
 
 from raider.config import Config
 from raider.flow import Flow
@@ -39,7 +39,7 @@ class Functions:
 
     """
 
-    def __init__(self, functions: List[Flow]) -> None:
+    def __init__(self, functions: Dict[str, Flow]) -> None:
         """Initializes the Functions object.
 
         Args:
@@ -50,35 +50,19 @@ class Functions:
         """
         self.functions = functions
 
-    def get_function_by_name(self, name: str) -> Optional[Flow]:
-        """Gets the function given its name.
-
-        Tries to find the Flow object with the given name, and returns
-        it if it's found, otherwise returns None.
-
-        Args:
-          name:
-            A string with the unique identifier of the function as
-            defined in the Flow.
-
-        Returns:
-          A Flow object associated with the name, or None if no such
-          function has been found.
-
-        """
-        for function in self.functions:
-            if function.name == name:
-                return function
-        return None
+    def __getitem__(self, key: str) -> Optional[Flow]:
+        if key not in self.functions.keys():
+            return None
+        return self.functions[key]
 
     def get_flow_index(self, name: str) -> Optional[int]:
         """Returns the index of Flow in the Functions array."""
-        if not name:
+        keys = list(self.functions.keys())
+
+        if not name or name not in keys:
             return -1
-        for function in self.functions:
-            if function.name == name:
-                return self.functions.index(function)
-        return None
+
+        return keys.index(name)
 
     def run_flow(self, name: str, user: User, config: Config) -> Optional[str]:
         """Runs a single Flow.
@@ -97,7 +81,7 @@ class Functions:
 
         """
         logging.info("Running function %s", name)
-        function = self.get_function_by_name(name)
+        function = self.functions[name]
         if function:
             function.execute(user, config)
             if function.outputs:
