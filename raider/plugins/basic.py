@@ -225,7 +225,10 @@ class Html(Plugin):
 
         for item in matches:
             if match_tag(item, self.attributes):
-                self.value = item.attrs.get(self.extract)
+                if self.extract == "contents":
+                    self.value = item.contents
+                else:
+                    self.value = item.attrs.get(self.extract)
 
         logging.debug("Html filter %s: %s", self.name, str(self.value))
         return self.value
