@@ -202,16 +202,13 @@ class Users(DataStore):
     an User object. The data from a UserStore object can be accessed
     same way like from the DataStore.
 
-    If "_active_user" is set up in the configuration file, this will be
-    the default user. Otherwise, the first user will be the active one.
-
-    Attributes:
-      active_user:
-        A string with the currently active user.
-
     """
 
-    def __init__(self, users: List[Dict[hy.models.Keyword, str]]) -> None:
+    def __init__(
+        self,
+        users: List[Dict[hy.models.Keyword, str]],
+        active_user: str = None,
+    ) -> None:
         """Initializes the UserStore object.
 
         Given a list of dictionaries, map them to a User object and
@@ -222,8 +219,10 @@ class Users(DataStore):
             A list of dictionaries. Dictionary's data is mapped to a
             User object.
         """
-        # Set first user as the active one
-        self.active_user = list(users[0].keys())[0]
+        if not active_user:
+            self.active_user = list(users[0].keys())[0]
+        else:
+            self.active_user = active_user
 
         values = {}
         for item in users:

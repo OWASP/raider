@@ -32,6 +32,7 @@ def main() -> None:
     parser.add_argument(
         "--verbose", "-v", action="store_true", help="Verbose mode"
     )
+    parser.add_argument("--user", help="Set up the active user")
 
     subparsers = parser.add_subparsers(help="Command", dest="command")
 
@@ -65,7 +66,10 @@ def main() -> None:
         else:
             raider.config.proxy = None
 
-        raider.authenticate()
+        if args.user:
+            raider.authenticate(args.user)
+        else:
+            raider.authenticate()
 
         if args.command == "run":
             if args.chain:
