@@ -1,0 +1,21 @@
+;; Extract the mastodon nickname from HTML. It'll look for a tag
+;; similar to:
+;; <input id="account_display_name" data-default="my_nickname">
+;; and extract the value in the `data-default` attribute.
+(setv nickname
+      (Html
+        :name "nickname"
+        :tag "input"
+        :attributes
+        {:id "account_display_name"}
+        :extract "data-default"))
+
+;; Go to user's profile to extract the nickname.
+(setv get_nickname
+      (Flow
+        :request (Request
+                   :method "GET"
+                   :cookies [mastodon_session session_id remember_user]
+                   :url (Combine.url base_url "/settings/profile"))
+        :outputs [nickname]
+        :operations [(Print nickname)]))
