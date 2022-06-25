@@ -127,7 +127,7 @@ Example:
 File
 ++++
 
-TODO
+Use the File plugin to set a plugin’s value to the contents of a file. The File plugin type comes with the benefit of a built-in method for substituting strings in the file content. This allows the user to quickly automate the manipulation of web elements such as scripts or data tables, as well as any other arbitrary file contents.
 
 Example:
 
