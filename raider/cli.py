@@ -25,6 +25,7 @@ from raider.utils import list_projects
 
 
 def main() -> None:
+    """Parses command line interface arguments."""
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--proxy", help="Send the request through the specified web proxy"

@@ -16,6 +16,6 @@
         :request (Request
                    :method "GET"
                    :cookies [mastodon_session session_id remember_user]
-                   :url (Combine.url base_url "/settings/profile"))
+                   :url (Combine base_url "/settings/profile"))
         :outputs [nickname]
         :operations [(Print nickname)]))

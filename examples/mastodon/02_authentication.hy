@@ -6,7 +6,7 @@
                    ;; Sends a GET request.
                    :method "GET"
                    ;; To https://ghost.server.url/about.
-                   :url (Combine.url base_url "about"))
+                   :url (Combine base_url "/about"))
         ;; Extract the csrf_token using Html and mastodon_session using
         ;; Cookie objects.
         :outputs [csrf_token mastodon_session]
@@ -35,7 +35,7 @@
           ;; Sends a POST request
           :method "POST"
           ;; To https://ghost.server.url/auth/sign_in.
-          :url (Combine.url base_url "auth/sign_in")
+          :url (Combine base_url "/auth/sign_in")
           ;; Only `mastodon_session` cookie is needed.
           :cookies [mastodon_session]
           ;; Sends the csrf_token together with the username and
@@ -73,7 +73,7 @@
           ;; Sends a POST request
           :method "POST"
           ;; To https://ghost.server.url/auth/sign_in.
-          :url (Combine.url base_url "auth/sign_in")
+          :url (Combine base_url "/auth/sign_in")
           ;; Using three cookies
           :cookies [mastodon_session
                     session_id
