@@ -4,7 +4,7 @@
       (AuthFlow
         :request (Request
                    :method "GET"
-                   :url (Combine.url base_url "login"))
+                   :url (Combine base_url "/login"))
         ;; Just gets the initial tokens from the server needed to start
         ;; login.
         :outputs [session_id csrf_token request_token]
@@ -15,7 +15,7 @@
       (AuthFlow
         :request (Request
                    :method "POST"
-                   :url (Combine.url base_url "login")
+                   :url (Combine base_url "/login")
                    ;; Sends some extra static cookies that nextcloud requires.
                    :cookies [session_id
                              csrf_token

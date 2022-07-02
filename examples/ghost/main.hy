@@ -25,7 +25,7 @@
                    :method "POST"
                    ;; To this path, built by combining the base URL
                    ;; with the absolute path.
-                   :url (Combine.url base_url "/ghost/api/v3/admin/session")
+                   :url (Combine base_url "/ghost/api/v3/admin/session")
                    ;; Only username and password needed in POST body
                    :data
                    {"password" password
@@ -50,7 +50,7 @@
                    :method "GET"
                    ;; To this path, built by combining the base URL
                    ;; with the absolute path.
-                   :url (Combine.url base_url "/ghost/api/canary/admin/users/me/")
+                   :url (Combine base_url "/ghost/api/canary/admin/users/me/")
                    ;; Using the `session_id` cookie we got from the
                    ;; `login` AuthFlow.
                    :cookies [session_id]
@@ -64,7 +64,7 @@
       (Flow
         :request (Request
                    :method "GET"
-                   :url (Combine.url base_url "/ghost/api/v3/admin/tags/?limit=all")
+                   :url (Combine base_url "/ghost/api/v3/admin/tags/?limit=all")
                    :cookies [session_id])
         :operations [(Print.body)]))
 
@@ -73,6 +73,6 @@
       (Flow
         :request (Request
                    :method "GET"
-                   :url (Combine.url base_url "/ghost/api/canary/admin/posts/")
+                   :url (Combine base_url "/ghost/api/canary/admin/posts/")
                    :cookies [session_id])
         :operations [(Print.body)]))
