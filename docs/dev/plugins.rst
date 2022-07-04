@@ -45,10 +45,9 @@ Basic
 Variable
 ++++++++
 
-Use this when the value of the plugin should be extracted from the
-user data. At the moment only ``username`` and ``password`` are
-working. Future versions will allow adding and accessing arbitrary
-data from the users.
+The Variable plugin extracts the value of a variable.
+
+.. autoclass:: Variable
 
 Example:
 
@@ -64,8 +63,7 @@ Example:
 Prompt
 ++++++
 
-Prompt plugin should be used when the information is not known in
-advance, for example when receiving the SMS code.
+The prompt plugin accepts user input mid-flow.
 
 Example:
 
@@ -81,7 +79,7 @@ Example:
 Cookie
 ++++++
 
-Use Cookie plugin to extract and set new cookies:
+The cookie plugin extracts and sets new cookies.
 
 Example:
 
@@ -98,9 +96,7 @@ Example:
 Header
 ++++++
 
-Use Header plugin to extract and set new headers. It also allows
-easier setup for basic and bearer authentication using the provided
-classmethods.
+The Header plugin extracts and sets new headers.
 
 Example:
 
@@ -122,12 +118,11 @@ Example:
 .. autoclass:: Header
    :members:	       
 
-
-
 File
 ++++
 
-TODO
+The File plugin sets the plugin's value to the contents of a provided file
+and allows string substitution within the content.
 
 Example:
 
@@ -140,8 +135,7 @@ Example:
 Command
 +++++++
 
-Use Command plugin if you want to extract information using a shell
-command.
+The Command plugin runs shell commands and extracts their output. 
 
 Example:
 
@@ -160,9 +154,7 @@ Example:
 Regex
 +++++
 
-Use Regex plugin if the data you want extracted can be easily
-identified with a regular expression. The string matched in between
-``(`` and ``)`` will be stored as the plugin's value.
+The Regex plugin extracts a matched expression from a provided string.
 
 Example:
 
@@ -183,12 +175,7 @@ Example:
 Html
 ++++
 
-Use the Html plugin when the data you want can be easily extracted by
-parsing HTML tags. Create a new plugin by giving it a name, the tag
-where the information is located, some attributes to identify whether
-the tag is the right one, and the name of the tag attribute you want
-to extract. The attributes are created as a dictionary, and its values
-can be regular expressions.
+The Html plugin extracts tags matching attributes specified by the user.
 
 Example:
 
@@ -212,6 +199,8 @@ Example:
       
 Json
 ++++
+
+The Json plugin extracts fields from JSON tables.
 
 .. autoclass:: Json
    :members:	       
