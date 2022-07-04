@@ -3,7 +3,8 @@ name: Lint
 on:
   push:
     paths:
-      - '*.py'
+      - 'raider/*.py'
+      - 'raider/plugins/*.py'
 
 jobs:
   flake8_py3:

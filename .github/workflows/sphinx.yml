@@ -1,6 +1,9 @@
-name: "Pull Request Docs Check"
+name: "Sphinx build check"
 on: 
-- pull_request
+  push:
+    paths:
+      - 'docs/'
+
 
 jobs:
   docs:
