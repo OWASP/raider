@@ -1,9 +1,6 @@
-name: "Sphinx build check"
+name: "Sphinx docs build check"
 on: 
-  push:
-    paths:
-      - 'docs/'
-
+  [push]
 
 jobs:
   docs:

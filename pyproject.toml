@@ -48,6 +48,7 @@
     bs4 = "^0.0.1"
     funcparserlib = "^1.0.0a0"
     ipython = "^8.4.0"
+mypy = "^0.961"
 
 [tool.poetry.dev-dependencies]
     pytest = "^7.1"
