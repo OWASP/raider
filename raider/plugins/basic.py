@@ -35,7 +35,7 @@ class Regex(Plugin):
     """Plugin to extract something using regular expressions.
 
     This plugin will match the regex provided, and extract the value
-    inside the first matched group . A group is the string that matched
+    inside the first matched group. A group is the string that matched
     inside the brackets.
 
     For example if the regular expression is:
