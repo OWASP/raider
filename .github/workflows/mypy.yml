@@ -1,0 +1,13 @@
+name: "mypy checks"
+on: 
+  [push]
+
+jobs:
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+    uses: jpetrucciani/mypy-check@master  
+
+
+
+
