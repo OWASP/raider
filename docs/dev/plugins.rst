@@ -45,10 +45,7 @@ Basic
 Variable
 ++++++++
 
-Use this when the value of the plugin should be extracted from the
-user data. At the moment only ``username`` and ``password`` are
-working. Future versions will allow adding and accessing arbitrary
-data from the users.
+.. autoclass:: Variable
 
 Example:
 
