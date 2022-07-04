@@ -48,15 +48,13 @@ Variable
 The Variable plugin extracts the value of a variable.
 
 .. autoclass:: Variable
+   :members:	       
 
 Example:
 
 .. code-block:: hylang
 
    (setv username (Variable "username"))
-
-.. autoclass:: Variable
-   :members:	       
 
 .. _plugin_prompt:
 
@@ -65,14 +63,14 @@ Prompt
 
 The prompt plugin accepts user input mid-flow.
 
+.. autoclass:: Prompt
+   :members:
+
 Example:
 
 .. code-block:: hylang
 
    (setv mfa_code (Prompt "Input code here:"))
-
-.. autoclass:: Prompt
-   :members:	       
 
 .. _plugin_cookie:      
 
@@ -81,15 +79,15 @@ Cookie
 
 The cookie plugin extracts and sets new cookies.
 
+.. autoclass:: Cookie
+   :members:
+
 Example:
 
 .. code-block:: hylang
 
    (setv session_cookie (Cookie "PHPSESSID"))
 
-.. autoclass:: Cookie
-   :members:	       
-	       
 
 .. _plugin_header:      
 
@@ -97,6 +95,9 @@ Header
 ++++++
 
 The Header plugin extracts and sets new headers.
+
+.. autoclass:: Header
+   :members:
 
 Example:
 
@@ -115,8 +116,6 @@ Example:
       
    (setv z-header (Header.bearerauth access_token))
 
-.. autoclass:: Header
-   :members:	       
 
 File
 ++++
@@ -124,11 +123,8 @@ File
 The File plugin sets the plugin's value to the contents of a provided file
 and allows string substitution within the content.
 
-Example:
-
 .. autoclass:: File
    :members:	       
-
 
 .. _plugin_command:
 
@@ -136,6 +132,9 @@ Command
 +++++++
 
 The Command plugin runs shell commands and extracts their output. 
+
+.. autoclass:: Command
+   :members:
 
 Example:
 
@@ -145,9 +144,6 @@ Example:
                    :name "otp"
 		   :command "pass otp personal/app1"))
 
-.. autoclass:: Command
-   :members:	       
-
 
 .. _plugin_regex:
 
@@ -155,6 +151,9 @@ Regex
 +++++
 
 The Regex plugin extracts a matched expression from a provided string.
+
+.. autoclass:: Regex
+   :members:
 
 Example:
 
@@ -166,16 +165,15 @@ Example:
            :regex "\"accessToken\":\"([^\"]+)\""))
 
 
-.. autoclass:: Regex
-   :members:	       
-	       
-
 .. _plugin_html:      
 
 Html
 ++++
 
 The Html plugin extracts tags matching attributes specified by the user.
+
+.. autoclass:: html
+   :members:
 
 Example:
 
@@ -191,9 +189,6 @@ Example:
              :type "hidden"}
             :extract "value"))
 
-
-.. autoclass:: Html
-   :members:	       
 
 .. _plugin_json:
       
