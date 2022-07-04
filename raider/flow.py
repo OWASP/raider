@@ -193,6 +193,7 @@ class AuthFlow(Flow):
         expected.
 
     """
+
     def __init__(
         self,
         request: Request,
