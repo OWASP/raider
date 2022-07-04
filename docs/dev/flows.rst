@@ -11,6 +11,15 @@ object containing the definition of the request. This definition can
 contain :class:`Plugins <raider.plugins.Plugin>` whose value will be
 used when sending the HTTP request.
 
+There are two types of Flow, the regular one using the :class:`Flow
+<raider.flow.Flow>` class, and the authentication Flows using the
+:class:`AuthFlow <raider.flow.AuthFlow>` class. Only difference is
+that AuthFlow ones are treated as changing the authentication state
+while the regular ones don't. Use AuthFlow to define the process
+necessary to reach from unauthenticated state to authenticated
+one. Use regular Flows for any other requests you want to test using
+Raider.
+
 .. automodule:: raider.flow
    :members:
 
@@ -18,28 +27,26 @@ used when sending the HTTP request.
 Examples
 --------
 
-Create the variable ``initialization`` with the Flow. It'll send a
-request to the :ref:`_base_url <var_base_url>` using the path
-``admin/``. If the HTTP response code is 200 go to next stage
-``login``.
+Create the variable ``initialization`` with the AuthFlow. It'll send a
+GET request to ``https://example.com/admin/``. If the HTTP response
+code is 200 go to next stage ``login``.
 
 .. code-block:: hylang
 
     (setv initialization
-          (Flow
-            :name "initialization"
+          (AuthFlow
             :request (Request
                        :method "GET"
-                       :path "admin/")
+                       :url "https://example.com/admin/")
             :operations [(Http
                            :status 200
                            :action (NextStage "login"))]))
     
 
-Define Flow ``login``. It will send a POST request to
-``https://www.example.com/admin/login`` with the username and the
-password in the body. Extract the cookie ``PHPSESSID`` and store it in
-the ``session_id`` plugin. If server responds with HTTP 200 OK, print
+Define AuthFlow ``login``. It will send a POST request to
+``https://example.com/admin/login`` with the username and the password
+in the body. Extract the cookie ``PHPSESSID`` and store it in the
+``session_id`` plugin. If server responds with HTTP 200 OK, print
 ``login successfully``, otherwise quit with the error message ``login
 error``.
 
@@ -50,8 +57,7 @@ error``.
     (setv session_id (Cookie "PHPSESSID"))
 
     (setv login
-          (Flow
-            :name "login"
+          (AuthFlow
             :request (Request
                        :method "POST"
                        :url "https://www.example.com/admin/login"
@@ -78,12 +84,39 @@ authentication (MFA)>` was enabled and the ``multi_factor`` :term:`stage`
 needs to run next. Otherwise, try to log in again. Here the password
 is asked from the user by a :class:`Prompt <raider.plugins.Prompt>`.
 
+Also define the regular Flow named ``get_nickname`` to extract the
+username of the logged in user. This request doesn't affect the
+authentication state which is why Flow is used instead of AuthFlow.
+
 .. code-block:: hylang
 
+    ;; Gets `username` from active user's object defined in `users`.
     (setv username (Variable "username"))
+
+    ;; Gets the password by manual input.
     (setv password (Prompt "password"))
+
+    ;; Gets `PHPSESSID` from the cookie.
     (setv session_id (Cookie "PHPSESSID"))
-    
+
+    ;; Gets the OTP code by manual input.
+    (setv mfa_code (Prompt "OTP code"))
+
+    ;; Extract nickname from the HTML code. It looks for a tag like this:
+    ;; <input id="nickname" value="admin">
+    ;; and returns `admin`.
+    (setv nickname
+          (Html
+            :name "nickname"
+            :tag "input"
+            :attributes
+            {:id "nickname"}
+            :extract "value"))
+
+    ;; Extracts the name of the CSRF token from HTML code. It looks
+    ;; for a tag similar to this:
+    ;; <input name="0123456789" value="0123456789012345678901234567890123456789012345678901234567890123" type="hidden">
+    ;; and returns 0123456789.
     (setv csrf_name
           (Html
             :name "csrf_name"
@@ -93,7 +126,11 @@ is asked from the user by a :class:`Prompt <raider.plugins.Prompt>`.
              :value "^[0-9A-Fa-f]{64}$"
              :type "hidden"}
             :extract "name"))
-    
+
+    ;; Extracts the value of the CSRF token from HTML code. It looks
+    ;; for a tag similar to this:
+    ;; <input name="0123456789" value="0123456789012345678901234567890123456789012345678901234567890123" type="hidden">
+    ;; and returns 0123456789012345678901234567890123456789012345678901234567890123.    
     (setv csrf_value
           (Html
             :name "csrf_value"
@@ -104,24 +141,52 @@ is asked from the user by a :class:`Prompt <raider.plugins.Prompt>`.
              :type "hidden"}
             :extract "value"))
 
-
+    ;; Defines the `login` AuthFlow. Sends a POST request to
+    ;; https://example.com/login.php. Use the username, password
+    ;; and both the CSRF name and values in the POST body.
+    ;; Extract the new CSRF values, and moves to the next stage
+    ;; if HTTP response is 200.
     (setv login
-          (Flow
-            :name "login"
+          (AuthFlow
             :request (Request
                        :method "POST"
-                       :path "/login.php"
+                       :url "https://example.com/login.php"
                        :cookies [session_id]
                        :data
-                       {"open" "login"
-                        "action" "customerlogin"
-                        "password" password
+                       {"password" password
                         "username" username
-                        "redirect" "myaccount"
                         csrf_name csrf_value})
             :outputs [csrf_name csrf_value]
             :operations [(Http
                            :status 200
                            :action (NextStage "multi_factor")
                            :otherwise (NextStage "login"))]))
+
+    ;; Defines the `multi_factor` AuthFlow. Sends a POST request to
+    ;; https://example.com/login.php. Use the username, password,
+    ;; CSRF values, and the MFA code in the POST body.
+    (setv multi_factor
+          (AuthFlow
+            :request (Request
+                       :method "POST"
+                       :url "https://example.com/login.php"
+                       :cookies [session_id]
+                       :data
+                       {"password" password
+                        "username" username
+			"otp" mfa_code
+                        csrf_name csrf_value})
+            :outputs [csrf_name csrf_value]))
+
+    ;; Extracts the nickname and print it. Send a GET request to
+    ;; https://example.com/settings.php and extract the nickname
+    ;; from the HTML response.
+    (setv get_nickname
+          (Flow
+            :request (Request
+                       :method "GET"
+                       :url "https://example.com/settings.php"
+                       :cookies [session_id])
+            :outputs [nickname]
+	    :operations [(Print nickname)]))
 		

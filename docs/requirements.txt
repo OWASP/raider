@@ -1,7 +1,7 @@
 importlib-metadata == 4.12.0
-raider == 0.2.2
+raider == 0.2.3
 sphinx_autodoc_typehints == 1.12.0
 sphinx-rtd-theme == 0.5.2
-sphinxcontrib-plantuml == 0.23
+sphinxcontrib-plantuml >= 0.21
 sphinxcontrib-needs == 0.7.0
 funcparserlib == 1.0.0
