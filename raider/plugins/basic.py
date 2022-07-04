@@ -393,8 +393,11 @@ class Json(Plugin):
 class Variable(Plugin):
     """Plugin to extract the value of a variable.
 
-    For now only the username and password variables are supported.
-    Use this when supplying credentials to the web application.
+    Use this when the value of the plugin should be extracted from the
+    user data. At the moment only ``username`` and ``password`` are
+    working. Future versions will allow adding and accessing arbitrary 
+    data from the users.
+
     """
 
     def __init__(self, name: str) -> None:
