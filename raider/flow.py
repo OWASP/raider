@@ -30,19 +30,19 @@ from raider.user import User
 class Flow:
     """Class dealing with the information exchange from HTTP communication.
 
-    A Flow object in Raider defines all the information about one single
-    HTTP information exchange. It has a ``name``, contains one
-    ``request``, the ``response``, the ``outputs`` that needs to be
-    extracted from the response, and a list of ``operations`` to be run
-    when the exchange is over.
+    A Flow object in Raider defines all the information about one
+    single HTTP information exchange. It contains one ``request``, the
+    ``response``, the ``outputs`` that needs to be extracted from the
+    response, and a list of ``operations`` to be run when the exchange
+    is over.
 
-    Flow objects are used as states in the :class:`Authentication
-    <raider.authentication.Authentication>` class to define the
-    authentication process as a finite state machine.
+    Use this only when working with requests that *DON't* change the
+    authentication state.  It's used in the :class:`Functions
+    <raider.functions.Functions>` class to run arbitrary actions when
+    it doesn't affect the authentication state.
 
-    It's also used in the :class:`Functions
-    <raider.functions.Functions>` class to run arbitrary actions when it
-    doesn't affect the authentication state.
+    When the authentication state changes, use :class:`AuthFlow
+    <raider.flow.AuthFlow>` objects.
 
     Attributes:
       request:
@@ -62,16 +62,13 @@ class Flow:
         outputs are extracted. Should contain a :class:`NextStage
         <raider.operations.NextStage>` operation if another Flow is
         expected.
-      logger:
-        A :class:`logging.RootLogger` object used for debugging.
-
     """
 
     def __init__(
         self,
         request: Request,
-        outputs: List[Plugin] = None,
-        operations: List[Operation] = None,
+        outputs: Optional[List[Plugin]] = None,
+        operations: Optional[List[Operation]] = None,
     ) -> None:
         """Initializes the Flow object.
 
@@ -93,7 +90,7 @@ class Flow:
         self.operations = operations
 
         self.request = request
-        self.response: requests.models.Response = None
+        self.response: Optional[requests.models.Response] = None
 
     def execute(self, user: User, config: Config) -> None:
         """Sends the request and extracts the outputs.
@@ -161,13 +158,46 @@ class Flow:
 
 
 class AuthFlow(Flow):
-    """Flow object that affects authentication state."""
+    """Class dealing with the authentication Flows.
 
+    It inherits from :class:`Flow <raider.flow.Flow>` so it contains
+    one ``request``, the ``response``, the ``outputs`` that needs to
+    be extracted from the response, and a list of ``operations`` to be
+    run when the exchange is over.
+
+    Use this only when working with requests that *DO* change the
+    authentication state.  It's used in the :class:`Authentication
+    <raider.authentication.Authentication>` class to run actions that
+    affect the authentication state.
+
+    When the authentication state doesn't change, use :class:`Flow
+    <raider.flow.Flow>` objects.
+
+    Attributes:
+      request:
+        A :class:`Request <raider.request.Request>` object detailing the
+        HTTP request with its elements.
+      response:
+        A :class:`requests.model.Response` object. It's empty until the
+        request is sent. When the HTTP response arrives, it's stored
+        here.
+      outputs:
+        A list of :class:`Plugin <raider.plugins.Plugin>` objects
+        detailing the pieces of information to be extracted from the
+        response. Those will be later available for other Flow objects.
+      operations:
+        A list of :class:`Operation <raider.operations.Operation>`
+        objects to be executed after the response is received and
+        outputs are extracted. Should contain a :class:`NextStage
+        <raider.operations.NextStage>` operation if another Flow is
+        expected.
+
+    """
     def __init__(
         self,
         request: Request,
-        outputs: List[Plugin] = None,
-        operations: List[Operation] = None,
+        outputs: Optional[List[Plugin]] = None,
+        operations: Optional[List[Operation]] = None,
     ) -> None:
 
         super().__init__(
