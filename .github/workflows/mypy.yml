@@ -16,5 +16,5 @@ jobs:
           level: warning
           # Change the current directory to run mypy command.
           # mypy command reads setup.cfg or other settings file in this path.
-          workdir: src
+          workdir: raider
 
