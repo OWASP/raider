@@ -1,4 +1,4 @@
-name: reviewdog
+name: mypy
 on: [push]
 jobs:
   mypy:
@@ -17,56 +17,4 @@ jobs:
           # Change the current directory to run mypy command.
           # mypy command reads setup.cfg or other settings file in this path.
           workdir: src
-
-
-inputs:
-  github_token:
-    description: 'GITHUB_TOKEN'
-    required: false
-    default: '${{ github.token }}'
-  workdir:
-    description: |
-      Working directory of where to run mypy command.
-      Relative to the root directory.
-    required: false
-    default: 'raider'
-  target:
-    description: |
-      Target file or directory of mypy command.
-      Relative to the working directory.
-    required: false
-    default: '.'
-  ### Flags for reviewdog ###
-  level:
-    description: 'Report level for reviewdog [info,warning,error]'
-    required: false
-    default: 'error'
-  reporter:
-    description: 'Reporter of reviewdog command [github-pr-check,github-pr-review].'
-    required: false
-    default: 'github-pr-check'
-  filter_mode:
-    description: |
-      Filtering mode for the reviewdog command [added,diff_context,file,nofilter].
-      Default is added.
-    required: false
-    default: 'added'
-  fail_on_error:
-    description: |
-      Exit code for reviewdog when errors are found [true,false]
-      Default is `false`.
-    required: false
-    default: 'false'
-  reviewdog_flags:
-    description: 'Additional reviewdog flags'
-    required: false
-    default: ''
-  ### Flags for mypy ###
-  mypy_flags:
-    description: 'mypy options (default: <none>)'
-    required: false
-    default: ''
-  tool_name:
-    description: 'Tool name to use for reviewdog reporter'
-    default: 'mypy'
 
