@@ -62,7 +62,7 @@ mypy = "^0.961"
     sphinx-autodoc-typehints = "^1.18.3"
     sphinx-rtd-theme = "^1.0.0"
     Pillow = "^9.2.0"
-    sphinxcontrib-plantuml = "^0.23"
+    sphinxcontrib-plantuml = "^0.24"
 
 [build-system]
     requires = ["poetry-core>=1.0.0"]
