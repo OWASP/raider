@@ -23,7 +23,7 @@ import requests
 
 
 class Plugin:
-    """Parent class for all plugins.
+    """
 
     Each Plugin class inherits from here. "get_value" function should
     be called when extracting the value from the plugin, which will then
@@ -39,8 +39,8 @@ class Plugin:
       value:
         A string containing the Plugin's output value to be used as
         input in the HTTP request.
-      flags:
-        An integer containing the flags that define the Plugin's
+        An integer containing the flags tha
+      flags:t define the Plugin's
         behaviour. For now only NEEDS_USERDATA and NEEDS_RESPONSE is
         supported. If NEEDS_USERDATA is set, the plugin will get its
         value from the user's data, which will be sent to the function
@@ -223,7 +223,8 @@ class Plugin:
 
 
 class Parser(Plugin):
-    """Plugins that parse other plugins."""
+    """
+    """
 
     def __init__(
         self,
@@ -241,7 +242,8 @@ class Parser(Plugin):
 
 
 class Processor(Plugin):
-    """Plugins that process (encode/decode/etc...) other plugins."""
+    """
+    """
 
     def __init__(
         self,
@@ -259,7 +261,8 @@ class Processor(Plugin):
 
 
 class Empty(Plugin):
-    """Empty plugin to use for fuzzing new data."""
+    """
+    """
 
     def __init__(self, name: str):
         """Initialize Empty plugin."""
