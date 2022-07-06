@@ -218,11 +218,15 @@ Modifiers
 Alter
 +++++
 
+The Alter plugin extracts and alters the value of other plugins.
+
 .. autoclass:: Alter
    :members:	       
 
 Combine
 +++++++
+
+The Combine plugin concatenates the values of other plugins.
 
 .. autoclass:: Combine
    :members:	       
