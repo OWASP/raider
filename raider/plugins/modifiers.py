@@ -22,7 +22,7 @@ from raider.plugins.common import Plugin
 
 
 class Alter(Plugin):
-    """Plugin used to alter other plugin's value.
+    """
 
     If the value extracted from other plugins cannot be used in it's raw
     form and needs to be somehow processed, Alter plugin can be used to
@@ -132,7 +132,11 @@ class Alter(Plugin):
 
 
 class Combine(Plugin):
-    """Plugin to combine the values of other plugins."""
+    """
+
+    Use to combine the values of plugins.
+
+    """
 
     def __init__(self, *args: Union[str, Plugin]):
         """Initialize Combine object."""
