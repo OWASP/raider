@@ -35,7 +35,7 @@ class Regex(Plugin):
     """Plugin to extract something using regular expressions.
 
     This plugin will match the regex provided, and extract the value
-    inside the first matched group . A group is the string that matched
+    inside the first matched group. A group is the string that matched
     inside the brackets.
 
     For example if the regular expression is:
@@ -391,13 +391,11 @@ class Json(Plugin):
 
 
 class Variable(Plugin):
-    """Plugin to extract the value of a variable.
-
+    """
     Use this when the value of the plugin should be extracted from the
     user data. At the moment only ``username`` and ``password`` are
     working. Future versions will allow adding and accessing arbitrary 
     data from the users.
-
     """
 
     def __init__(self, name: str) -> None:
@@ -419,7 +417,7 @@ class Variable(Plugin):
 
 
 class Command(Plugin):
-    """Runs a shell command and extract the output."""
+    """Use this to run a shell command and extract the output."""
 
     def __init__(self, name: str, command: str) -> None:
         """Initializes the Command Plugin.
@@ -463,8 +461,7 @@ class Command(Plugin):
 
 
 class Prompt(Plugin):
-    """Plugin to ask the user for an input.
-
+    """
     Use this plugin when the value cannot be known in advance, for
     example when asking for multi-factor authentication code that is
     going to be sent over SMS.
@@ -498,8 +495,7 @@ class Prompt(Plugin):
 
 
 class Cookie(Plugin):
-    """Plugin to deal with HTTP cookies.
-
+    """
     Use this Plugin when dealing with the cookies in the HTTP request.
     """
 
