@@ -241,6 +241,8 @@ Parsers
 UrlParser
 +++++++++
 
+The URLParser plugin parses URLs and extracts elements from it.
+
 .. autoclass:: UrlParser
    :members:	       
       
