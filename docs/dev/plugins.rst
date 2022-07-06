@@ -17,20 +17,29 @@ Common
 Plugin
 ++++++
 
+This is the parent class for all plugins.
+
 .. autoclass:: Plugin
 
 Parser
 ++++++
+
+The Parser plugin parses other plugins.
 
 .. autoclass:: Parser
 
 Processor
 +++++++++
 
+The Processor plugin encodes, decodes and otherwise processes other
+plugins.
+
 .. autoclass:: Processor
 
 Empty
 +++++
+
+The Empty plugin is unique in that it contains no function or value.
 
 .. autoclass:: Empty
 
