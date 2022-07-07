@@ -246,7 +246,7 @@ The URLParser plugin parses URLs and extracts elements from it.
 .. autoclass:: UrlParser
    :members:	       
 
-..module:: raider.plugins.processors
+.. module:: raider.plugins.processors
 
 Processors
 ----------
