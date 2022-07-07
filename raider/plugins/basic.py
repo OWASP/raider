@@ -32,10 +32,10 @@ from raider.utils import hy_dict_to_python, match_tag, parse_json_filter
 
 
 class Regex(Plugin):
-    """Plugin to extract something using regular expressions.
+    """
 
     This plugin will match the regex provided, and extract the value
-    inside the first matched group . A group is the string that matched
+    inside the first matched group. A group is the string that matched
     inside the brackets.
 
     For example if the regular expression is:
@@ -147,7 +147,7 @@ class Regex(Plugin):
 
 
 class Html(Plugin):
-    """Plugin to extract something from an HTML tag.
+    """
 
     This Plugin will find the HTML "tag" containing the specified
     "attributes" and store the "extract" attribute of the matched tag
@@ -246,7 +246,7 @@ class Html(Plugin):
 
 
 class Json(Plugin):
-    """Plugin to extract a field from JSON.
+    """
 
     The "extract" attribute is used to specify which field to store in
     the "value". Using the dot ``.`` character you can go deeper inside
@@ -391,7 +391,7 @@ class Json(Plugin):
 
 
 class Variable(Plugin):
-    """Plugin to extract the value of a variable.
+    """
 
     Use this when the value of the plugin should be extracted from the
     user data. At the moment only ``username`` and ``password`` are
@@ -419,7 +419,11 @@ class Variable(Plugin):
 
 
 class Command(Plugin):
-    """Runs a shell command and extract the output."""
+    """
+
+    Use this to run a shell command and extract the output.
+
+    """
 
     def __init__(self, name: str, command: str) -> None:
         """Initializes the Command Plugin.
@@ -463,11 +467,12 @@ class Command(Plugin):
 
 
 class Prompt(Plugin):
-    """Plugin to ask the user for an input.
+    """
 
     Use this plugin when the value cannot be known in advance, for
     example when asking for multi-factor authentication code that is
     going to be sent over SMS.
+
     """
 
     def __init__(self, name: str) -> None:
@@ -498,9 +503,10 @@ class Prompt(Plugin):
 
 
 class Cookie(Plugin):
-    """Plugin to deal with HTTP cookies.
+    """
 
     Use this Plugin when dealing with the cookies in the HTTP request.
+
     """
 
     def __init__(
@@ -617,9 +623,10 @@ class Cookie(Plugin):
 
 
 class Header(Plugin):
-    """Plugin to deal with HTTP headers.
+    """
 
     Use this Plugin when dealing with the headers in the HTTP request.
+
     """
 
     def __init__(
@@ -787,9 +794,10 @@ class Header(Plugin):
 
 
 class File(Plugin):
-    """Plugin used to upload files.
+    """
 
-    Use this plugin when needing to upload a file.
+    Use this plugin to manipulate files.
+
     """
 
     def __init__(
