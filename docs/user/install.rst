@@ -14,7 +14,7 @@ https://github.com/OWASP/raider``.
 
 Using a python virtual environment is recommended to avoid weird
 issues with python incompatibilities when working on the code. However
-you can still use ``pip3 install .`` in the project's directory to
+you can still use ``pip install .`` in the project's directory to
 install the package locally.
 
 Install the virtual environment, `install poetry

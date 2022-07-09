@@ -24,7 +24,6 @@ import requests
 
 class Plugin:
     """
-
     Each Plugin class inherits from here. "get_value" function should
     be called when extracting the value from the plugin, which will then
     be stored in the "value" attribute.
