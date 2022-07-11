@@ -30,15 +30,22 @@ class Plugin:
     be stored in the ``value`` attribute.
 
     Plugin's behaviour can be controlled using following flags:
-    * NEEDS_USERDATA = 0x01
-      When set, the plugin will get its value from the user's data,
-        which will be sent to the function defined here. If
-        NEEDS_RESPONSE is set, the :class:`Plugin` will extract its
-        value from the HTTP response instead.
 
+    NEEDS_USERDATA = 0x01
+      When set, the Plugin will get its value from the user's data,
+      which will be sent to the function defined here. Use when
+      plugin's value depends on things defined in the :class:`User`
+      class, like the username or password.
     NEEDS_RESPONSE = 0x02
+      When set, the Plugin's value can only be extracted from a
+      previous HTTP response.
     DEPENDS_ON_OTHER_PLUGINS = 0x04
+      When set, the Plugin's value can only be extracted from other
+      plugins. Use this when combining Plugins.
     NAME_NOT_KNOWN_IN_ADVANCE = 0x08
+      When set, the name of the Plugin is not known in advance, and
+      will be set when the Plugin runs. Useful when the name changes
+      and can only be matched with a regex.
 
 
     Attributes:

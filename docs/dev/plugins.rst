@@ -36,6 +36,7 @@ Plugin's behaviour can be controlled with following flags:
 | NAME_NOT_KNOWN_IN_ADVANCE | 0x08 |
 +---------------------------+------+
 
+
 Combine the flags with boolean OR if you want to set more flags, for
 example:
 
