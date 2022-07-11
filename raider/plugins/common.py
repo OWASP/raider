@@ -23,28 +23,37 @@ import requests
 
 
 class Plugin:
-    """
-    Each Plugin class inherits from here. "get_value" function should
+    """Parent class for all plugins.
+
+    Each Plugin class inherits from here. ``get_value`` function should
     be called when extracting the value from the plugin, which will then
-    be stored in the "value" attribute.
+    be stored in the ``value`` attribute.
+
+    Plugin's behaviour can be controlled using following flags:
+    * NEEDS_USERDATA = 0x01
+      When set, the plugin will get its value from the user's data,
+        which will be sent to the function defined here. If
+        NEEDS_RESPONSE is set, the :class:`Plugin` will extract its
+        value from the HTTP response instead.
+
+    NEEDS_RESPONSE = 0x02
+    DEPENDS_ON_OTHER_PLUGINS = 0x04
+    NAME_NOT_KNOWN_IN_ADVANCE = 0x08
+
 
     Attributes:
       name:
-        A string used as an identifier for the Plugin.
+        A string used as an identifier for the :class:`Plugin`.
       function:
-        A function which will be called to extract the "value" of the
-        Plugin when used as an input in a Flow. The function should set
-        self.value and also return it.
+        A function which will be called to extract the ``value`` of
+        the :class:`Plugin` when used as an input in a Flow. The function
+        should set self.value and also return it.
       value:
-        A string containing the Plugin's output value to be used as
-        input in the HTTP request.
-        An integer containing the flags tha
-      flags:t define the Plugin's
-        behaviour. For now only NEEDS_USERDATA and NEEDS_RESPONSE is
-        supported. If NEEDS_USERDATA is set, the plugin will get its
-        value from the user's data, which will be sent to the function
-        defined here. If NEEDS_RESPONSE is set, the Plugin will extract
-        its value from the HTTP response instead.
+        A string containing the :class:`Plugin`'s output value to be used as
+        input in the HTTP requests.
+      flags:
+        An integer containing the flags that define the
+        :class:`Plugin`'s behaviour.
 
     """
 
@@ -61,25 +70,25 @@ class Plugin:
         flags: int = 0,
         value: Optional[str] = None,
     ) -> None:
-        """Initializes a Plugin object.
+        """Initializes a :class:`Plugin` object.
 
-        Creates a Plugin object, holding a "function" defining how to
+        Creates a :class:`Plugin` object, holding a "function" defining how to
         extract the "value".
 
         Args:
           name:
-            A string with the unique identifier of the Plugin.
+            A string with the unique identifier of the :class:`Plugin`.
           function:
             A Callable function that will be used to extract the
-            Plugin's value.
+            :class:`Plugin`'s value.
           value:
-            A string with the extracted value from the Plugin.
+            A string with the extracted value from the :class:`Plugin`.
           flags:
-            An integer containing the flags that define the Plugin's
+            An integer containing the flags that define the :class:`Plugin`'s
             behaviour. For now only NEEDS_USERDATA and NEEDS_RESPONSE is
             supported. If NEEDS_USERDATA is set, the plugin will get its
             value from the user's data, which will be sent to the function
-            defined here. If NEEDS_RESPONSE is set, the Plugin will extract
+            defined here. If NEEDS_RESPONSE is set, the :class:`Plugin` will extract
             its value from the HTTP response instead.
 
         """
@@ -102,9 +111,9 @@ class Plugin:
         self,
         userdata: Dict[str, str],
     ) -> Optional[str]:
-        """Gets the value from the Plugin.
+        """Gets the value from the :class:`Plugin`.
 
-        Depending on the Plugin's flags, extract and return its value.
+        Depending on the :class:`Plugin`'s flags, extract and return its value.
 
         Args:
           userdata:
@@ -125,9 +134,9 @@ class Plugin:
         self,
         response: Optional[requests.models.Response],
     ) -> None:
-        """Extracts the value of the Plugin from the HTTP response.
+        """Extracts the value of the :class:`Plugin` from the HTTP response.
 
-        If NEEDS_RESPONSE flag is set, the Plugin will extract its value
+        If NEEDS_RESPONSE flag is set, the :class:`Plugin` will extract its value
         upon receiving the HTTP response, and store it inside the "value"
         attribute.
 
@@ -151,9 +160,9 @@ class Plugin:
         self,
         response: Optional[requests.models.Response],
     ) -> None:
-        """Extracts the name of the Plugin from the HTTP response.
+        """Extracts the name of the :class:`Plugin` from the HTTP response.
 
-        If NAME_NOT_KNOWN_IN_ADVANCE flag is set, the Plugin will set
+        If NAME_NOT_KNOWN_IN_ADVANCE flag is set, the :class:`Plugin` will set
         its name after receiving the HTTP response, and store it inside
         the "name" attribute.
 
@@ -177,7 +186,7 @@ class Plugin:
         """Extracts the plugin value from userdata.
 
         Given a dictionary with the userdata, return its value with the
-        same name as the "name" attribute from this Plugin.
+        same name as the "name" attribute from this :class:`Plugin`.
 
         Args:
           data:
@@ -250,7 +259,7 @@ class Processor(Plugin):
         function: Callable[[], Optional[str]],
         value: str = None,
     ) -> None:
-        """Initializes the Processor plugin."""
+        """Initializes the Processor :class:<Plugin>."""
         super().__init__(
             name=name,
             value=value,
@@ -264,7 +273,7 @@ class Empty(Plugin):
     """
 
     def __init__(self, name: str):
-        """Initialize Empty plugin."""
+        """Initialize Empty :class:<Plugin>."""
         super().__init__(
             name=name,
             flags=0,

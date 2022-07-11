@@ -4,11 +4,12 @@
 Plugins
 =======
 
-Plugins in **Raider** are pieces of code that are used to get inputs
-from, and put them in the HTTP request, and/or to extract some values
-from the response. This is used to facilitate the information exchange
-between :ref:`Flows <flows>`. Below there's a list of predefined
-Plugins. The users are also encouraged to write their own plugins.
+:term:`Plugins <Plugin>` in **Raider** are pieces of code that are
+used to get inputs from, and put them in the HTTP request, and/or to
+extract some values from the response. This is used to facilitate the
+information exchange between :ref:`Flows <flows>`. Below there's a
+list of predefined :term:`Plugins <Plugin>`. The users are also
+encouraged to :ref:`write their own plugins <plugin_api>`.
 
 
 Common
@@ -17,7 +18,37 @@ Common
 Plugin
 ++++++
 
-This is the parent class for all plugins.
+Use this class only when creating new plugins. Either when
+:ref:`writing custom plugins <plugin_api>` in hylang or when adding
+new plugins to the Raider main code. `Check the repository
+<https://github.com/OWASP/raider/tree/main/raider/plugins>`_ for
+inspiration.
+
+Plugin's behaviour can be controlled with following flags:
+
++---------------------------+------+
+| NEEDS_USERDATA            | 0x01 |
++---------------------------+------+
+| NEEDS_RESPONSE            | 0x02 |
++---------------------------+------+
+| DEPENDS_ON_OTHER_PLUGINS  | 0x04 |
++---------------------------+------+
+| NAME_NOT_KNOWN_IN_ADVANCE | 0x08 |
++---------------------------+------+
+
+Combine the flags with boolean OR if you want to set more flags, for
+example:
+
+.. code-block::
+
+   class MyPlugin(Plugin):
+   def __init__(self, name):
+       super().__init__(
+           name=name,
+           function=self.extract_html_tag,
+           flags=Plugin.NEEDS_USERDATA|Plugins.NEEDS_RESPONSE,
+       )
+   
 
 .. autoclass:: Plugin
 
