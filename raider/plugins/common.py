@@ -321,7 +321,7 @@ class Processor(Plugin):
         function: Callable[[], Optional[str]],
         value: Optional[str] = None,
     ) -> None:
-        """Initializes the :class:`Processor` :class:`<Plugin>`.
+        """Initializes the :class:`Processor` :class:`Plugin`.
 
         Creates a :class:`Processor` object, holding a ``function``
         defining how to process the parent :class:`Plugin` to get the
@@ -362,7 +362,7 @@ class Empty(Plugin):
     """
 
     def __init__(self, name: str):
-        """Initializes the :class:`Empty` :class:`<Plugin>`.
+        """Initializes the :class:`Empty` :class:`Plugin`.
 
         Creates an :class:`Empty` object without any value. Use it
         when you don't need any value for the :class:`Plugin` and only
