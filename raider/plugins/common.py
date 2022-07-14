@@ -23,7 +23,7 @@ import requests
 
 
 class Plugin:
-    """Parent class for all :class:`Plugin`s.
+    """Parent class for all :class:`Plugins <Plugin>`.
 
     Each :class:`Plugin` class inherits from here. ``get_value``
     function should be called when extracting the value from the
@@ -43,8 +43,8 @@ class Plugin:
       a previous HTTP response.
     DEPENDS_ON_OTHER_PLUGINS = 0x04
       When set, the :class:`Plugin`'s value can only be extracted from
-      other :class:`Plugin`s. Use this when combining
-      :class:`Plugin`s.
+      other :class:`Plugins <Plugin>`. Use this when combining
+      :class:`Plugins <Plugin>`.
     NAME_NOT_KNOWN_IN_ADVANCE = 0x08
       When set, the name of the :class:`Plugin` is not known in
       advance, and will be set when the :class:`Plugin` runs. Useful
@@ -240,7 +240,7 @@ class Plugin:
 
 
 class Parser(Plugin):
-    """Parent class for :class:`Parser` :Class:`Plugin`s.
+    """Parent class for :class:`Parser` :Class:`Plugins <Plugin>`.
 
     Use the :Class:`Parser` :Class:`Plugin` when needing to take
     another :Class:`Plugin` as input, build a data structure out of
@@ -272,8 +272,8 @@ class Parser(Plugin):
         defining how to parse the parent :class:`Plugin` in order to
         extract the ``value``. Only the flag
         ``DEPENDS_ON_OTHER_PLUGINS`` is preset, since it needs to
-        extract the value from other :class:`Plugin`s, and those need
-        to be extracted first.
+        extract the value from other :class:`Plugins <Plugin>`, and
+        those need to be extracted first.
 
         Args:
           name:
@@ -294,7 +294,7 @@ class Parser(Plugin):
 
 
 class Processor(Plugin):
-    """Parent class for :Class:`Processor` :Class:`Plugin`s.
+    """Parent class for :Class:`Processor` :Class:`Plugins <Plugin>`.
 
     Use the :Class:`Processor` :Class:`Plugin` when needing to take
     another :Class:`Plugin` as input, and modify (process) it to get
@@ -327,14 +327,14 @@ class Processor(Plugin):
         defining how to process the parent :class:`Plugin` to get the
         ``value``. Only the flag ``DEPENDS_ON_OTHER_PLUGINS`` is
         preset, since it needs to extract the value from other
-        :class:`Plugin`s, and those need to be extracted first.
+        :class:`Plugins <Plugin>`, and those need to be extracted first.
 
         Args:
           name:
             A string with the unique identifier of the :class:`Parser`.
           function:
             A Callable function that will be used to extract the
-            :class:`Parser`'s value.
+            :class:`Parsers <Parser>` value.
           value:
             A string with the extracted value from the :class:`Plugin`.
 
@@ -348,7 +348,7 @@ class Processor(Plugin):
 
 
 class Empty(Plugin):
-    """Class for :Class:`Empty` :Class:`Plugin`s.
+    """Class for :Class:`Empty` :Class:`Plugins <Plugin>`.
 
     Use the :Class:`Empty` :Class:`Plugin` when you don't care about
     the actual value of the :Class:`Plugin`, and only want to have a
@@ -357,7 +357,7 @@ class Empty(Plugin):
     Attributes:
       name:
         A string used as an identifier for the :class:`Empty`
-       :class:`Plugin`.
+        :class:`Plugin`.
 
     """
 
