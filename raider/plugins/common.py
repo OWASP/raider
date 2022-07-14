@@ -240,10 +240,10 @@ class Plugin:
 
 
 class Parser(Plugin):
-    """Parent class for :class:`Parser` :Class:`Plugins <Plugin>`.
+    """Parent class for :class:`Parser` :class:`Plugins <Plugin>`.
 
-    Use the :Class:`Parser` :Class:`Plugin` when needing to take
-    another :Class:`Plugin` as input, build a data structure out of
+    Use the :class:`Parser` :class:`Plugin` when needing to take
+    another :class:`Plugin` as input, build a data structure out of
     it, and extracting some parts you're interested in. The simplest
     example would be parsing a URL to extract the domain name from it.
 
@@ -266,7 +266,7 @@ class Parser(Plugin):
         function: Callable[[], Optional[str]],
         value: str = None,
     ) -> None:
-        """Initializes the :Class:`Parser` :class:`Plugin`.
+        """Initializes the :class:`Parser` :class:`Plugin`.
 
         Creates a :class:`Parser` object, holding a ``function``
         defining how to parse the parent :class:`Plugin` in order to
@@ -294,10 +294,10 @@ class Parser(Plugin):
 
 
 class Processor(Plugin):
-    """Parent class for :Class:`Processor` :Class:`Plugins <Plugin>`.
+    """Parent class for :class:`Processor` :class:`Plugins <Plugin>`.
 
-    Use the :Class:`Processor` :Class:`Plugin` when needing to take
-    another :Class:`Plugin` as input, and modify (process) it to get
+    Use the :class:`Processor` :class:`Plugin` when needing to take
+    another :class:`Plugin` as input, and modify (process) it to get
     the needed ``value``. For example by encoding/decoding or doing
     other kinds of modifications to the value extracted from the
     parent :class:`Plugin`.
@@ -321,7 +321,7 @@ class Processor(Plugin):
         function: Callable[[], Optional[str]],
         value: Optional[str] = None,
     ) -> None:
-        """Initializes the :Class:`Processor` :class:<Plugin>.
+        """Initializes the :class:`Processor` :class:`<Plugin>`.
 
         Creates a :class:`Processor` object, holding a ``function``
         defining how to process the parent :class:`Plugin` to get the
@@ -348,10 +348,10 @@ class Processor(Plugin):
 
 
 class Empty(Plugin):
-    """Class for :Class:`Empty` :Class:`Plugins <Plugin>`.
+    """Class for :class:`Empty` :class:`Plugins <Plugin>`.
 
-    Use the :Class:`Empty` :Class:`Plugin` when you don't care about
-    the actual value of the :Class:`Plugin`, and only want to have a
+    Use the :class:`Empty` :class:`Plugin` when you don't care about
+    the actual value of the :class:`Plugin`, and only want to have a
     placeholder to use for fuzzing.
 
     Attributes:
@@ -362,10 +362,10 @@ class Empty(Plugin):
     """
 
     def __init__(self, name: str):
-        """Initializes the :class:`Empty` :class:<Plugin>.
+        """Initializes the :class:`Empty` :class:`<Plugin>`.
 
         Creates an :class:`Empty` object without any value. Use it
-        when you don't need any value for the :Class:`Plugin` and only
+        when you don't need any value for the :class:`Plugin` and only
         want to use it as a placeholder for fuzzing.
 
         Args:
