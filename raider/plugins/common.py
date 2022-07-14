@@ -33,19 +33,19 @@ class Plugin:
     :class:`Plugin`'s behaviour can be controlled using following
     flags:
 
-    NEEDS_USERDATA = 0x01
+    ``NEEDS_USERDATA`` = 0x01
       When set, the :class:`Plugin` will get its value from the user's
       data, which will be sent to the function defined here. Use when
       :class:`Plugin`'s value depends on things defined in the
       :class:`User` class, like the username or password.
-    NEEDS_RESPONSE = 0x02
+    ``NEEDS_RESPONSE`` = 0x02
       When set, the :class:`Plugin`'s value can only be extracted from
       a previous HTTP response.
-    DEPENDS_ON_OTHER_PLUGINS = 0x04
+    ``DEPENDS_ON_OTHER_PLUGINS`` = 0x04
       When set, the :class:`Plugin`'s value can only be extracted from
       other :class:`Plugins <Plugin>`. Use this when combining
       :class:`Plugins <Plugin>`.
-    NAME_NOT_KNOWN_IN_ADVANCE = 0x08
+    ``NAME_NOT_KNOWN_IN_ADVANCE`` = 0x08
       When set, the name of the :class:`Plugin` is not known in
       advance, and will be set when the :class:`Plugin` runs. Useful
       when the name changes and can only be matched with a regex.
@@ -143,7 +143,7 @@ class Plugin:
     ) -> None:
         """Extracts the value of the :class:`Plugin` from the HTTP response.
 
-        If NEEDS_RESPONSE flag is set, the :class:`Plugin` will
+        If ``NEEDS_RESPONSE`` flag is set, the :class:`Plugin` will
         extract its value upon receiving the HTTP response, and store
         it inside the "value" attribute.
 
@@ -170,7 +170,7 @@ class Plugin:
     ) -> None:
         """Extracts the name of the :class:`Plugin` from the HTTP response.
 
-        If NAME_NOT_KNOWN_IN_ADVANCE flag is set, the :class:`Plugin`
+        If ``NAME_NOT_KNOWN_IN_ADVANCE`` flag is set, the :class:`Plugin`
         will set its name after receiving the HTTP response, and store
         it inside the ``name`` attribute.
 
@@ -220,22 +220,22 @@ class Plugin:
 
     @property
     def needs_userdata(self) -> bool:
-        """Returns True if the NEEDS_USERDATA flag is set."""
+        """Returns True if the ``NEEDS_USERDATA`` flag is set."""
         return bool(self.flags & self.NEEDS_USERDATA)
 
     @property
     def needs_response(self) -> bool:
-        """Returns True if the NEEDS_RESPONSE flag is set."""
+        """Returns True if the ``NEEDS_RESPONSE`` flag is set."""
         return bool(self.flags & self.NEEDS_RESPONSE)
 
     @property
     def depends_on_other_plugins(self) -> bool:
-        """Returns True if the DEPENDS_ON_OTHER_PLUGINS flag is set."""
+        """Returns True if the ``DEPENDS_ON_OTHER_PLUGINS`` flag is set."""
         return bool(self.flags & self.DEPENDS_ON_OTHER_PLUGINS)
 
     @property
     def name_not_known_in_advance(self) -> bool:
-        """Returns True if the NAME_NOT_KNOWN_IN_ADVANCE flag is set."""
+        """Returns True if the ``NAME_NOT_KNOWN_IN_ADVANCE`` flag is set."""
         return bool(self.flags & self.NAME_NOT_KNOWN_IN_ADVANCE)
 
 
