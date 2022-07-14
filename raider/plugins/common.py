@@ -23,29 +23,32 @@ import requests
 
 
 class Plugin:
-    """Parent class for all plugins.
+    """Parent class for all :class:`Plugin`s.
 
-    Each Plugin class inherits from here. ``get_value`` function should
-    be called when extracting the value from the plugin, which will then
-    be stored in the ``value`` attribute.
+    Each :class:`Plugin` class inherits from here. ``get_value``
+    function should be called when extracting the value from the
+    :class:`Plugin`, which will then be stored in the ``value``
+    attribute.
 
-    Plugin's behaviour can be controlled using following flags:
+    :class:`Plugin`'s behaviour can be controlled using following
+    flags:
 
     NEEDS_USERDATA = 0x01
-      When set, the Plugin will get its value from the user's data,
-      which will be sent to the function defined here. Use when
-      plugin's value depends on things defined in the :class:`User`
-      class, like the username or password.
+      When set, the :class:`Plugin` will get its value from the user's
+      data, which will be sent to the function defined here. Use when
+      :class:`Plugin`'s value depends on things defined in the
+      :class:`User` class, like the username or password.
     NEEDS_RESPONSE = 0x02
-      When set, the Plugin's value can only be extracted from a
-      previous HTTP response.
+      When set, the :class:`Plugin`'s value can only be extracted from
+      a previous HTTP response.
     DEPENDS_ON_OTHER_PLUGINS = 0x04
-      When set, the Plugin's value can only be extracted from other
-      plugins. Use this when combining Plugins.
+      When set, the :class:`Plugin`'s value can only be extracted from
+      other :class:`Plugin`s. Use this when combining
+      :class:`Plugin`s.
     NAME_NOT_KNOWN_IN_ADVANCE = 0x08
-      When set, the name of the Plugin is not known in advance, and
-      will be set when the Plugin runs. Useful when the name changes
-      and can only be matched with a regex.
+      When set, the name of the :class:`Plugin` is not known in
+      advance, and will be set when the :class:`Plugin` runs. Useful
+      when the name changes and can only be matched with a regex.
 
 
     Attributes:
@@ -53,11 +56,11 @@ class Plugin:
         A string used as an identifier for the :class:`Plugin`.
       function:
         A function which will be called to extract the ``value`` of
-        the :class:`Plugin` when used as an input in a Flow. The function
-        should set self.value and also return it.
+        the :class:`Plugin` when used as an input in a Flow. The
+        function should set ``self.value`` and also return it.
       value:
-        A string containing the :class:`Plugin`'s output value to be used as
-        input in the HTTP requests.
+        A string containing the :class:`Plugin`'s output value to be
+        used as input in the HTTP requests.
       flags:
         An integer containing the flags that define the
         :class:`Plugin`'s behaviour.
@@ -79,8 +82,8 @@ class Plugin:
     ) -> None:
         """Initializes a :class:`Plugin` object.
 
-        Creates a :class:`Plugin` object, holding a "function" defining how to
-        extract the "value".
+        Creates a :class:`Plugin` object, holding a ``function``
+        defining how to extract the ``value``.
 
         Args:
           name:
@@ -91,13 +94,8 @@ class Plugin:
           value:
             A string with the extracted value from the :class:`Plugin`.
           flags:
-            An integer containing the flags that define the :class:`Plugin`'s
-            behaviour. For now only NEEDS_USERDATA and NEEDS_RESPONSE is
-            supported. If NEEDS_USERDATA is set, the plugin will get its
-            value from the user's data, which will be sent to the function
-            defined here. If NEEDS_RESPONSE is set, the :class:`Plugin` will extract
-            its value from the HTTP response instead.
-
+            An integer containing the flags that define the
+            :class:`Plugin`'s behaviour.
         """
         self.name = name
         self.plugins: List["Plugin"] = []
@@ -120,11 +118,13 @@ class Plugin:
     ) -> Optional[str]:
         """Gets the value from the :class:`Plugin`.
 
-        Depending on the :class:`Plugin`'s flags, extract and return its value.
+        Depending on the :class:`Plugin`'s flags, extract and return
+        its value.
 
         Args:
           userdata:
             A dictionary with the user specific data.
+
         """
         if not self.needs_response:
             if self.needs_userdata:
@@ -143,13 +143,14 @@ class Plugin:
     ) -> None:
         """Extracts the value of the :class:`Plugin` from the HTTP response.
 
-        If NEEDS_RESPONSE flag is set, the :class:`Plugin` will extract its value
-        upon receiving the HTTP response, and store it inside the "value"
-        attribute.
+        If NEEDS_RESPONSE flag is set, the :class:`Plugin` will
+        extract its value upon receiving the HTTP response, and store
+        it inside the "value" attribute.
 
         Args:
           response:
-            An requests.models.Response object with the HTTP response.
+            An :class:`requests.models.Response` object with the HTTP
+            response.
 
         """
         output = self.function(response)
@@ -169,28 +170,29 @@ class Plugin:
     ) -> None:
         """Extracts the name of the :class:`Plugin` from the HTTP response.
 
-        If NAME_NOT_KNOWN_IN_ADVANCE flag is set, the :class:`Plugin` will set
-        its name after receiving the HTTP response, and store it inside
-        the "name" attribute.
+        If NAME_NOT_KNOWN_IN_ADVANCE flag is set, the :class:`Plugin`
+        will set its name after receiving the HTTP response, and store
+        it inside the ``name`` attribute.
 
         Args:
           response:
-            An requests.models.Response object with the HTTP response.
+            An :class:`requests.models.Response` object with the HTTP
+            response.
 
         """
         if callable(self.name_function):
             # pylint can't figure out name_function is callable
             # pylint: disable=E1102
             output = self.name_function(response)
-        if output:
-            self.name = output
+            if output:
+                self.name = output
         else:
             logging.warning("Couldn't extract name: %s", str(self.name))
 
     def extract_value_from_userdata(
-        self, data: Dict[str, str] = None
+        self, data: Optional[Dict[str, str]] = None
     ) -> Optional[str]:
-        """Extracts the plugin value from userdata.
+        """Extracts the :class:`Plugin` value from userdata.
 
         Given a dictionary with the userdata, return its value with the
         same name as the "name" attribute from this :class:`Plugin`.
@@ -200,8 +202,8 @@ class Plugin:
             A dictionary with user specific data.
 
         Returns:
-          A string with the value of the variable found. None if no such
-          variable has been defined.
+          A string with the value of the variable found. None if no
+          such variable has been defined.
 
         """
         if data and self.name in data:
@@ -209,7 +211,7 @@ class Plugin:
         return self.value
 
     def return_value(self) -> Optional[str]:
-        """Just return plugin's value.
+        """Returns :class:`Plugin`'s value.
 
         This is used when needing a function just to return the value.
 
@@ -238,7 +240,24 @@ class Plugin:
 
 
 class Parser(Plugin):
-    """
+    """Parent class for :class:`Parser` :Class:`Plugin`s.
+
+    Use the :Class:`Parser` :Class:`Plugin` when needing to take
+    another :Class:`Plugin` as input, build a data structure out of
+    it, and extracting some parts you're interested in. The simplest
+    example would be parsing a URL to extract the domain name from it.
+
+    Attributes:
+      name:
+        A string used as an identifier for the :class:`Parser`.
+      function:
+        A function which will be called to parse the ``value`` of
+        parent :class:`Plugin` and extract the new ``value``. The
+        function should set ``self.value`` and also return it.
+      value:
+        A string containing the :class:`Parser`'s output value to be
+        used as input in the HTTP requests.
+
     """
 
     def __init__(
@@ -247,7 +266,25 @@ class Parser(Plugin):
         function: Callable[[], Optional[str]],
         value: str = None,
     ) -> None:
-        """Initializes the Parser plugin."""
+        """Initializes the :Class:`Parser` :class:`Plugin`.
+
+        Creates a :class:`Parser` object, holding a ``function``
+        defining how to parse the parent :class:`Plugin` in order to
+        extract the ``value``. Only the flag
+        ``DEPENDS_ON_OTHER_PLUGINS`` is preset, since it needs to
+        extract the value from other :class:`Plugin`s, and those need
+        to be extracted first.
+
+        Args:
+          name:
+            A string with the unique identifier of the :class:`Parser`.
+          function:
+            A Callable function that will be used to extract the
+            :class:`Parser`'s value.
+          value:
+            A string with the extracted value from the :class:`Plugin`.
+
+        """
         super().__init__(
             name=name,
             value=value,
@@ -257,16 +294,51 @@ class Parser(Plugin):
 
 
 class Processor(Plugin):
-    """
+    """Parent class for :Class:`Processor` :Class:`Plugin`s.
+
+    Use the :Class:`Processor` :Class:`Plugin` when needing to take
+    another :Class:`Plugin` as input, and modify (process) it to get
+    the needed ``value``. For example by encoding/decoding or doing
+    other kinds of modifications to the value extracted from the
+    parent :class:`Plugin`.
+
+    Attributes:
+      name:
+        A string used as an identifier for the :class:`Processor`.
+      function:
+        A function which will be called to process the ``value`` of
+        the parent :class:`Plugin` and get the new ``value``. The
+        function should set ``self.value`` and also return it.
+      value:
+        A string containing the :class:`Processors`'s output value to
+        be used as input in the HTTP requests.
+
     """
 
     def __init__(
         self,
         name: str,
         function: Callable[[], Optional[str]],
-        value: str = None,
+        value: Optional[str] = None,
     ) -> None:
-        """Initializes the Processor :class:<Plugin>."""
+        """Initializes the :Class:`Processor` :class:<Plugin>.
+
+        Creates a :class:`Processor` object, holding a ``function``
+        defining how to process the parent :class:`Plugin` to get the
+        ``value``. Only the flag ``DEPENDS_ON_OTHER_PLUGINS`` is
+        preset, since it needs to extract the value from other
+        :class:`Plugin`s, and those need to be extracted first.
+
+        Args:
+          name:
+            A string with the unique identifier of the :class:`Parser`.
+          function:
+            A Callable function that will be used to extract the
+            :class:`Parser`'s value.
+          value:
+            A string with the extracted value from the :class:`Plugin`.
+
+        """
         super().__init__(
             name=name,
             value=value,
@@ -276,11 +348,31 @@ class Processor(Plugin):
 
 
 class Empty(Plugin):
-    """
+    """Class for :Class:`Empty` :Class:`Plugin`s.
+
+    Use the :Class:`Empty` :Class:`Plugin` when you don't care about
+    the actual value of the :Class:`Plugin`, and only want to have a
+    placeholder to use for fuzzing.
+
+    Attributes:
+      name:
+        A string used as an identifier for the :class:`Empty`
+       :class:`Plugin`.
+
     """
 
     def __init__(self, name: str):
-        """Initialize Empty :class:<Plugin>."""
+        """Initializes the :class:`Empty` :class:<Plugin>.
+
+        Creates an :class:`Empty` object without any value. Use it
+        when you don't need any value for the :Class:`Plugin` and only
+        want to use it as a placeholder for fuzzing.
+
+        Args:
+          name:
+            A string with the unique identifier of the :class:`Parser`.
+
+        """
         super().__init__(
             name=name,
             flags=0,

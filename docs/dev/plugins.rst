@@ -52,6 +52,7 @@ example:
    
 
 .. autoclass:: Plugin
+   :members:
 
 Parser
 ++++++
@@ -59,6 +60,7 @@ Parser
 The Parser plugin parses other plugins.
 
 .. autoclass:: Parser
+   :members:
 
 Processor
 +++++++++
@@ -67,6 +69,7 @@ The Processor plugin encodes, decodes and otherwise processes other
 plugins.
 
 .. autoclass:: Processor
+   :members:
 
 Empty
 +++++
@@ -74,6 +77,7 @@ Empty
 The Empty plugin is unique in that it contains no function or value.
 
 .. autoclass:: Empty
+   :members:
 
 
 .. module:: raider.plugins.basic
