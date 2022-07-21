@@ -30,9 +30,37 @@ from bs4 import BeautifulSoup
 from raider.plugins.common import Plugin
 from raider.utils import hy_dict_to_python, match_tag, parse_json_filter
 
+class Variable(Plugin):
+    """:class:`Plugin` to extract data from the :class:`Users <raider.user.Users>`
+
+    Use this when the value of the plugin should be extracted from the
+    user data. At the moment only ``username`` and ``password`` are
+    working. Future versions will allow adding and accessing arbitrary
+    data from the users.
+
+    """
+
+    def __init__(self, name: str) -> None:
+        """Initializes the Variable Plugin.
+
+        Creates a Variable object that will return the data from a
+        previously defined variable.
+
+        Args:
+          name:
+            The name of the variable.
+
+        """
+        super().__init__(
+            name=name,
+            function=lambda data: data[self.name],
+            flags=Plugin.NEEDS_USERDATA,
+        )
+
+
 
 class Regex(Plugin):
-    """
+    """Plugin class to extract regular expressions.
 
     This plugin will match the regex provided, and extract the value
     inside the first matched group. A group is the string that matched
@@ -50,6 +78,8 @@ class Regex(Plugin):
     in the "value" attribute.
 
     Attributes:
+      name:
+        A string used as an identifier for the :class:`Regex`.
       regex:
         A string containing the regular expression to be matched.
 
@@ -389,33 +419,6 @@ class Json(Plugin):
         """Returns a string representation of the Plugin."""
         return "Json:" + str(self.extract)
 
-
-class Variable(Plugin):
-    """
-
-    Use this when the value of the plugin should be extracted from the
-    user data. At the moment only ``username`` and ``password`` are
-    working. Future versions will allow adding and accessing arbitrary
-    data from the users.
-
-    """
-
-    def __init__(self, name: str) -> None:
-        """Initializes the Variable Plugin.
-
-        Creates a Variable object that will return the data from a
-        previously defined variable.
-
-        Args:
-          name:
-            The name of the variable.
-
-        """
-        super().__init__(
-            name=name,
-            function=lambda data: data[self.name],
-            flags=Plugin.NEEDS_USERDATA,
-        )
 
 
 class Command(Plugin):

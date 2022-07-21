@@ -15,6 +15,10 @@ encouraged to :ref:`write their own plugins <plugin_api>`.
 Common
 ------
 
+Users most often won't need to use those unless they're writing their
+own :term:`Plugins <Plugin>`. Common :term:`Plugins <Plugin>` are
+mostly used as parent classes for other :term:`Plugins <Plugin>`.
+
 Plugin
 ++++++
 
@@ -90,7 +94,8 @@ Basic
 Variable
 ++++++++
 
-The Variable plugin extracts the value of a variable.
+The Variable plugin extracts the values defined in the :class:`Users`
+object.
 
 .. autoclass:: Variable
    :members:	       
@@ -195,7 +200,7 @@ Example:
 Regex
 +++++
 
-The Regex plugin extracts a matched expression from a provided string.
+The Regex plugin extracts a matched expression from the HTTP response.
 
 .. autoclass:: Regex
    :members:
@@ -217,7 +222,7 @@ Html
 
 The Html plugin extracts tags matching attributes specified by the user.
 
-.. autoclass:: html
+.. autoclass:: Html
    :members:
 
 Example:

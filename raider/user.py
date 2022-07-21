@@ -30,27 +30,36 @@ from raider.utils import hy_dict_to_python
 class User:
     """Class holding user related information.
 
-    User objects are created inside the UserStore. Each User object
-    contains at least the username and the password. Every time a
-    Plugin generates an output, it is saved in the User object. If the
-    Plugin is a Cookie or a Header, the output will be stored in the
-    the "cookies" and "headers" attributes respectively. Otherwise
-    they'll be saved inside "data".
+    :class:`User` objects are created inside the :class:`Users`. Each
+    :class:`User` object contains at least the ``username`` and the
+    ``password``. Every time a :class:`Plugin
+    <raider.plugins.common.Plugin>` generates an output, it is saved
+    in the :class:`User` object. If the :class:`Plugin
+    <raider.plugins.common.Plugin>` is a :class:`Cookie
+    <raider.plugins.basic.Cookie>` or a :class:`Header
+    <raider.plugins.basic.Header>`, the output will be stored in the
+    the ``cookies`` and ``headers`` attributes respectively. Otherwise
+    they'll be saved inside ``data``.
 
     Attributes:
       username:
-        A string containing the user's email or username used to log in.
+        A string containing the user's email or username used to log in. 
       password:
         A string containing the user's password.
       cookies:
-        A CookieStore object containing all of the collected cookies for
-        this user. The Cookie plugin only writes here.
+        A :class:`CookieStore <raider.structures.CookieStore>` object
+        containing all of the collected cookies for this user. The
+        :class:`Cookie <raider.plugins.basic.Cookie>` plugin only
+        writes here.
       headers:
-        A HeaderStore object containing all of the collected headers for
-        this user. The Header plugin only writes here.
+        A :class:`HeaderStore <raider.structures.HeaderStore>` object
+        containing all of the collected headers for this user. The
+        :class:`Header <raider.plugins.basic.Header>` plugin only
+        writes here.
       data:
-        A DataStore object containing the rest of the data collected
-        from plugins for this user.
+        A :class:`DataStore <raider.structures.DataStore>` object
+        containing the rest of the data collected from plugins for
+        this user.
 
     """
 
@@ -60,11 +69,13 @@ class User:
         password: str,
         **kwargs: Dict[str, str],
     ) -> None:
-        """Initializes a User object.
+        """Initializes a :class:`User` object.
 
         Creates an object for easy access to user specific
-        information. It's used to store the username, password, cookies,
-        headers, and other data extracted from the Plugin objects.
+        information. It's used to store the ``username``,
+        ``password``, ``cookies``, ``headers``, and other ``data``
+        extracted from the :class:`Plugin
+        <raider.plugins.common.Plugin>` objects.
 
         Args:
           username:
@@ -84,25 +95,29 @@ class User:
         self.data = DataStore(kwargs.get("data"))
 
     def set_cookie(self, cookie: Cookie) -> None:
-        """Sets the cookie for the user.
+        """Sets the ``cookies`` for the user.
 
-        Given a Cookie object, update the user's "cookies" attribute to
-        include this cookie.
+        Given a :class:`Cookie <raider.plugins.basic.Cookie>` object,
+        update the user's ``cookies`` attribute to include this
+        :class:`Cookie's <raider.plugins.basic.Cookie>` value.
 
         Args:
           cookie:
-            A Cookie Plugin object with the data to be added.
+            A :class:`Cookie <raider.plugins.basic.Cookie>`
+            :class:`Plugin <raider.plugins.common.Plugin>` object with
+            the data to be added.
 
         """
         if cookie.value:
             self.cookies.set(cookie)
 
     def set_cookies_from_dict(self, data: Dict[str, str]) -> None:
-        """Set user's cookies from a dictionary.
+        """Set user's ``cookies`` from a dictionary.
 
-        Given a dictionary of cookies, convert them to :class:`Cookie
-        <raider.plugins.Cookie>` objects, and load them in the
-        :class:`User <raider.user.User>` object respectively.
+        Given a dictionary of cookie values as strings, convert them
+        to :class:`Cookie <raider.plugins.Cookie>` objects, and load
+        them in the :class:`User <raider.user.User>` object
+        respectively.
 
         Args:
           data:
@@ -119,25 +134,29 @@ class User:
             self.set_cookie(item)
 
     def set_header(self, header: Header) -> None:
-        """Sets the header for the user.
+        """Sets the ``headers`` for the user.
 
-        Given a Header object, update the user's "headers" attribute to
-        include this header.
+        Given a :class:`Header <raider.plugins.basic.Header>` object,
+        update the user's ``headers`` attribute to include this header
+        value.
 
         Args:
           header:
-            A Header Plugin object with the data to be added.
+            A :class:`Header <raider.plugins.basic.Header>`
+            :class:`Plugin <raider.plugins.common.Plugin` object with
+            the data to be added.
 
         """
         if header.value:
             self.headers.set(header)
 
     def set_headers_from_dict(self, data: Dict[str, str]) -> None:
-        """Set user's headers from a dictionary.
+        """Set user's ``headers`` from a dictionary.
 
-        Given a dictionary of headers, convert them to :class:`Header
-        <raider.plugins.Header>` objects, and load them in the
-        :class:`User <raider.user.User>` object respectively.
+        Given a dictionary of header values as strings, convert them
+        to :class:`Header <raider.plugins.Header>` objects, and load
+        them in the :class:`User <raider.user.User>` object
+        respectively.
 
         Args:
           data:
@@ -154,25 +173,25 @@ class User:
             self.set_header(item)
 
     def set_data(self, data: Plugin) -> None:
-        """Sets the data for the user.
+        """Sets the ``data`` for the user.
 
-        Given a Plugin, update the user's data attribute to include this
-        data.
+        Given a :class:`Plugin <raider.plugins.common.Plugin>`, update
+        the user's ``data`` attribute to include this data.
 
         Args:
           data:
-            A Plugin object with the data to be added.
+            A :class:`Plugin <raider.plugins.common.Plugin>` object
+            with the data to be added.
 
         """
         if data.value:
             self.data.update({data.name: data.value})
 
     def set_data_from_dict(self, data: Dict[str, str]) -> None:
-        """Set user's data from a dictionary.
+        """Set user's ``data`` from a dictionary.
 
-        Given a dictionary of data items from :class:`Plugins
-        <raider.plugins.Plugin>`, load them in the :class:`User
-        <raider.user.User>` object respectively.
+        Given a dictionary of data items made out of strings, update
+        the ``data`` attribute accordingly.
 
         Args:
           data:
@@ -195,12 +214,23 @@ class User:
 
 
 class Users(DataStore):
-    """Class holding all the users of the Application.
+    """Class holding all the users of the application.
 
-    Users inherits from DataStore, and contains the users set up in
-    the "_users" variable from the hy configuration file. Each user is
-    an User object. The data from a UserStore object can be accessed
-    same way like from the DataStore.
+    Users inherits from :class:`DataStructure
+    <raider.structures.DataStore>`, and contains the users set up in
+    :term:`hyfiles`. Each user is an :class:`User` object. The data
+    from a :class:`Users` object can be accessed same way like from
+    the :class:`DataStore <raider.structures.DataStore>`.
+
+    Attributes:
+      active_user:
+        A string with the ``username`` attribute of the currently
+        active :class:`User`.
+      _index:
+        An integer used internally for iterating through configured
+        items.
+      _store:
+        A dictionary used internally with all configured entries.
 
     """
 
@@ -209,15 +239,22 @@ class Users(DataStore):
         users: List[Dict[hy.models.Keyword, str]],
         active_user: str = None,
     ) -> None:
-        """Initializes the UserStore object.
+        """Initializes the :class:`Users` object.
 
-        Given a list of dictionaries, map them to a User object and
-        store them in this UserStore object.
+        Given a `list
+        <https://docs.hylang.org/en/stable/syntax.html#hy.models.List>`_
+        of `dictionaries
+        <https://docs.hylang.org/en/stable/syntax.html#dictionary-literals>`_,
+        map them to a :class:`User` object and store them in this
+        :class:`Users` object.
 
         Args:
           users:
             A list of dictionaries. Dictionary's data is mapped to a
-            User object.
+            :class:`User` object.
+          active_user:
+            An optional string specifying the default :class:`User`.
+
         """
         if not active_user:
             self.active_user = list(users[0].keys())[0]
@@ -237,7 +274,7 @@ class Users(DataStore):
         super().__init__(values)
 
     def to_dict(self) -> Dict[str, str]:
-        """Returns the UserStore data in dictionary format."""
+        """Returns the :class:`Users` object data in dictionary format."""
         data = {}
         for username in self:
             data[username] = self[username].to_dict()
@@ -246,5 +283,5 @@ class Users(DataStore):
 
     @property
     def active(self) -> User:
-        """Returns the active user as an User object."""
+        """Returns the active :class:`User` as an :class:`Users` object."""
         return self[self.active_user]
