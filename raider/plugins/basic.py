@@ -30,25 +30,33 @@ from bs4 import BeautifulSoup
 from raider.plugins.common import Plugin
 from raider.utils import hy_dict_to_python, match_tag, parse_json_filter
 
-class Variable(Plugin):
-    """:class:`Plugin` to extract data from the :class:`Users <raider.user.Users>`
 
-    Use this when the value of the plugin should be extracted from the
-    user data. At the moment only ``username`` and ``password`` are
-    working. Future versions will allow adding and accessing arbitrary
-    data from the users.
+class Variable(Plugin):
+    """:class:`Plugin <raider.plugins.common.Plugin>` to extract data
+    from the :class:`User <raider.user.User>`
+
+    Use this when the ``value`` of the plugin should be extracted from the
+    user data. ``username`` and ``password`` are mandatory and can be
+    accessed with ``(Variable "username")`` and ``(Variable
+    "password")`` respectively. Other data can be accessed similarly.
+
+    Attributes:
+      name:
+        A string used as an identifier for the :class:`Variable`
+        :class:`Plugin <raider.plugins.common.Plugin>`
 
     """
 
     def __init__(self, name: str) -> None:
-        """Initializes the Variable Plugin.
+        """Initializes the :class:`Variable` :class:`Plugin
+        <raider.plugins.common.Plugin>`.
 
-        Creates a Variable object that will return the data from a
-        previously defined variable.
+        Creates a :class:`Variable` object that will return the data
+        from the :class:`User <raider.user.User>` object.
 
         Args:
           name:
-            The name of the variable.
+            A String with the name of the variable.
 
         """
         super().__init__(
@@ -58,11 +66,210 @@ class Variable(Plugin):
         )
 
 
+class Prompt(Plugin):
+    """:class:`Plugin <raider.plugins.common.Plugin>` to prompt the
+    user for some data.
+
+    Use this :class:`Plugin <raider.plugins.common.Plugin>` when the ``value``
+    cannot be known in advance, for example when asking for
+    :term:`multi-factor authentication (MFA)` code that is going to be
+    sent over SMS or E-mail.
+
+    Attributes:
+      name:
+        A String used both as an identifier for this :class:`Prompt`
+        :class:`Plugin <raider.plugins.common.Plugin>` and as a prompt
+        message on the terminal.
+
+    """
+
+    def __init__(self, name: str) -> None:
+        """Initializes the :class:`Prompt` :class:`Plugin
+        <raider.plugins.common.Plugin>`.
+
+        Creates a :class:`Prompt` :class:`Plugin
+        <raider.plugins.common.Plugin>` which will ask the user's
+        input to get the :class:`Plugin's
+        <raider.plugins.common.Plugin>` ``value``.
+
+        Args:
+          name:
+            A String containing the prompt asking the user for input.
+
+        """
+        super().__init__(name=name, function=self.get_user_prompt)
+
+    def get_user_prompt(self) -> str:
+        """Gets the ``value`` from user input.
+
+        Creates a prompt asking the user for input and stores the ``value``
+        in the Plugin.
+
+        """
+        self.value = None
+        while not self.value:
+            print("Please provide the input value")
+            self.value = input(self.name + " = ")
+        return self.value
+
+
+class Cookie(Plugin):
+    """:class:`Plugin <raider.plugins.common.Plugin>` dealing with the
+    :class:`Cookies <raider.plugins.basic.Cookie>` in HTTP
+    :term:`Requests <Request>` and :term:`Responses <Response>`.
+
+    Use the :class:`Cookie` :class:`Plugin` when working with the data
+    found in :class:`Cookie` headers.
+
+    Attributes:
+      name:
+        A String with the :class:`Cookie's <Cookie>` name. Also used
+        as an identifier for the :class:`Plugin
+        <raider.plugins.common.Plugin>`
+      function:
+        A Callable which will be called to extract the ``value`` of
+        the :class:`Cookie` when used as an input in a :ref:`Flow
+        <flows>`. The function should set ``self.value`` and also
+        return it.
+      name_function:
+        A Callable which will be called to extract the ``name`` of the
+        :class:`Cookie` when it's not known in advance and the flag
+        ``NAME_NOT_KNOWN_IN_ADVANCE`` is set.
+      plugins:
+        A List of :class:`Plugins <Plugin>` whose value needs to be
+        extracted first before current :class:`Cookie's <Cookie>`
+        value can be extracted. Used when the flag
+        ``DEPENDS_ON_OTHER_PLUGINS`` is set.
+      value:
+        A string containing the :class:`Cookie's <Cookie>` output
+        ``value`` to be used as input in the HTTP :term:`Requests
+        <Request>`.
+      flags:
+        An integer containing the flags that define the
+        :class:`Plugin's <raider.plugins.common.Plugin>` behaviour.
+
+    """
+
+    def __init__(
+        self,
+        name: str,
+        value: Optional[str] = None,
+        function: Optional[Callable[..., Optional[str]]] = None,
+        flags: int = Plugin.NEEDS_RESPONSE,
+    ) -> None:
+        """Initializes the :class:`Cookie` :class:`Plugin
+        <raider.plugins.common.Plugin>`.
+
+        Creates a :class:`Cookie` :class:`Plugin
+        <raider.plugins.common.Plugin>`, either with predefined
+        ``value``, or by using a ``function`` defining how the
+        ``value`` should be generated on runtime.
+
+        Args:
+          name:
+            A String with the name of the :class:`Cookie`.
+          value:
+            An Optional String with the ``value`` of the
+            :class:`Cookie` in case it's already known.
+          function:
+            A Callable which is used to get the ``value`` of the
+            Cookie on runtime.
+          flags:
+
+        """
+        if not function:
+            if flags & Plugin.NEEDS_RESPONSE:
+                super().__init__(
+                    name=name,
+                    function=self.extract_from_response,
+                    value=value,
+                    flags=flags,
+                )
+            else:
+                super().__init__(
+                    name=name,
+                    value=value,
+                    flags=flags,
+                )
+
+        else:
+            super().__init__(
+                name=name, function=function, value=value, flags=flags
+            )
+
+    def extract_from_response(
+        self, response: requests.models.Response
+    ) -> Optional[str]:
+        """Returns the cookie with the specified name from the response."""
+        return response.cookies.get(self.name)
+
+    def __str__(self) -> str:
+        """Returns a string representation of the cookie."""
+        return str({self.name: self.value})
+
+    @classmethod
+    def regex(cls, regex: str) -> "Cookie":
+        """Extract the cookie using regular expressions."""
+
+        def extract_cookie_value_regex(
+            response: requests.models.Response,
+            regex: str,
+        ) -> Optional["str"]:
+            """Find the cookie ``value`` matching the given regex."""
+            for name, value in response.cookies.items():
+                if re.search(regex, name):
+                    return value
+            return None
+
+        def extract_cookie_name_regex(
+            response: requests.models.Response,
+            regex: str,
+        ) -> Optional["str"]:
+            """Find the cookie name matching the given regex."""
+            for name in response.cookies.keys():
+                if re.search(regex, name):
+                    return name
+            return None
+
+        cookie = cls(
+            name=regex,
+            function=partial(extract_cookie_value_regex, regex=regex),
+            flags=Plugin.NEEDS_RESPONSE | Plugin.NAME_NOT_KNOWN_IN_ADVANCE,
+        )
+
+        cookie.name_function = partial(extract_cookie_name_regex, regex=regex)
+
+        return cookie
+
+    @classmethod
+    def from_plugin(cls, parent_plugin: Plugin, name: str) -> "Cookie":
+        """Creates a Cookie from a Plugin.
+
+        Given another :class:`plugin <raider.plugins.Plugin>`, and a
+        name, create a :class:`cookie <raider.plugins.Cookie>`.
+
+        Args:
+          name:
+            The cookie name to use.
+          plugin:
+            The plugin which will contain the ``value`` we need.
+
+        Returns:
+          A Cookie object with the name and the plugin's ``value``.
+
+        """
+        cookie = cls(
+            name=name,
+            value=parent_plugin.value,
+            flags=Plugin.DEPENDS_ON_OTHER_PLUGINS,
+        )
+        return cookie
+
 
 class Regex(Plugin):
     """Plugin class to extract regular expressions.
 
-    This plugin will match the regex provided, and extract the value
+    This plugin will match the regex provided, and extract the ``value``
     inside the first matched group. A group is the string that matched
     inside the brackets.
 
@@ -75,7 +282,7 @@ class Regex(Plugin):
     "accessToken":"0123456789abcdef"
 
     then only the string "0123456789abcdef" will be extracted and saved
-    in the "value" attribute.
+    in the ``value`` attribute.
 
     Attributes:
       name:
@@ -161,7 +368,7 @@ class Regex(Plugin):
 
     @classmethod
     def from_plugin(cls, parent_plugin: Plugin, regex: str) -> "Regex":
-        """Extracts Regex from another plugin's value."""
+        """Extracts Regex from another plugin's ``value``."""
         regex_plugin = cls(
             name=regex,
             regex=regex,
@@ -181,7 +388,7 @@ class Html(Plugin):
 
     This Plugin will find the HTML "tag" containing the specified
     "attributes" and store the "extract" attribute of the matched tag
-    in its "value" attribute.
+    in its ``value`` attribute.
 
     Attributes:
       tag:
@@ -189,11 +396,11 @@ class Html(Plugin):
       attributes:
         A dictionary with attributes matching the desired HTML tag. The
         keys in the dictionary are strings matching the tag's attributes,
-        and the values are treated as regular expressions, to help
-        match tags that don't have a static value.
+        and the ``value``s are treated as regular expressions, to help
+        match tags that don't have a static ``value``.
       extract:
         A string defining the HTML tag's attribute that needs to be
-        extracted and stored inside "value".
+        extracted and stored inside ``value``.
     """
 
     def __init__(
@@ -207,7 +414,7 @@ class Html(Plugin):
 
         Creates a Html Plugin with the given "tag" and
         "attributes". Stores the "extract" attribute in the plugin's
-        "value".
+        ``value``.
 
         Args:
           name:
@@ -216,7 +423,7 @@ class Html(Plugin):
             A string with the HTML tag to look for.
           attributes:
             A hy dictionary with the attributes to look inside HTML
-            tags. The values of dictionary elements are treated as
+            tags. The ``value``s of dictionary elements are treated as
             regular expressions.
           extract:
             A string with the HTML tag attribute that needs to be
@@ -239,7 +446,7 @@ class Html(Plugin):
 
         Given the HTML text, parses it, iterates through the tags, and
         find the one matching the attributes. Then it stores the matched
-        "value" and returns it.
+        ``value`` and returns it.
 
         Args:
           text:
@@ -279,7 +486,7 @@ class Json(Plugin):
     """
 
     The "extract" attribute is used to specify which field to store in
-    the "value". Using the dot ``.`` character you can go deeper inside
+    the ``value``. Using the dot ``.`` character you can go deeper inside
     the JSON object. To look inside an array, use square brackets
     `[]`.
 
@@ -349,7 +556,7 @@ class Json(Plugin):
         """Extracts the JSON field from the text.
 
         Given the JSON body as a string, extract the field and store it
-        in the Plugin's "value" attribute.
+        in the Plugin's ``value`` attribute.
 
         Args:
           text:
@@ -405,7 +612,7 @@ class Json(Plugin):
     def from_plugin(
         cls, parent_plugin: Plugin, name: str, extract: str
     ) -> "Json":
-        """Extracts the JSON field from another plugin's value."""
+        """Extracts the JSON field from another plugin's ``value``."""
         json_plugin = cls(
             name=name,
             extract=extract,
@@ -420,7 +627,6 @@ class Json(Plugin):
         return "Json:" + str(self.extract)
 
 
-
 class Command(Plugin):
     """
 
@@ -433,7 +639,7 @@ class Command(Plugin):
 
         The specified command will be executed with os.popen() and the
         output with the stripped last newline, will be saved inside the
-        value.
+        ``value``.
 
         Args:
           name:
@@ -449,10 +655,10 @@ class Command(Plugin):
         )
 
     def run_command(self) -> Optional[str]:
-        """Runs a command and returns its value.
+        """Runs a command and returns its ``value``.
 
         Given a dictionary with the predefined variables, return the
-        value of the with the same name as the "name" attribute from
+        ``value`` of the with the same name as the "name" attribute from
         this Plugin.
 
         Args:
@@ -460,169 +666,13 @@ class Command(Plugin):
             A dictionary with the predefined variables.
 
         Returns:
-          A string with the value of the variable found. None if no such
+          A string with the ``value`` of the variable found. None if no such
           variable has been defined.
 
         """
         self.value = os.popen(self.command).read().strip()
 
         return self.value
-
-
-class Prompt(Plugin):
-    """
-
-    Use this plugin when the value cannot be known in advance, for
-    example when asking for multi-factor authentication code that is
-    going to be sent over SMS.
-
-    """
-
-    def __init__(self, name: str) -> None:
-        """Initializes the Prompt Plugin.
-
-        Creates a Prompt Plugin which will ask the user's input to get
-        the Plugin's value.
-
-        Args:
-          name:
-            A string containing the prompt asking the user for input.
-
-        """
-        super().__init__(name=name, function=self.get_user_prompt)
-
-    def get_user_prompt(self) -> str:
-        """Gets the value from user input.
-
-        Creates a prompt asking the user for input and stores the value
-        in the Plugin.
-
-        """
-        self.value = None
-        while not self.value:
-            print("Please provide the input value")
-            self.value = input(self.name + " = ")
-        return self.value
-
-
-class Cookie(Plugin):
-    """
-
-    Use this Plugin when dealing with the cookies in the HTTP request.
-
-    """
-
-    def __init__(
-        self,
-        name: str,
-        value: Optional[str] = None,
-        function: Optional[Callable[..., Optional[str]]] = None,
-        flags: int = Plugin.NEEDS_RESPONSE,
-    ) -> None:
-        """Initializes the Cookie Plugin.
-
-        Creates a Cookie Plugin, either with predefined value, or by
-        using a function defining how the value should be generated on
-        runtime.
-
-        Args:
-          name:
-            A string with the name of the Cookie.
-          value:
-            An optional string with the value of the Cookie in case it's
-            already known.
-          function:
-            A Callable function which is used to get the value of the
-            Cookie on runtime.
-
-        """
-        if not function:
-            if flags & Plugin.NEEDS_RESPONSE:
-                super().__init__(
-                    name=name,
-                    function=self.extract_from_response,
-                    value=value,
-                    flags=flags,
-                )
-            else:
-                super().__init__(
-                    name=name,
-                    value=value,
-                    flags=flags,
-                )
-
-        else:
-            super().__init__(
-                name=name, function=function, value=value, flags=flags
-            )
-
-    def extract_from_response(
-        self, response: requests.models.Response
-    ) -> Optional[str]:
-        """Returns the cookie with the specified name from the response."""
-        return response.cookies.get(self.name)
-
-    def __str__(self) -> str:
-        """Returns a string representation of the cookie."""
-        return str({self.name: self.value})
-
-    @classmethod
-    def regex(cls, regex: str) -> "Cookie":
-        """Extract the cookie using regular expressions."""
-
-        def extract_cookie_value_regex(
-            response: requests.models.Response,
-            regex: str,
-        ) -> Optional["str"]:
-            """Find the cookie value matching the given regex."""
-            for name, value in response.cookies.items():
-                if re.search(regex, name):
-                    return value
-            return None
-
-        def extract_cookie_name_regex(
-            response: requests.models.Response,
-            regex: str,
-        ) -> Optional["str"]:
-            """Find the cookie name matching the given regex."""
-            for name in response.cookies.keys():
-                if re.search(regex, name):
-                    return name
-            return None
-
-        cookie = cls(
-            name=regex,
-            function=partial(extract_cookie_value_regex, regex=regex),
-            flags=Plugin.NEEDS_RESPONSE | Plugin.NAME_NOT_KNOWN_IN_ADVANCE,
-        )
-
-        cookie.name_function = partial(extract_cookie_name_regex, regex=regex)
-
-        return cookie
-
-    @classmethod
-    def from_plugin(cls, parent_plugin: Plugin, name: str) -> "Cookie":
-        """Creates a Cookie from a Plugin.
-
-        Given another :class:`plugin <raider.plugins.Plugin>`, and a
-        name, create a :class:`cookie <raider.plugins.Cookie>`.
-
-        Args:
-          name:
-            The cookie name to use.
-          plugin:
-            The plugin which will contain the value we need.
-
-        Returns:
-          A Cookie object with the name and the plugin's value.
-
-        """
-        cookie = cls(
-            name=name,
-            value=parent_plugin.value,
-            flags=Plugin.DEPENDS_ON_OTHER_PLUGINS,
-        )
-        return cookie
 
 
 class Header(Plugin):
@@ -641,18 +691,18 @@ class Header(Plugin):
     ) -> None:
         """Initializes the Header Plugin.
 
-        Creates a Header Plugin, either with predefined value, or by
-        using a function defining how the value should be generated on
+        Creates a Header Plugin, either with predefined ``value``, or by
+        using a function defining how the ``value`` should be generated on
         runtime.
 
         Args:
           name:
             A string with the name of the Header.
           value:
-            An optional string with the value of the Header in case it's
+            An optional string with the ``value`` of the Header in case it's
             already known.
           function:
-            A Callable function which is used to get the value of the
+            A Callable function which is used to get the ``value`` of the
             Header on runtime.
 
         """
@@ -696,7 +746,7 @@ class Header(Plugin):
             response: requests.models.Response,
             regex: str,
         ) -> Optional["str"]:
-            """Find the header value matching the given regex."""
+            """Find the header ``value`` matching the given regex."""
             for name, value in response.headers.items():
                 if re.search(regex, name):
                     return value
@@ -727,7 +777,7 @@ class Header(Plugin):
         """Creates a basic authentication header.
 
         Given the username and the password for the basic
-        authentication, returns the Header object with the proper value.
+        authentication, returns the Header object with the proper ``value``.
 
         Args:
           username:
@@ -747,13 +797,13 @@ class Header(Plugin):
     def bearerauth(cls, access_token: Plugin) -> "Header":
         """Creates a bearer authentication header.
 
-        Given the access_token as a Plugin, extracts its value and
-        returns a Header object with the correct value to be passed as
+        Given the access_token as a Plugin, extracts its ``value`` and
+        returns a Header object with the correct ``value`` to be passed as
         the Bearer Authorization string in the Header.
 
         Args:
           access_token:
-            A Plugin containing the value of the token to use.
+            A Plugin containing the ``value`` of the token to use.
 
         Returns:
           A Header object with the proper bearer authentication string.
@@ -780,10 +830,10 @@ class Header(Plugin):
           name:
             The header name to use.
           plugin:
-            The plugin which will contain the value we need.
+            The plugin which will contain the ``value`` we need.
 
         Returns:
-          A Header object with the name and the plugin's value.
+          A Header object with the name and the plugin's ``value``.
 
         """
         header = cls(
@@ -811,7 +861,7 @@ class File(Plugin):
     ) -> None:
         """Initializes the File Plugin.
 
-        Creates a File Plugin which will set its value to the contents
+        Creates a File Plugin which will set its ``value`` to the contents
         of the file.
 
         Args:
@@ -827,7 +877,7 @@ class File(Plugin):
             super().__init__(name=path, function=function, flags=flags)
 
     def read_file(self) -> bytes:
-        """Sets the plugin's value to the file content."""
+        """Sets the plugin's ``value`` to the file content."""
         with open(self.path, "rb") as finput:
             self.value = finput.read()
         return self.value
@@ -836,7 +886,7 @@ class File(Plugin):
     def replace(
         cls, path: str, old_value: str, new_value: Union[str, int, Plugin]
     ) -> "File":
-        """Read a file and replace strings with new values."""
+        """Read a file and replace strings with new ``value``s."""
 
         def replace_string(
             original: bytes, old: str, new: Union[str, int, Plugin]

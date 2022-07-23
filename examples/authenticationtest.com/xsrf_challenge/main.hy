@@ -1,7 +1,7 @@
 (setv users
       (Users
         [{"xsrf@authenticationtest.com" "pa$$w0rd"}]))
-      
+
 (setv username (Variable "username"))
 (setv password (Variable "password"))
 
@@ -38,4 +38,3 @@
                  "password" password
                  "xsrfToken" csrf_token})
         :operations [(Print.headers ["Location"])]))
-          

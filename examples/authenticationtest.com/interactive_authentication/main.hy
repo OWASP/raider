@@ -1,7 +1,7 @@
 (setv users
       (Users
         [{"bootstrap@authenticationtest.com" "pa$$w0rd"}]))
-      
+
 (setv username (Variable "username"))
 (setv password (Variable "password"))
 
@@ -37,4 +37,3 @@
                  "password" password
                  "captcha" captcha})
         :operations [(Print.headers ["Location"])]))
-          

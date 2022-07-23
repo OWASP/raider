@@ -1,7 +1,7 @@
 (setv users
       (Users
         [{"multi@authenticationtest.com" "pa$$w0rd"}]))
-      
+
 (setv username (Variable "username"))
 (setv password (Variable "password"))
 
@@ -41,4 +41,3 @@
           :data {"email" username
                  "password" password})
         :operations [(Print.headers ["Location"])]))
-          

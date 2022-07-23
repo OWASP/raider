@@ -43,7 +43,7 @@ class User:
 
     Attributes:
       username:
-        A string containing the user's email or username used to log in. 
+        A string containing the user's email or username used to log in.
       password:
         A string containing the user's password.
       cookies:
@@ -226,12 +226,6 @@ class Users(DataStore):
       active_user:
         A string with the ``username`` attribute of the currently
         active :class:`User`.
-      _index:
-        An integer used internally for iterating through configured
-        items.
-      _store:
-        A dictionary used internally with all configured entries.
-
     """
 
     def __init__(

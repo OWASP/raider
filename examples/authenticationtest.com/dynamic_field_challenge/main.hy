@@ -1,7 +1,7 @@
 (setv users
       (Users
         [{"dynamic@authenticationtest.com" "pa$$w0rd"}]))
-      
+
 (setv username (Variable "username"))
 (setv password (Variable "password"))
 
@@ -46,4 +46,3 @@
           :data {email_field username
                  password_field password})
         :operations [(Print.headers ["Location"])]))
-          

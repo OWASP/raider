@@ -7,9 +7,16 @@ Flows
 define the HTTP information exchange. Each :term:`request` you want to
 send needs its own Flow object. Inside the ``request`` attribute of
 the object, needs to be a :class:`Request <raider.request.Request>`
-object containing the definition of the request. This definition can
-contain :class:`Plugins <raider.plugins.Plugin>` whose value will be
-used when sending the HTTP request.
+object containing the definition of the ``request``.
+
+This definition can contain :class:`Plugins <raider.plugins.Plugin>`
+whose value will be used when sending the HTTP :term:`Request`. In
+this case, the :class:`Plugins <raider.plugins.Plugin>` will act as
+inputs.
+
+When using :class:`Plugins <raider.plugins.Plugin>` in the ``outputs``
+attribute, they will act as outputs, and the ``value`` will be
+extracted for later use.
 
 There are two types of Flow, the regular one using the :class:`Flow
 <raider.flow.Flow>` class, and the authentication Flows using the

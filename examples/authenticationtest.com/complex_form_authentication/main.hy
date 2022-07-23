@@ -1,10 +1,10 @@
 (setv users
       (Users
         [{"complex@authenticationtest.com" "pa$$w0rd"}]))
-      
+
 (setv username (Variable "username"))
 (setv password (Variable "password"))
-      
+
 
 (setv complex_form_auth
       (AuthFlow
@@ -17,4 +17,3 @@
                  "selectLogin" "yes"
                  "loveForm" "on"})
         :operations [(Print.headers ["Location"])]))
-          
