@@ -18,7 +18,8 @@
 
 from typing import Any, Dict, Iterator, List, Optional, Tuple
 
-from raider.plugins.basic import Cookie, Header
+from raider.plugins.basic.cookie import Cookie
+from raider.plugins.basic.header import Header
 
 
 class DataStore:

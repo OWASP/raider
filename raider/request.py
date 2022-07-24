@@ -27,7 +27,9 @@ import requests
 from urllib3.exceptions import InsecureRequestWarning
 
 from raider.config import Config
-from raider.plugins.basic import Cookie, File, Header
+from raider.plugins.basic.cookie import Cookie
+from raider.plugins.basic.file import File
+from raider.plugins.basic.header import Header
 from raider.plugins.common import Plugin
 from raider.structures import CookieStore, DataStore, HeaderStore
 from raider.user import User
