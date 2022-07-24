@@ -212,10 +212,11 @@ Example:
 Cookie
 ++++++
 
-The :class:`Cookie` :class:`Plugin` extracts its ``value`` from the
-:term:`Response's <Response>` :class:`Cookie` headers. :class:`Cookie`
-:class:`Plugins <raider.plugins.common.Plugin>` can be used **BOTH**
-as inputs and outputs.
+The :class:`Cookie` :class:`Plugin <raider.plugins.common.Plugin>`
+extracts its ``value`` from the :term:`Response's <Response>`
+:class:`Cookie` headers. :class:`Cookie` :class:`Plugins
+<raider.plugins.common.Plugin>` can be used **BOTH** as inputs and
+outputs.
 
 .. autoclass:: Cookie
    :members:
@@ -229,13 +230,23 @@ Example:
    (setv session_cookie (Cookie "PHPSESSID"))   ;; Defines `session_cookie` as a Cookie
                                                 ;; object with the name `PHPSESSID`
 
+
+   (setv csrf_token                         ;; Extract CSRF token from cookies
+     (Cookie.regex "([a-zA-Z0-9]{10})"))    ;; where its name is a 10 alphanumerical string
+						
+   (setv access_token
+     (Json                         ;; Uses the Json Plugin
+       :name "access_token"        ;; To extract the access token
+       :extract "token"))          ;; Stored in `token`
+
    (setv initialization
      (AuthFlow
        :request
          (Request
 	   :method "GET"
 	   :url "https://www.example.com")
-       :outputs [session_cookie]                ;; Extracts `PHPSESSID` from response
+       :outputs [session_cookie                 ;; Extracts `PHPSESSID` from response
+                 csrf_token]                    ;; Extracts CSRF token using `Cookie.regex`
        :operations [(NextStage "login")]))
 
    (setv login
@@ -246,11 +257,26 @@ Example:
 	   :url "https://www.example.com/login"
            :cookies [session_cookie             ;; Uses the `PHPSESSID` extracted above
 
-	             (Cookie "admin" "true")]   ;; Sends a custom cookie named `admin`
+	             (Cookie "admin" "true")    ;; Sends a custom cookie named `admin`
 		                                ;; and the value `true`
+
+		     csrf_token]                ;; Sends the CSRF token as a cookie
 	   :data
 	   {"username" username
 	    "password" password})))
+
+   (setv my_function
+     (Flow
+       :name "my_function"
+       :request (Request
+                  :method "GET"
+                  :url "https://www.example.com/my_function"
+
+                  ;; Sends the cookie `mycookie` with the value of
+                  ;; `access_token` extracted from JSON.
+                  :cookies [(Cookie.from_plugin access_token "mycookie" )])))
+
+
 
 
 Header

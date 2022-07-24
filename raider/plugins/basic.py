@@ -105,6 +105,9 @@ class Prompt(Plugin):
         Creates a prompt asking the user for input and stores the ``value``
         in the Plugin.
 
+        Returns:
+          A string with the input received from the user.
+
         """
         self.value = None
         while not self.value:
@@ -175,6 +178,9 @@ class Cookie(Plugin):
             A Callable which is used to get the ``value`` of the
             Cookie on runtime.
           flags:
+            An integer containing the flags that define the
+           :class:`Plugin's <raider.plugins.common.Plugin>`
+           behaviour. By default only ``NEEDS_RESPONSE`` flag is set.
 
         """
         if not function:
@@ -200,7 +206,18 @@ class Cookie(Plugin):
     def extract_from_response(
         self, response: requests.models.Response
     ) -> Optional[str]:
-        """Returns the cookie with the specified name from the response."""
+        """Returns the cookie with the specified name from the response.
+
+        Args:
+          response:
+            A :class:`requests.models.Response` object containing the
+            HTTP :term:`Response`.
+
+        Returns:
+          An Optional String with the :class:`Cookie`
+          ``value``. Returns None if no such :class:`Cookie` found.
+
+        """
         return response.cookies.get(self.name)
 
     def __str__(self) -> str:
@@ -209,13 +226,55 @@ class Cookie(Plugin):
 
     @classmethod
     def regex(cls, regex: str) -> "Cookie":
-        """Extract the cookie using regular expressions."""
+        """Extracts the :class:`Cookie` using regular expressions.
+
+        When the name of the :class:`Cookie` is unknown in advance,
+        but can be matched against a regular expression, you can use
+        ``Cookie.regex`` to extract it. The ``name`` of the
+        :class:`Cookie` should be supplied as a regular expression
+        inside a group, i.e. between ``(`` and ``)``.
+
+        For example the following code will match the :class:`Cookie`
+        whose name is a 10 character string containing letters and
+        digits:
+
+        .. code-block:: hylang
+
+           (setv csrf_token
+                   (Cookie.regex "([a-zA-Z0-9]{10})"))
+        
+
+        Args:
+          regex:
+            A String with the regular expression to match the name of
+            the :class:`Cookie`.
+
+        Returns:
+          A :class:`Cookie` object configured to match the regular
+          expression.
+
+        """
 
         def extract_cookie_value_regex(
             response: requests.models.Response,
             regex: str,
         ) -> Optional["str"]:
-            """Find the cookie ``value`` matching the given regex."""
+            """Finds the :class:`Cookie` ``value`` matching the given
+            ``regex``.
+
+            Args:
+              response:
+                A :class:`requests.models.Response` object with the
+                HTTP :term:`Response`.
+              regex:
+                A String containing the regular expression to match for.
+
+            Returns:
+              An Optional String with the ``value`` extracted from the
+              :class:`Cookie` matching the ``name`` with the supplied
+              ``regex``.
+
+            """
             for name, value in response.cookies.items():
                 if re.search(regex, name):
                     return value
@@ -225,7 +284,22 @@ class Cookie(Plugin):
             response: requests.models.Response,
             regex: str,
         ) -> Optional["str"]:
-            """Find the cookie name matching the given regex."""
+            """Find the :class:`Cookie` ``name`` matching the given
+            ``regex``.
+
+            Args:
+              response:
+                A :class:`requests.models.Response` object with the
+                HTTP :term:`Response`.
+              regex:
+                A String containing the regular expression to match for.
+
+            Returns:
+              An Optional String with the ``name`` extracted from the
+              :class:`Cookie` matching the ``name`` with the supplied
+              ``regex``.
+
+            """
             for name in response.cookies.keys():
                 if re.search(regex, name):
                     return name
@@ -243,19 +317,48 @@ class Cookie(Plugin):
 
     @classmethod
     def from_plugin(cls, parent_plugin: Plugin, name: str) -> "Cookie":
-        """Creates a Cookie from a Plugin.
+        """Creates a :class:`Cookie` from another :class:`Plugin
+        <raider.plugins.common.Plugin>`.
 
-        Given another :class:`plugin <raider.plugins.Plugin>`, and a
-        name, create a :class:`cookie <raider.plugins.Cookie>`.
+        Given another :class:`Plugin <raider.plugins.common.Plugin>`,
+        and a ``name``, create a :class:`Cookie
+        <raider.plugins.basic.Cookie>`.
+
+        For example, if we need to extract the ``access_token`` from JSON:
+
+        .. code-block:: hylang
+
+           (setv access_token
+             (Json
+               :name "access_token"
+               :extract "token"))
+
+        And use it later as a :class:`Cookie`:
+
+        .. code-block:: hylang
+
+           (setv my_function
+             (Flow
+               :name "my_function"
+               :request (Request
+                          :method "GET"
+                          :url "https://www.example.com/my_function"
+   
+                          ;; Sends the cookie `mycookie` with the value of
+                          ;; `access_token` extracted from JSON.
+                          :cookies [(Cookie.from_plugin access_token "mycookie" )])))
+
 
         Args:
           name:
-            The cookie name to use.
+            The :class:`Cookie` ``name`` to use.
           plugin:
-            The plugin which will contain the ``value`` we need.
+            The :class:`Plugin <raider.plugins.common.Plugin>` which
+            will contain the ``value`` we need.
 
         Returns:
-          A Cookie object with the name and the plugin's ``value``.
+          A :class:`Cookie` object with the ``name`` and the
+          :class:`Plugin's <raider.plugins.common.Plugin>` ``value``.
 
         """
         cookie = cls(
