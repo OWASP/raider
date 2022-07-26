@@ -12,7 +12,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
-"""
+"""Plugin to work with headers.
 """
 import re
 from base64 import b64encode
@@ -56,28 +56,13 @@ class Header(Plugin):
 
         """
 
-        if not function:
-            if flags & Plugin.NEEDS_RESPONSE:
-                super().__init__(
-                    name=name,
-                    function=self.extract_from_response,
-                    value=value,
-                    flags=flags,
-                )
+        if not function and (flags & Plugin.NEEDS_RESPONSE):
+            function = self.extract_header_from_response
+        super().__init__(
+            name=name, function=function, value=value, flags=flags
+        )
 
-            else:
-                super().__init__(
-                    name=name,
-                    value=value,
-                    flags=flags,
-                )
-
-        else:
-            super().__init__(
-                name=name, function=function, value=value, flags=flags
-            )
-
-    def extract_from_response(
+    def extract_header_from_response(
         self, response: requests.models.Response
     ) -> Optional[str]:
         """Returns the header with the specified name from the response."""

@@ -12,14 +12,14 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
-"""
+"""Plugin to work with JSON data.
 """
 
 import json
+import logging
 from typing import Callable, Optional
 
 import requests
-import logging
 
 from raider.plugins.common import Plugin
 from raider.utils import parse_json_filter
@@ -69,17 +69,12 @@ class Json(Plugin):
             A string with the location of the JSON field to extract.
         """
         if not function:
-            super().__init__(
-                name=name,
-                function=self.extract_json_from_response,
-                flags=flags,
-            )
-        else:
-            super().__init__(
-                name=name,
-                function=function,
-                flags=flags,
-            )
+            function = self.extract_json_from_response
+        super().__init__(
+            name=name,
+            function=function,
+            flags=flags,
+        )
 
         self.extract = extract
 

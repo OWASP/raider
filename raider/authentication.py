@@ -20,13 +20,9 @@ import logging
 import sys
 from typing import Dict, Optional, Union
 
+import raider.plugins as Plugins
 from raider.config import Config
 from raider.flow import AuthFlow, Flow
-from raider.plugins.basic.cookie import Cookie
-from raider.plugins.basic.header import Header
-from raider.plugins.basic.html import Html
-from raider.plugins.basic.json import Json
-from raider.plugins.basic.regex import Regex
 from raider.user import User
 
 
@@ -183,11 +179,13 @@ class Authentication:
 
         if stage.outputs:
             for item in stage.outputs:
-                if isinstance(item, Cookie):
+                if isinstance(item, Plugins.Cookie):
                     user.set_cookie(item)
-                elif isinstance(item, Header):
+                elif isinstance(item, Plugins.Header):
                     user.set_header(item)
-                elif isinstance(item, (Regex, Html, Json)):
+                elif isinstance(
+                    item, (Plugins.Regex, Plugins.Html, Plugins.Json)
+                ):
                     user.set_data(item)
 
         next_stage = stage.run_operations()

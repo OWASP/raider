@@ -131,21 +131,7 @@ def import_raider_objects() -> Dict[str, Any]:
 
     """
     hy_imports = {
-        "plugins.common": ("Empty " "Plugin " "Parser " "Processor "),
-        "plugins.basic.regex": "Regex",
-        "plugins.basic.html": "Html",
-        "plugins.basic.json": "Json",
-        "plugins.basic.variable": "Variable",
-        "plugins.basic.command": "Command",
-        "plugins.basic.prompt": "Prompt",
-        "plugins.basic.cookie": "Cookie",
-        "plugins.basic.header": "Header",
-        "plugins.basic.file": "File",
-        "plugins.modifiers": ("Alter " "Combine "),
-        "plugins.parsers": ("Parser " "UrlParser "),
-        "plugins.processors": (
-            "Urlencode " "Urldecode " "B64encode " "B64decode "
-        ),
+        "plugins": "*",
         "flow": "Flow " "AuthFlow ",
         "user": "Users ",
         "request": ("Request " "PostBody " "Template "),
@@ -155,7 +141,12 @@ def import_raider_objects() -> Dict[str, Any]:
     }
 
     for module, classes in hy_imports.items():
-        expr = hy.read_str("(import raider." + module + " [" + classes + "])")
+        if classes == "*":
+            expr = hy.read_str("(import raider." + module + " *)")
+        else:
+            expr = hy.read_str(
+                "(import raider." + module + " [" + classes + "])"
+            )
         logging.debug("expr = %s", str(expr).replace("\n", " "))
         hy.eval(expr)
 

@@ -12,7 +12,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
-"""
+"""Plugin to extract regular expressions.
 """
 
 import logging
@@ -70,17 +70,12 @@ class Regex(Plugin):
             A string containing the regular expression to be matched.
         """
         if not function:
-            super().__init__(
-                name=name,
-                function=self.extract_regex_from_response,
-                flags=flags,
-            )
-        else:
-            super().__init__(
-                name=name,
-                function=function,
-                flags=flags,
-            )
+            function = self.extract_regex_from_response
+        super().__init__(
+            name=name,
+            function=function,
+            flags=flags,
+        )
 
         self.regex = regex
 

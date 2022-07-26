@@ -22,7 +22,7 @@ from urllib.parse import parse_qs, urlsplit
 from raider.plugins.common import Parser, Plugin
 
 
-class UrlParser(Parser):
+class Urlparser(Parser):
     """Parse the URL and extract elements from it.
 
     Use this when needing to extract some piece of information from
