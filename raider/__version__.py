@@ -16,11 +16,9 @@
 """Raider version information.
 """
 
-from importlib_metadata import version
-
 __title__ = "raider"
 __description__ = "Authentication testing tool"
-__version__ = version("raider")
+__version__ = "0.2.3"
 __author__ = "Daniel Neagaru"
 __author_email__ = "daniel@digeex.de"
 __license__ = "GPLv3+"

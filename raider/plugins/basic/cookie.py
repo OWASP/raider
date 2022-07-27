@@ -100,7 +100,8 @@ class Cookie(Plugin):
     def extract_cookie_from_response(
         self, response: requests.models.Response
     ) -> Optional[str]:
-        """Returns the cookie with the specified name from the response.
+        """Returns the :class:`Cookie` with the specified name from
+        the response.
 
         Args:
           response:
@@ -115,7 +116,10 @@ class Cookie(Plugin):
         return response.cookies.get(self.name)
 
     def __str__(self) -> str:
-        """Returns a string representation of the cookie."""
+        """Returns a string representation of the :class:`Cookie`.
+
+        Used for logging purposes only.
+        """
         return str({self.name: self.value})
 
     @classmethod
@@ -227,13 +231,22 @@ class Cookie(Plugin):
                :name "access_token"
                :extract "token"))
 
+           (setv get_token
+              (AuthFlow
+                :request
+                  (Request
+                    :method "POST"
+                    :url "https://www.example.com/login"
+                    :data {"username" "username"
+                           "password" "password"})
+                 :outputs [access_token]))
+
         And use it later as a :class:`Cookie`:
 
         .. code-block:: hylang
 
            (setv my_function
              (Flow
-               :name "my_function"
                :request (Request
                           :method "GET"
                           :url "https://www.example.com/my_function"

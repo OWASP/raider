@@ -25,9 +25,39 @@ from raider.plugins.common import Plugin
 
 
 class Header(Plugin):
-    """
+    """:class:`Plugin <raider.plugins.common.Plugin>` dealing with the
+    :class:`Headers <raider.plugins.basic.Header>` in HTTP
+    :term:`Requests <Request>` and :term:`Responses <Response>`.
 
-    Use this Plugin when dealing with the headers in the HTTP request.
+    Use the :class:`Header` :class:`Plugin` when working with the data
+    found in HTTP :class:`Headers <Header>`.
+
+    Attributes:
+      name:
+        A String with the :class:`Header's <Header>` name. Also used
+        as an identifier for the :class:`Plugin
+        <raider.plugins.common.Plugin>`
+      function:
+        A Callable which will be called to extract the ``value`` of
+        the :class:`Header` when used as an input in a :ref:`Flow
+        <flows>`. The function should set ``self.value`` and also
+        return it.
+      name_function:
+        A Callable which will be called to extract the ``name`` of the
+        :class:`Header` when it's not known in advance and the flag
+        ``NAME_NOT_KNOWN_IN_ADVANCE`` is set.
+      plugins:
+        A List of :class:`Plugins <Plugin>` whose value needs to be
+        extracted first before current :class:`Header's <Header>`
+        value can be extracted. Used when the flag
+        ``DEPENDS_ON_OTHER_PLUGINS`` is set.
+      value:
+        A string containing the :class:`Header's <Header>` output
+        ``value`` to be used as input in the HTTP :term:`Requests
+        <Request>`.
+      flags:
+        An integer containing the flags that define the
+        :class:`Plugin's <raider.plugins.common.Plugin>` behaviour.
 
     """
 
@@ -38,21 +68,27 @@ class Header(Plugin):
         function: Optional[Callable[..., Optional[str]]] = None,
         flags: int = Plugin.NEEDS_RESPONSE,
     ) -> None:
-        """Initializes the Header Plugin.
+        """Initializes the :class:`Header` :class:`Plugin
+        <raider.plugins.common.Plugin>`.
 
-        Creates a Header Plugin, either with predefined ``value``, or by
-        using a function defining how the ``value`` should be generated on
-        runtime.
+        Creates a :class:`Header` :class:`Plugin
+        <raider.plugins.common.Plugin>`, either with predefined
+        ``value``, or by using a ``function`` defining how the
+        ``value`` should be generated on runtime.
 
         Args:
           name:
-            A string with the name of the Header.
+            A String with the name of the :class:`Header`.
           value:
-            An optional string with the ``value`` of the Header in case it's
-            already known.
+            An Optional String with the ``value`` of the
+            :class:`Header` in case it's already known.
           function:
-            A Callable function which is used to get the ``value`` of the
+            A Callable which is used to get the ``value`` of the
             Header on runtime.
+          flags:
+            An integer containing the flags that define the
+           :class:`Plugin's <raider.plugins.common.Plugin>`
+           behaviour. By default only ``NEEDS_RESPONSE`` flag is set.
 
         """
 
@@ -65,22 +101,79 @@ class Header(Plugin):
     def extract_header_from_response(
         self, response: requests.models.Response
     ) -> Optional[str]:
-        """Returns the header with the specified name from the response."""
+        """Returns the :class:`Header` with the specified name from
+        the response.
+
+        Args:
+          response:
+            A :class:`requests.models.Response` object containing the
+            HTTP :term:`Response`.
+
+        Returns:
+          An Optional String with the :class:`Header`
+          ``value``. Returns None if no such :class:`Header` found.
+
+        """
         return response.headers.get(self.name)
 
     def __str__(self) -> str:
-        """Returns a string representation of the Plugin."""
+        """Returns a string representation of the :class:`Header`.
+
+        Used for logging purposes only.
+        """
         return str({self.name: self.value})
 
     @classmethod
     def regex(cls, regex: str) -> "Header":
-        """Extract the header using regular expressions."""
+        """Extracts the :class:`Header` using regular expressions.
+
+        When the name of the :class:`Header` is unknown in advance,
+        but can be matched against a regular expression, you can use
+        ``Header.regex`` to extract it. The ``name`` of the
+        :class:`Header` should be supplied as a regular expression
+        inside a group, i.e. between ``(`` and ``)``.
+
+        For example the following code will match the :class:`Header`
+        whose name is a 10 character string containing letters and
+        digits:
+
+        .. code-block:: hylang
+
+           (setv csrf_token
+                   (Header.regex "([a-zA-Z0-9]{10})"))
+
+
+        Args:
+          regex:
+            A String with the regular expression to match the name of
+            the :class:`Header`.
+
+        Returns:
+          A :class:`Header` object configured to match the regular
+          expression.
+
+        """
 
         def extract_header_value_regex(
             response: requests.models.Response,
             regex: str,
         ) -> Optional["str"]:
-            """Find the header ``value`` matching the given regex."""
+            """Finds the :class:`Header` ``value`` matching the given
+            ``regex``.
+
+            Args:
+              response:
+                A :class:`requests.models.Response` object with the
+                HTTP :term:`Response`.
+              regex:
+                A String containing the regular expression to match for.
+
+            Returns:
+              An Optional String with the ``value`` extracted from the
+              :class:`Header` matching the ``name`` with the supplied
+              ``regex``.
+
+            """
             for name, value in response.headers.items():
                 if re.search(regex, name):
                     return value
@@ -90,7 +183,22 @@ class Header(Plugin):
             response: requests.models.Response,
             regex: str,
         ) -> Optional["str"]:
-            """Find the header name matching the given regex."""
+            """Find the :class:`Header` ``name`` matching the given
+            ``regex``.
+
+            Args:
+              response:
+                A :class:`requests.models.Response` object with the
+                HTTP :term:`Response`.
+              regex:
+                A String containing the regular expression to match for.
+
+            Returns:
+              An Optional String with the ``name`` extracted from the
+              :class:`Header` matching the ``name`` with the supplied
+              ``regex``.
+
+            """
             for name in response.headers.keys():
                 if re.search(regex, name):
                     return name
@@ -108,19 +216,35 @@ class Header(Plugin):
 
     @classmethod
     def basicauth(cls, username: str, password: str) -> "Header":
-        """Creates a basic authentication header.
+        """Creates a basic authentication :class:`Header`.
 
         Given the username and the password for the basic
-        authentication, returns the Header object with the proper ``value``.
+        authentication, returns the :class:`Header` object with the
+        proper ``value``, i.e. with the ``name`` as ``Authorization``
+        and the ``value`` as ``Basic `` followed by base64 encoded
+        ``username:password``.
+
+        For example:
+
+        .. code-block:: hylang
+
+           (setv my_function
+             (Flow
+               :request
+                 (Request
+                   :method "GET"
+                   :url "https://www.example.com/my_function"
+                   :headers [(Header.basicauth "username" "password")])))
 
         Args:
           username:
-            A string with the basic authentication username.
+            A String with the basic authentication ``username``.
           password:
-            A string with the basic authentication password.
+            A String with the basic authentication ``password``.
 
         Returns:
-          A Header object with the encoded basic authentication string.
+          A :class:`Header` object with the encoded basic
+          authentication string.
 
         """
         encoded = b64encode(":".join([username, password]).encode("utf-8"))
@@ -129,18 +253,57 @@ class Header(Plugin):
 
     @classmethod
     def bearerauth(cls, access_token: Plugin) -> "Header":
-        """Creates a bearer authentication header.
+        """Creates a bearer authentication :class:`Header`.
 
-        Given the access_token as a Plugin, extracts its ``value`` and
-        returns a Header object with the correct ``value`` to be passed as
-        the Bearer Authorization string in the Header.
+        Given the ``access_token`` as a :class:`Plugin
+        <raider.plugins.common.Plugin>`, extracts its ``value`` and
+        returns a :class:`Header` object with the correct ``value`` to
+        be passed as the Bearer Authorization string in the
+        :class:`Header`, i.e. with the ``name`` as ``Authorization``
+        and the ``value`` as ``Bearer `` followed by the value from
+        parent :class:`Plugin <raider.plugins.common.Plugin>`
+
+        For example if we extract the ``access_token`` from JSON:
+
+        .. code-block:: hylang
+
+           (setv access_token
+             (Json
+               :name "access_token"
+               :extract "token"))
+
+           (setv get_token
+              (AuthFlow
+                :request
+                  (Request
+                    :method "POST"
+                    :url "https://www.example.com/login"
+                    :data {"username" "username"
+                           "password" "password"})
+                 :outputs [access_token]))
+
+
+        And use it later as a bearer authentication :class:`Header`:
+
+        .. code-block:: hylang
+
+           (setv my_function
+             (Flow
+               :request
+                 (Request
+                   :method "GET"
+                   :url "https://www.example.com/my_function"
+                   :headers [(Header.bearerauth access_token)])))
+
 
         Args:
           access_token:
-            A Plugin containing the ``value`` of the token to use.
+            A :class:`Plugin <raider.plugins.common.Plugin>`
+            containing the ``value`` of the token to use.
 
         Returns:
-          A Header object with the proper bearer authentication string.
+          A :class:`Header` object with the proper bearer
+          authentication string.
 
         """
         header = cls(
@@ -155,19 +318,27 @@ class Header(Plugin):
 
     @classmethod
     def from_plugin(cls, parent_plugin: Plugin, name: str) -> "Header":
-        """Creates a Header from a Plugin.
+        """Creates a :class:`Header` from another :class:`Plugin
+        <raider.plugins.common.Plugin>`.
 
-        Given another :class:`plugin <raider.plugins.Plugin>`, and a
-        name, create a :class:`header <raider.plugins.Header>`.
+        Given another :class:`Plugin <raider.plugins.common.Plugin>`,
+        and a ``name``, create a :class:`Header`. Unlike
+        :func:`~Header.basicauth` and :func:`~Header.bearerauth` no
+        string will be added to the beginning of :class:`Header`
+        ``value``, so this class method can be used for other
+        arbitrary :class:`Headers <Header>` not just ``Authorization``
+        ones.
 
         Args:
           name:
-            The header name to use.
+            The :class:`Header` ``name`` to use.
           plugin:
-            The plugin which will contain the ``value`` we need.
+            The :class:`Plugin <raider.plugins.common.Plugin>` which
+            will contain the ``value`` we need.
 
         Returns:
-          A Header object with the name and the plugin's ``value``.
+          A :class:`Header` object with the ``name`` and the
+          :class:`Plugin's <raider.plugins.common.Plugin>` ``value``.
 
         """
         header = cls(
