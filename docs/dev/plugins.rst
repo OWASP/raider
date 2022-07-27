@@ -194,7 +194,7 @@ Example:
 
    (setv username (Variable "username"))
    (setv password (Variable "password"))
-   (setv mfa_code (Prompt "Input code here:"))      ;; Asks user for the MFA code
+   (setv mfa_code (Prompt "Input code here:"))      ;; Asks user for the MFA code.
 
    (setv multifactor
      (AuthFlow
@@ -205,7 +205,7 @@ Example:
            :data
 	   {"username" username
 	    "password" password
-	    "otp" mfa_code}             ;; Sends the data from user's input in `otp`
+	    "otp" mfa_code}             ;; Sends the data from user's input in `otp`.
 
 .. _plugin_cookie:      
 
@@ -228,16 +228,16 @@ Example:
    (setv username (Variable "username"))
    (setv password (Variable "password"))
    (setv session_cookie (Cookie "PHPSESSID"))   ;; Defines `session_cookie` as a Cookie
-                                                ;; object with the name `PHPSESSID`
+                                                ;; object with the name `PHPSESSID`.
 
 
    (setv csrf_token                         ;; Extract CSRF token from cookies
-     (Cookie.regex "([a-zA-Z0-9]{10})"))    ;; where its name is a 10 alphanumerical string
+     (Cookie.regex "([a-zA-Z0-9]{10})"))    ;; where its name is a 10 alphanumerical string.
 						
    (setv access_token
      (Json                         ;; Uses the Json Plugin
        :name "access_token"        ;; To extract the access token
-       :extract "token"))          ;; Stored in `token`
+       :extract "token"))          ;; Stored in `token`.
 
    (setv initialization
      (AuthFlow
@@ -245,8 +245,8 @@ Example:
          (Request
 	   :method "GET"
 	   :url "https://www.example.com")
-       :outputs [session_cookie                 ;; Extracts `PHPSESSID` from response
-                 csrf_token]                    ;; Extracts CSRF token using `Cookie.regex`
+       :outputs [session_cookie                 ;; Extracts `PHPSESSID` from response.
+                 csrf_token]                    ;; Extracts CSRF token using `Cookie.regex`.
        :operations [(NextStage "login")]))
 
    (setv login
@@ -255,12 +255,12 @@ Example:
          (Request
 	   :method "POST"
 	   :url "https://www.example.com/login"
-           :cookies [session_cookie             ;; Uses the `PHPSESSID` extracted above
+           :cookies [session_cookie             ;; Uses the `PHPSESSID` extracted above.
 
 	             (Cookie "admin" "true")    ;; Sends a custom cookie named `admin`
-		                                ;; and the value `true`
+		                                ;; and the value `true`.
 
-		     csrf_token]                ;; Sends the CSRF token as a cookie
+		     csrf_token]                ;; Sends the CSRF token as a cookie.
 	   :data
 	   {"username" username
 	    "password" password})))
@@ -282,7 +282,10 @@ Example:
 Header
 ++++++
 
-The Header plugin extracts and sets new headers.
+The :class:`Header` :class:`Plugin <raider.plugins.common.Plugin>`
+extracts and sets new headers.  :class:`Cookie` :class:`Plugins
+<raider.plugins.common.Plugin>` can be used **BOTH** as inputs and
+outputs.
 
 .. autoclass:: Header
    :members:
@@ -291,18 +294,48 @@ Example:
 
 .. code-block:: hylang
 
-   (setv x-header (Header "x-header"))
-   (setv y-header (Header "y-header" "y-value"))
-
-   (setv z-header (Header.basicauth "username" "password"))
-
-
    (setv access_token
          (Regex
-           :name "access_token"
-           :regex "\"accessToken\":\"([^\"]+)\""))
+           :name "access_token"                     ;; Extracts `access_token` using
+           :regex "\"accessToken\":\"([^\"]+)\""))  ;; regular expressions.
       
-   (setv z-header (Header.bearerauth access_token))
+   (setv user_id
+     (Json                         ;; Uses the Json Plugin
+       :name "user_id"             ;; To extract `user_id`.
+       :extract "user_id"))
+
+
+   (setv authheader (Header.bearerauth access_token))   ;; Defines bearer authorization header.
+   (setv useragent (Header "User-Agent" "Mozilla/5.0")) ;; Static user agent.
+
+   (setv username (Variable "username"))
+   (setv password (Variable "password"))
+
+   (setv login
+     (AuthFlow
+       :request
+         (Request
+	   :method "POST"
+	   :url "https://www.example.com/login"
+	   :headers [useragent                    ;; Sets the user agent.
+
+	             (Headers.from_plugin         ;; Creates new header from ``user_id``
+		       user_id                    ;; Plugin and uses it in the value of
+		       "X-identification")        ;; X-identification customer header.
+	   :data
+	   {"username" username
+	    "password" password})
+       :outputs [access_token]))                  ;; Extracts the `access_token`.
+
+   (setv my_function
+     (Flow
+       :name "my_function"
+       :request (Request
+                  :method "GET"
+                  :url "https://www.example.com/my_function"
+                  :headers [authheader])))
+
+
 
 
 File
@@ -417,12 +450,12 @@ The Combine plugin concatenates the ``value`` of other plugins.
 Parsers
 -------
 
-UrlParser
+Urlparser
 +++++++++
 
 The URLParser plugin parses URLs and extracts elements from it.
 
-.. autoclass:: UrlParser
+.. autoclass:: Urlparser
    :members:	       
 
 .. module:: raider.plugins.processors

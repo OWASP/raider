@@ -1,3 +1,5 @@
+"""Import basic plugins.
+"""
 from raider.plugins.basic.command import Command
 from raider.plugins.basic.cookie import Cookie
 from raider.plugins.basic.file import File

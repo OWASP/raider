@@ -44,15 +44,12 @@
     python = ">=3.8,<3.11"
     hy = "^1.0.a4"
     requests = "^2.25.1"
-    importlib-metadata = "^4.6.1"
     bs4 = "^0.0.1"
     funcparserlib = "^1.0.0a0"
     ipython = "^8.4.0"
-    mypy = "^0.961"
 
 [tool.poetry.dev-dependencies]
-    pytest = "^7.1"
-    pytest-cov = "^3.0.0"
+    mypy = "^0.961"
     pre-commit = "^2.20.0"
     flake8 = "^4.0.1"
     pylint = "^2.14.4"
@@ -61,7 +58,6 @@
     sphinxcontrib-needs = "^0.7.9"
     sphinx-autodoc-typehints = "^1.18.3"
     sphinx-rtd-theme = "^1.0.0"
-    Pillow = "^9.2.0"
     sphinxcontrib-plantuml = "^0.24"
 
 [build-system]
