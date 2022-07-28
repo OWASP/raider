@@ -47,8 +47,8 @@ class Cookie(Plugin):
         :class:`Cookie` when it's not known in advance and the flag
         ``NAME_NOT_KNOWN_IN_ADVANCE`` is set.
       plugins:
-        A List of :class:`Plugins <Plugin>` whose value needs to be
-        extracted first before current :class:`Cookie's <Cookie>`
+        A List of :class:`Plugins <Plugin>` whose ``value`` needs to
+        be extracted first before current :class:`Cookie's <Cookie>`
         value can be extracted. Used when the flag
         ``DEPENDS_ON_OTHER_PLUGINS`` is set.
       value:
@@ -56,7 +56,7 @@ class Cookie(Plugin):
         ``value`` to be used as input in the HTTP :term:`Requests
         <Request>`.
       flags:
-        An integer containing the flags that define the
+        An integer containing the ``flags`` that define the
         :class:`Plugin's <raider.plugins.common.Plugin>` behaviour.
 
     """
@@ -84,9 +84,9 @@ class Cookie(Plugin):
             :class:`Cookie` in case it's already known.
           function:
             A Callable which is used to get the ``value`` of the
-            Cookie on runtime.
+            :class:`Cookie` on runtime.
           flags:
-            An integer containing the flags that define the
+            An integer containing the ``flags`` that define the
            :class:`Plugin's <raider.plugins.common.Plugin>`
            behaviour. By default only ``NEEDS_RESPONSE`` flag is set.
 
@@ -133,7 +133,7 @@ class Cookie(Plugin):
         inside a group, i.e. between ``(`` and ``)``.
 
         For example the following code will match the :class:`Cookie`
-        whose name is a 10 character string containing letters and
+        whose ``name`` is a 10 character string containing letters and
         digits:
 
         .. code-block:: hylang

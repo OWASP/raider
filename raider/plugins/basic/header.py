@@ -29,8 +29,9 @@ class Header(Plugin):
     :class:`Headers <raider.plugins.basic.Header>` in HTTP
     :term:`Requests <Request>` and :term:`Responses <Response>`.
 
-    Use the :class:`Header` :class:`Plugin` when working with the data
-    found in HTTP :class:`Headers <Header>`.
+    Use the :class:`Header` :class:`Plugin
+    <raider.plugins.basic.Plugin>` when working with the data found in
+    HTTP :class:`Headers <Header>`.
 
     Attributes:
       name:
@@ -47,7 +48,7 @@ class Header(Plugin):
         :class:`Header` when it's not known in advance and the flag
         ``NAME_NOT_KNOWN_IN_ADVANCE`` is set.
       plugins:
-        A List of :class:`Plugins <Plugin>` whose value needs to be
+        A List of :class:`Plugins <Plugin>` whose ``value`` needs to be
         extracted first before current :class:`Header's <Header>`
         value can be extracted. Used when the flag
         ``DEPENDS_ON_OTHER_PLUGINS`` is set.
@@ -56,7 +57,7 @@ class Header(Plugin):
         ``value`` to be used as input in the HTTP :term:`Requests
         <Request>`.
       flags:
-        An integer containing the flags that define the
+        An integer containing the ``flags`` that define the
         :class:`Plugin's <raider.plugins.common.Plugin>` behaviour.
 
     """
@@ -84,9 +85,9 @@ class Header(Plugin):
             :class:`Header` in case it's already known.
           function:
             A Callable which is used to get the ``value`` of the
-            Header on runtime.
+            :class:`Header` on runtime.
           flags:
-            An integer containing the flags that define the
+            An integer containing the ``flags`` that define the
            :class:`Plugin's <raider.plugins.common.Plugin>`
            behaviour. By default only ``NEEDS_RESPONSE`` flag is set.
 
@@ -134,7 +135,7 @@ class Header(Plugin):
         inside a group, i.e. between ``(`` and ``)``.
 
         For example the following code will match the :class:`Header`
-        whose name is a 10 character string containing letters and
+        whose ``name`` is a 10 character string containing letters and
         digits:
 
         .. code-block:: hylang
