@@ -24,4 +24,13 @@ __all__ = [
     "Urldecode",
     "B64encode",
     "B64decode",
+    "Command",
+    "Cookie",
+    "File",
+    "Header",
+    "Html",
+    "Json",
+    "Prompt",
+    "Regex",
+    "Variable",
 ]

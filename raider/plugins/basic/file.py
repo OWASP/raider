@@ -24,7 +24,7 @@ class File(Plugin):
     """:class:`Plugin <raider.plugins.common.Plugin>` used for getting
     data from the filesystem.
 
-    Use :class:`File: :class:`Plugin <raider.plugins.common.Plugin>`
+    Use :class:`File`: :class:`Plugin <raider.plugins.common.Plugin>`
     when needing to upload something, or sending a :term:`Request`
     with lots of data that would better be stored on the filesystem
     instead of :term:`hyfiles`.
@@ -132,7 +132,7 @@ class File(Plugin):
         .. code-block::
 
            (File.replace "/path/to/data.json"
-              "$USERNAME"
+              "$USERNAME$"
               "admin")
 
         To replace every instance of ``$USERNAME$`` with our chosen
