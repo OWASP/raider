@@ -99,6 +99,7 @@ User guide
 
    user/install
    user/tutorials
+   user/beginner-tutorial
    user/architecture
    user/definitions
    user/faq
