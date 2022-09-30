@@ -15,7 +15,7 @@
 
 """Data structures used in Raider.
 """
-
+import igraph
 from typing import Any, Dict, Iterator, List, Optional, Tuple
 
 from raider.plugins.basic.cookie import Cookie
@@ -79,11 +79,11 @@ class DataStore:
         """Pops an element from the DataStore."""
         return self._store.pop(name)
 
-    def list_keys(self) -> List[Any]:
+    def keys(self) -> List[Any]:
         """Returns a list of the keys in the DataStore."""
         return list(self._store)
 
-    def list_values(self) -> List[Any]:
+    def values(self) -> List[Any]:
         """Returns a list of the values in the DataStore."""
         data = []
         for key in self._store:
@@ -236,3 +236,50 @@ class CookieStore(DataStore):
                 cookie = Cookie(name, value)
                 cookielist.append(cookie)
         return cls(cookielist)
+
+
+class FlowGraph(igraph.Graph):
+    """Class defining a Rooted-Graph-like data structure.
+
+    This class was created to hold Flows in a graph structure, with
+    one Root Node as a single point of entry. Doing so allows for
+    easier control of web processes.
+
+    """
+
+    def __init__(self) -> None:
+        """Initializes the FlowGraph object.
+
+        Given a dictionary with the data, store them in this object.
+
+        Args:
+          data:
+            A dictionary with Any elements to be stored.
+
+        """
+        super().__init__(directed=True)
+
+    def add_flow(self, key:str, value:str) -> None:
+        self.add_vertices(1)
+        index = self.vcount()-1
+        self.vs[index]["name"] = key
+        self.vs[index]["object"] = value
+            
+
+    def __getitem__(self, name: Any) -> Any:
+        """Getter to return a Flow by the name."""
+        if name in self.keys:
+            flow_id = self.get_flow_id_by_name(name)
+            return self.vs[flow_id]["object"]
+        return None
+
+    def get_flow_id_by_name(self, flow_name:str) -> int:
+        return self.keys.index(flow_name)
+
+    @property
+    def keys(self) -> List[str]:
+        return self.vs[::]["name"]
+
+    @property
+    def values(self) -> List[Any]:
+        return self.vs[::]["object"]

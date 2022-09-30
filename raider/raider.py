@@ -20,7 +20,7 @@ import logging
 import sys
 from typing import Optional
 
-from raider.application import Application
+from raider.projects import Project, Projects
 from raider.authentication import Authentication
 from raider.config import Config
 from raider.fuzzing import Fuzz
@@ -36,8 +36,8 @@ class Raider:
     is where all of the features available to the end user should be.
 
     Attributes:
-      application:
-        An :class:`Application <raider.application.Application>` object
+      project:
+        An :class:`Project <raider.projects.Project>` object
         with the currently active project.
       config:
         A Config object containing all of the necessary settings.
@@ -53,15 +53,15 @@ class Raider:
     # Session was loaded and the information is already in userdata
     SESSION_LOADED = 0x01
 
-    def __init__(self, project: Optional[str] = None, flags: int = 0) -> None:
+    def __init__(self, name: Optional[str] = None, flags: int = 0, args=None) -> None:
         """Initializes the Raider object.
 
         Initializes the main entry point for Raider. If the name of the
-        project is supplied, this application will be used, otherwise
-        the last used application will be chosen.
+        project is supplied, this project will be used, otherwise
+        the last used project will be chosen.
 
         Args:
-          project:
+          name:
             A string with the name of the project.
           flags:
             An integer with the flags. Only SESSION_LOADED is supported
@@ -70,17 +70,17 @@ class Raider:
             which means the plugins should get their value from userdata.
 
         """
-        self.application = Application(project)
-        if hasattr(self.application, "functions"):
-            self.functions = self.application.functions
-
-        self.flags = flags
+        self.config = Config()
+        self.args = args
+        self._project_name = name or self.config.active_project
+        self.projects = Projects(self.config, self._project_name)
+        self._flags = flags
 
     def authenticate(self, username: str = None) -> None:
-        """Authenticates in the chosen application.
+        """Authenticates in the chosen project.
 
         Runs the authentication process from start to end on the
-        selected application with the specified user.
+        selected project with the specified user.
 
         Args:
           username:
@@ -88,21 +88,22 @@ class Raider:
             specified, the last used user will be selected.
 
         """
-        self.application.authenticate(username)
+        self.project.authenticate(username)
+        self.config.write_config_file()
 
     def load_session(self) -> None:
         """Loads saved session from ``_userdata.hy``."""
-        self.application.load_session_file()
-        self.flags = self.flags | self.SESSION_LOADED
+        self.project.load_session_file()
+        self._flags = self._flags | self.SESSION_LOADED
 
     def save_session(self) -> None:
         """Saves session to ``_userdata.hy``."""
-        self.application.write_session_file()
+        self.project.write_session_file()
 
     def run_function(self, function: str) -> None:
-        """Runs a function in the chosen application.
+        """Runs a function in the chosen project.
 
-        With the selected application and user run the function from the
+        With the selected project and user run the function from the
         argument.
 
         Args:
@@ -123,7 +124,7 @@ class Raider:
     def run_chain(self, function: str) -> None:
         """Runs a function, and follows the NextStage Operations.
 
-        With the selected application and user run the function from the
+        With the selected project and user run the function from the
         argument.
 
         Args:
@@ -173,14 +174,14 @@ class Raider:
 
             if is_authentication:
                 fuzzer = Fuzz(
-                    application=self.application,
+                    project=self.project,
                     flow=flow,
                     fuzzing_point=fuzzing_point,
                     flags=Fuzz.IS_AUTHENTICATION,
                 )
             else:
                 fuzzer = Fuzz(
-                    application=self.application,
+                    project=self.project,
                     flow=flow,
                     fuzzing_point=fuzzing_point,
                     flags=0,
@@ -218,19 +219,18 @@ class Raider:
                 plugin.function = plugin.extract_value_from_userdata
 
     @property
-    def authentication(self) -> Authentication:
-        """Returns the Authentication object"""
-        return self.application.authentication
+    def project(self) -> Project:
+        return self.projects[self.config.active_project]
 
     @property
-    def config(self) -> Config:
-        """Returns the Configuration object"""
-        return self.application.config
+    def authentication(self) -> Authentication:
+        """Returns the Authentication object"""
+        return self.project.authentication
 
     @property
     def user(self) -> User:
         """Returns the User object"""
-        return self.application.active_user
+        return self.project.active_user
 
     @property
     def session_loaded(self) -> bool:

@@ -16,6 +16,7 @@
 """Authentication class responsible for running the defined stages.
 """
 
+import igraph
 import logging
 import sys
 from typing import Dict, Optional, Union
@@ -38,24 +39,24 @@ class Authentication:
 
     """
 
-    def __init__(self, stages: Dict[str, AuthFlow]) -> None:
+    def __init__(self, graph: igraph.Graph) -> None:
         """Initializes the Authentication object.
 
         Creates an object to handle the authentication process.
 
         Args:
-          stages:
+          graph:
             A list of Flow objects defined inside "_authentication"
             variable in hy configuration files.
 
         """
-        self.stages = stages
+        self.graph = graph
         self._current_stage = 0
 
     def __getitem__(self, key: str) -> Optional[AuthFlow]:
-        if key not in self.stages.keys():
+        if key not in self.graph.keys():
             return None
-        return self.stages[key]
+        return self.graph[key]
 
     def get_stage_name_by_id(self, stage_id: int) -> str:
         """Returns the stage name given its number.
@@ -72,29 +73,16 @@ class Authentication:
           A string with the name of the Flow in the position "stage_id".
 
         """
-        return list(self.stages.keys())[stage_id]
+        return self.graph.vs[stage_id]["name"]
 
     def get_stage_index(self, name: str) -> int:
         """Returns the index of the stage given its name.
 
 
-        Each authentication step is given an index based on its position
-        in the "_authentication" list. This function returns the index of
-        the Flow based on its name.
-
-        Args:
-          name:
-            A string with the name of the Flow.
-
         Returns:
           An integer with the index of the Flow with the specified "name".
         """
-        keys = list(self.stages.keys())
-
-        if not name or name not in keys:
-            return -1
-
-        return keys.index(name)
+        return self.graph.vs[::]["name"].index(name)
 
     def run_all(self, user: User, config: Config) -> None:
         """Runs all authentication stages.
@@ -167,9 +155,9 @@ class Authentication:
         stage: Optional[Flow]
         if isinstance(stage_id, int):
             stage_name = self.get_stage_name_by_id(stage_id)
-            stage = self.stages[stage_name]
+            stage = self.graph[stage_name]
         elif isinstance(stage_id, str):
-            stage = self.stages[stage_id]
+            stage = self.graph[stage_id]
 
         if not stage:
             logging.critical("Stage %s not defined. Cannot continue", stage_id)

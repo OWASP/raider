@@ -92,6 +92,13 @@ class Flow:
         self.request = request
         self.response: Optional[requests.models.Response] = None
 
+    def print(self, spacing:int=0) -> None:
+        print(" " * spacing
+              + "\x1b[1;30;44m"
+              + self.request
+              + "\x1b[0m")
+        
+
     def execute(self, user: User, config: Config) -> None:
         """Sends the request and extracts the outputs.
 

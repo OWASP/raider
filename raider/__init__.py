@@ -2,7 +2,7 @@
 """
 
 from raider.__version__ import __version__
-from raider.application import Application
+from raider.projects import Project
 from raider.authentication import Authentication
 from raider.config import Config
 from raider.flow import Flow

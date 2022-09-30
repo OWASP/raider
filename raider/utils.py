@@ -27,6 +27,17 @@ import hy
 
 from raider.__version__ import __version__
 
+colors = {"BLACK-BLUE-B": "\x1b[1;30;44m",
+          "BLUE-BLACK-B": "\x1b[1;34;40m",
+          "CYAN-BLACK-B": "\x1b[1;96;40m",
+          "CYAN-BLACK":   "\x1b[0;96;40m",
+          "RED-BLACK":    "\x1b[0;31;40m",
+          "GREEN-BLACK":  "\x1b[0;32;40m",
+          "RED-BLACK-B":  "\x1b[1;31;40m",
+          "BLACK-BLUE-B": "\x1b[1;30;44m",
+          "BLACK-BLUE-B": "\x1b[1;30;44m",
+          }
+
 
 def default_user_agent() -> str:
     """Gets the default user agent.
@@ -147,7 +158,7 @@ def import_raider_objects() -> Dict[str, Any]:
             expr = hy.read_str(
                 "(import raider." + module + " [" + classes + "])"
             )
-        logging.debug("expr = %s", str(expr).replace("\n", " "))
+        logging.debug("expr = %s", str(expr))
         hy.eval(expr)
 
     return locals()
@@ -316,7 +327,7 @@ def eval_file(
             while True:
                 expr = hy.read(hyfile)
                 if expr:
-                    logging.debug("expr = %s", str(expr).replace("\n", " "))
+                    logging.debug("expr = %s", str(expr))
                     hy.eval(expr)
         except EOFError:
             logging.debug("Finished processing %s", filename)
@@ -373,6 +384,28 @@ def list_projects() -> List[str]:
         if not filename[0] == "_":
             projects.append(filename)
     return projects
+
+def list_hyfiles(project:str) -> List[str]:
+    """List hyfiles for a project.
+
+    This function returns the list of hyfiles that have been
+    configured in Raider for the provided project.
+
+    Args:
+      project:
+        A string with the project name.
+
+    Returns:
+      A list with the strings of the project found in the
+      configuration directory.
+
+    """
+    hyfiles = []
+    project_files = sorted(os.listdir(get_project_dir(project)))
+    for confile in project_files:
+        if confile.endswith(".hy") and not confile.startswith("."):
+            hyfiles.append(confile)
+    return hyfiles
 
 
 def match_tag(html_tag: bs4.element.Tag, attributes: Dict[str, str]) -> bool:
@@ -457,3 +490,13 @@ def parse_json_filter(raw: str) -> List[str]:
         parsed_filter += parsed_item
 
     return parsed_filter
+
+
+def colored_hyfile(filename:str) -> str:
+    if re.match("^[0-9][0-9]_.*\.hy$", filename):
+        color = colors["CYAN-BLACK"]
+    elif re.match("^_.*\.hy$", filename):
+        color = colors["RED-BLACK"]
+    else:
+        color = colors["GREEN-BLACK"]
+    return color + filename + "\x1b[0m"

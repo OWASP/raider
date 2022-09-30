@@ -21,71 +21,44 @@ import argparse
 from IPython import embed
 
 from raider.raider import Raider
-from raider.utils import list_projects
+from raider.utils import list_projects, list_hyfiles
+from raider.parsers.show import add_show_parser, run_show_command
+from raider.parsers.shell import add_shell_parser, run_shell_command
+from raider.parsers.config import add_config_parser, run_config_command
+from raider.parsers.authenticate import add_authenticate_parser, run_authenticate_command
+from raider.parsers.run_flow import add_run_flow_parser, run_run_flow_command
+from raider.parsers.run_graph import add_run_graph_parser, run_run_graph_command
+from raider.parsers.inspect import add_inspect_parser, run_inspect_command
 
 
 def main() -> None:
     """Parses command line interface arguments."""
     parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "--proxy", help="Send the request through the specified web proxy"
-    )
-    parser.add_argument(
-        "--verbose", "-v", action="store_true", help="Verbose mode"
-    )
-    parser.add_argument("--user", help="Set up the active user")
-
     subparsers = parser.add_subparsers(help="Command", dest="command")
 
-    shell_parser = subparsers.add_parser(
-        "shell", help="Run commands in an interactive shell"
-    )
-    auth_parser = subparsers.add_parser(
-        "authenticate", help="Authenticate and exit"
-    )
-    func_parser = subparsers.add_parser(
-        "run",
-        help="Authenticate, run function (or chain of functions) and exit",
-    )
-    subparsers.add_parser("ls", help="List configured projects")
+    commands = {
+        "show": run_show_command,
+        "shell": run_shell_command,
+        "config": run_config_command,
+        "authenticate": run_authenticate_command,
+        "run_flow": run_run_flow_command,
+        "run_graph": run_run_graph_command,
+        "inspect": run_inspect_command,
+    }
 
-    shell_parser.add_argument("project", help="Project name")
-    auth_parser.add_argument("project", help="Project name")
-    func_parser.add_argument("project", help="Project name")
-
-    func_parser.add_argument("function", help="Function name to run")
-    func_parser.add_argument(
-        "--chain", help="Run subsequent chained functions", action="store_true"
-    )
+    add_show_parser(subparsers)
+    add_authenticate_parser(subparsers)
+    add_config_parser(subparsers)
+    add_inspect_parser(subparsers)
+    add_run_flow_parser(subparsers)
+    add_run_graph_parser(subparsers)
+    add_shell_parser(subparsers)
 
     args = parser.parse_args()
-
-    if args.command in ["shell", "authenticate", "run"]:
-        raider = Raider(args.project)
-        if args.proxy:
-            raider.config.proxy = args.proxy
-        else:
-            raider.config.proxy = None
-
-        if args.user:
-            raider.authenticate(args.user)
-        else:
-            raider.authenticate()
-
-        if args.command == "run":
-            if args.chain:
-                raider.run_chain(args.function)
-            else:
-                raider.run_function(args.function)
-
-        if args.command == "shell":
-            embed(colors="neutral")
-
-    elif args.command == "ls":
-        print("Configured projects")
-        for item in list_projects():
-            print("  - " + item)
-
+    if not args.command:
+        parser.print_help()
+    else:
+        commands[args.command](args)
 
 if __name__ == "__main__":
     main()

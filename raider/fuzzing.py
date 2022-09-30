@@ -22,7 +22,7 @@ from copy import deepcopy
 from functools import partial
 from typing import Callable, List, Optional
 
-from raider.application import Application
+from raider.projects import Project
 from raider.flow import Flow
 from raider.plugins.common import Plugin
 
@@ -35,7 +35,7 @@ class Fuzz:
 
     def __init__(
         self,
-        application: Application,
+        project: Project,
         flow: Flow,
         fuzzing_point: str,
         flags: int = 0,
@@ -50,8 +50,8 @@ class Fuzz:
         of the plugin.
 
         Args:
-          application:
-            An :class:`Application <raider.application.Application>`
+          project:
+            An :class:`Project <raider.projects.Project>`
             object.
           flow:
             A :class:`Flow <raider.flow.Flow>` object which needs to be
@@ -68,7 +68,7 @@ class Fuzz:
 
         """
 
-        self.application = application
+        self.project = project
         self.flow = flow
         self.fuzzing_point = fuzzing_point
         self.flags = flags
@@ -172,8 +172,8 @@ class Fuzz:
             **Raider** configuration.
 
         """
-        user = self.application.active_user
-        config = self.application.config
+        user = self.project.active_user
+        config = self.project.config
         flow = deepcopy(self.flow)
         fuzzing_plugin = self.get_fuzzing_input(flow)
         flow.get_plugin_values(user)
@@ -210,9 +210,9 @@ class Fuzz:
         stage, then continue fuzzing.
 
         """
-        authentication = self.application.authentication
-        user = self.application.active_user
-        config = self.application.config
+        authentication = self.project.authentication
+        user = self.project.active_user
+        config = self.project.config
 
         while authentication.current_stage_name != self.flow.name:
             authentication.run_current_stage(user, config)
