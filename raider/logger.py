@@ -1,5 +1,7 @@
 import logging
+
 from raider.utils import colors
+
 
 class CustomFormatter(logging.Formatter):
     grey = colors["GRAY-BLACK"]
@@ -15,7 +17,7 @@ class CustomFormatter(logging.Formatter):
         logging.INFO: cyan + format + reset,
         logging.WARNING: yellow + format + reset,
         logging.ERROR: red + format + reset,
-        logging.CRITICAL: bold_red + format + reset
+        logging.CRITICAL: bold_red + format + reset,
     }
 
     def format(self, record):

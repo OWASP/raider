@@ -15,8 +15,9 @@
 
 """Data structures used in Raider.
 """
-import igraph
 from typing import Any, Dict, Iterator, List, Optional, Tuple
+
+import igraph
 
 from raider.plugins.basic.cookie import Cookie
 from raider.plugins.basic.header import Header
@@ -259,12 +260,11 @@ class FlowGraph(igraph.Graph):
         """
         super().__init__(directed=True)
 
-    def add_flow(self, key:str, value:str) -> None:
+    def add_flow(self, key: str, value: str) -> None:
         self.add_vertices(1)
-        index = self.vcount()-1
+        index = self.vcount() - 1
         self.vs[index]["name"] = key
         self.vs[index]["object"] = value
-            
 
     def __getitem__(self, name: Any) -> Any:
         """Getter to return a Flow by the name."""
@@ -273,7 +273,7 @@ class FlowGraph(igraph.Graph):
             return self.vs[flow_id]["object"]
         return None
 
-    def get_flow_id_by_name(self, flow_name:str) -> int:
+    def get_flow_id_by_name(self, flow_name: str) -> int:
         return self.keys.index(flow_name)
 
     @property

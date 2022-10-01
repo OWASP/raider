@@ -19,11 +19,11 @@
 import sys
 from typing import Optional
 
-from raider.projects import Project, Projects
 from raider.authentication import Authentication
 from raider.config import Config
 from raider.fuzzing import Fuzz
 from raider.plugins.common import Plugin
+from raider.projects import Project, Projects
 from raider.user import User
 
 
@@ -52,7 +52,9 @@ class Raider:
     # Session was loaded and the information is already in userdata
     SESSION_LOADED = 0x01
 
-    def __init__(self, name: Optional[str] = None, flags: int = 0, args=None) -> None:
+    def __init__(
+        self, name: Optional[str] = None, flags: int = 0, args=None
+    ) -> None:
         """Initializes the Raider object.
 
         Initializes the main entry point for Raider. If the name of the

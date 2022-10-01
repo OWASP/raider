@@ -23,9 +23,10 @@ from typing import Any, Callable, List, Optional, Union
 
 import requests
 
-from raider.plugins.common import Plugin
 from raider.logger import get_logger
+from raider.plugins.common import Plugin
 from raider.utils import colored_text
+
 
 def execute_actions(
     config,
@@ -494,7 +495,11 @@ class Print(Operation):
             if isinstance(item, str):
                 print(item)
             else:
-                print(colored_text(item.name + " = " + str(item.value), "YELLOW-BLACK-B"))
+                print(
+                    colored_text(
+                        item.name + " = " + str(item.value), "YELLOW-BLACK-B"
+                    )
+                )
 
     def __str__(self) -> str:
         """Returns a string representation of the Print Operation."""
@@ -545,12 +550,24 @@ class Print(Operation):
                 for header in headers:
                     value = response.headers.get(header)
                     if value:
-                        print(": ".join([colored_text(header, "CYAN-BLACK-B"),
-                                         colored_text(value, "BLUE-BLACK-B")]))
+                        print(
+                            ": ".join(
+                                [
+                                    colored_text(header, "CYAN-BLACK-B"),
+                                    colored_text(value, "BLUE-BLACK-B"),
+                                ]
+                            )
+                        )
             else:
                 for name, value in response.headers.items():
-                    print(": ".join([colored_text(name, "CYAN-BLACK-B"),
-                                     colored_text(value, "BLUE-BLACK-B")]))
+                    print(
+                        ": ".join(
+                            [
+                                colored_text(name, "CYAN-BLACK-B"),
+                                colored_text(value, "BLUE-BLACK-B"),
+                            ]
+                        )
+                    )
 
         operation = cls(
             function=partial(print_headers, headers=headers),
@@ -589,12 +606,24 @@ class Print(Operation):
                 for cookie in cookies:
                     value = response.cookies.get(cookie)
                     if value:
-                        print(": ".join([colored_text(cookie, "CYAN-BLACK-B"),
-                                         colored_text(value, "BLUE-BLACK-B")]))
+                        print(
+                            ": ".join(
+                                [
+                                    colored_text(cookie, "CYAN-BLACK-B"),
+                                    colored_text(value, "BLUE-BLACK-B"),
+                                ]
+                            )
+                        )
             else:
                 for name, value in response.cookies.items():
-                    print(": ".join([colored_text(name, "CYAN-BLACK-B"),
-                                     colored_text(value, "BLUE-BLACK-B")]))
+                    print(
+                        ": ".join(
+                            [
+                                colored_text(name, "CYAN-BLACK-B"),
+                                colored_text(value, "BLUE-BLACK-B"),
+                            ]
+                        )
+                    )
 
         operation = cls(
             function=partial(print_cookies, cookies=cookies),

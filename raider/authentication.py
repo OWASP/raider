@@ -16,9 +16,10 @@
 """Authentication class responsible for running the defined stages.
 """
 
-import igraph
 import sys
 from typing import Dict, Optional, Union
+
+import igraph
 
 import raider.plugins as Plugins
 from raider.config import Config
@@ -161,7 +162,9 @@ class Authentication:
             stage = self.graph[stage_id]
 
         if not stage:
-            self.logger.critical("Stage %s not defined. Cannot continue", stage_id)
+            self.logger.critical(
+                "Stage %s not defined. Cannot continue", stage_id
+            )
             sys.exit()
 
         stage.execute(user, config)

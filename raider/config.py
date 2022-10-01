@@ -16,24 +16,24 @@
 """Config class holding global Raider configuration.
 """
 
+import logging
 import os
 import sys
-import logging
 from typing import Any, Dict
 
+from raider.logger import get_logger
 from raider.utils import (
+    colors,
     create_hy_expression,
     default_user_agent,
     eval_file,
     eval_project_file,
     get_config_file,
     get_project_dir,
-    list_projects,
     list_hyfiles,
-    colors,
+    list_projects,
 )
 
-from raider.logger import get_logger
 
 class Config:
     """Class dealing with global Raider configuration.
@@ -88,7 +88,6 @@ class Config:
             )
             sys.exit()
 
-
     def write_config_file(self) -> None:
         """Writes global configuration to common.hy.
 
@@ -115,14 +114,12 @@ class Config:
         print("user_agent: " + self.user_agent)
         print("active_project: " + str(self.active_project))
 
-
-
     @property
     def proxy(self):
         return self.output.get("proxy", None)
 
     @proxy.setter
-    def proxy(self, value:str):
+    def proxy(self, value: str):
         self.output["proxy"] = value
 
     @property
@@ -130,7 +127,7 @@ class Config:
         return self.output.get("verify", False)
 
     @verify.setter
-    def verify(self, value:str):
+    def verify(self, value: str):
         self.output["verify"] = value
 
     @property
@@ -138,7 +135,7 @@ class Config:
         return self.output.get("loglevel", "WARNING")
 
     @loglevel.setter
-    def loglevel(self, value:str):
+    def loglevel(self, value: str):
         self.output["loglevel"] = value
 
     @property
@@ -146,7 +143,7 @@ class Config:
         return self.output.get("user_agent", default_user_agent())
 
     @user_agent.setter
-    def user_agent(self, value:str):
+    def user_agent(self, value: str):
         self.output["user_agent"] = value
 
     @property
@@ -154,6 +151,5 @@ class Config:
         return self.output.get("active_project", None)
 
     @active_project.setter
-    def active_project(self, value:str):
+    def active_project(self, value: str):
         self.output["active_project"] = value
-        

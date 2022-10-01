@@ -22,9 +22,9 @@ from copy import deepcopy
 from functools import partial
 from typing import Callable, List, Optional
 
-from raider.projects import Project
 from raider.flow import Flow
 from raider.plugins.common import Plugin
+from raider.projects import Project
 
 
 class Fuzz:

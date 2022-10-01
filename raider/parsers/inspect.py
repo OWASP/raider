@@ -1,8 +1,13 @@
-from raider import Raider
 import argparse
 
+from raider import Raider
+
+
 def add_inspect_parser(parser) -> None:
-    inspect_parser = parser.add_parser("inspect", help="Inspect Raider configuration")
+    inspect_parser = parser.add_parser(
+        "inspect", help="Inspect Raider configuration"
+    )
+
 
 def run_inspect_command(args):
     raider = Raider()

@@ -17,9 +17,10 @@
 """
 
 
-import igraph
 import sys
 from typing import Dict, Optional
+
+import igraph
 
 from raider.config import Config
 from raider.flow import Flow

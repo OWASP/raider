@@ -16,17 +16,25 @@
 """Project classes holding project configuration.
 """
 
+from typing import Dict, List, Optional
+
 import igraph
 
-from typing import Optional, List, Dict
-
 from raider.authentication import Authentication
+from raider.config import Config
 from raider.flow import AuthFlow, Flow
 from raider.functions import Functions
+from raider.structures import DataStore, FlowGraph
 from raider.user import Users
-from raider.config import Config
-from raider.structures import FlowGraph, DataStore
-from raider.utils import create_hy_expression, eval_file, get_project_file, list_projects, list_hyfiles, colored_hyfile, eval_project_file
+from raider.utils import (
+    colored_hyfile,
+    create_hy_expression,
+    eval_file,
+    eval_project_file,
+    get_project_file,
+    list_hyfiles,
+    list_projects,
+)
 
 
 class Project:
@@ -110,7 +118,9 @@ class Project:
         auth_graph = FlowGraph()
         func_graph = FlowGraph()
 
-        self.logger.debug("Loading data from hyfiles for %s project", self.name)
+        self.logger.debug(
+            "Loading data from hyfiles for %s project", self.name
+        )
         for hyfile in list_hyfiles(self.name):
             self.logger.debug("Loading data from %s", hyfile)
             env_old = shared_locals.copy()
@@ -123,19 +133,16 @@ class Project:
                 if isinstance(shared_locals[key], Flow):
                     flows[hyfile].append(key)
 
-        
         for value in shared_locals.values():
             if isinstance(value, Users):
                 self.users = value
 
-        if not hasattr(self, "users"):
-            self.users = Users()
         active_user = self.users.active_user
         if active_user and active_user in self.users:
             self.active_user = self.users[active_user]
         else:
             self.active_user = self.users.active
-    
+
         for key, value in shared_locals.items():
             if isinstance(value, AuthFlow):
                 auth_graph.add_flow(key, value)
@@ -147,7 +154,6 @@ class Project:
         self.flows = flows
 
         return shared_locals
-
 
     def authenticate(self, username: str = None) -> None:
         """Authenticates the user.
@@ -252,25 +258,22 @@ class Project:
             self.logger.debug("value = %s", str(value))
             proj_file.write(value)
 
-    def print(self, spacing:int=0) -> None:
-        print(" " * spacing
-              + "\x1b[1;30;44m"
-              + self.name
-              + "\x1b[0m")
+    def print(self, spacing: int = 0) -> None:
+        print(" " * spacing + "\x1b[1;30;44m" + self.name + "\x1b[0m")
 
-    def print_hyfiles(self, matches:List[str]=None, spacing:int=0) -> None:
+    def print_hyfiles(
+        self, matches: List[str] = None, spacing: int = 0
+    ) -> None:
         for hyfile in self.hyfiles:
             if not matches or hyfile in matches:
-                print(" " * spacing
-                      + "- "
-                      + colored_hyfile(hyfile))
+                print(" " * spacing + "- " + colored_hyfile(hyfile))
 
-    def print_flows(self, hyfile:str, matches:List[str]=None, spacing:int=0) -> None:
+    def print_flows(
+        self, hyfile: str, matches: List[str] = None, spacing: int = 0
+    ) -> None:
         for flow in self.flows[hyfile]:
             if not matches or flow in matches:
-                print(" " * spacing
-                      + "• "
-                      + (flow))
+                print(" " * spacing + "• " + (flow))
 
     @property
     def hyfiles(self):
@@ -285,7 +288,7 @@ class Projects(DataStore):
 
     """
 
-    def __init__(self, config:Config, active_project: str = None) -> None:
+    def __init__(self, config: Config, active_project: str = None) -> None:
         """Initializes a Projects object.
 
         Given a list of Project objects, create the Projects DataStore
@@ -307,8 +310,7 @@ class Projects(DataStore):
 
         super().__init__(values)
 
-
-    def search_projects(self, search:str=None) -> List[str]:
+    def search_projects(self, search: str = None) -> List[str]:
         matches = set()
         if not search:
             matches = sorted(self.keys())
@@ -318,11 +320,12 @@ class Projects(DataStore):
             if search.lower() in project.name.lower():
                 matches.add(project.name)
 
-
         matches = sorted(list(matches))
         return matches
 
-    def search_hyfiles(self, projects:List[str], search:str=None) -> List[str]:
+    def search_hyfiles(
+        self, projects: List[str], search: str = None
+    ) -> List[str]:
         matches = {}
         for project in projects:
             project_hyfiles = sorted(list_hyfiles(project))
@@ -336,20 +339,23 @@ class Projects(DataStore):
 
         return matches
 
-    def search_flows(self, hyfiles:Dict[str, List[str]], search:str=None) -> List[str]:
+    def search_flows(
+        self, hyfiles: Dict[str, List[str]], search: str = None
+    ) -> List[str]:
         matches = {}
         for project in hyfiles.keys():
             for hyfile in hyfiles[project]:
                 if not search:
                     matches[project] = {}
                     matches[project][hyfile] = []
-                    matches[project][hyfile].append(self[project].flows[hyfile])
+                    matches[project][hyfile].append(
+                        self[project].flows[hyfile]
+                    )
                 else:
                     for flow in self[project].flows[hyfile]:
                         if search.lower() in flow.lower():
                             matches[project] = {}
                             matches[project][hyfile] = []
                             matches[project][hyfile].append(flow)
-    
+
         return matches
-    

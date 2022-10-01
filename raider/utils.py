@@ -28,23 +28,25 @@ import hy
 from raider.__version__ import __version__
 
 colors = {
-    "BLACK-BLUE-B": 	"\x1b[1;30;44m",
-    "BLUE-BLACK-B": 	"\x1b[1;34;40m",
-    "CYAN-BLACK":   	"\x1b[0;96;40m",
-    "CYAN-BLACK-B": 	"\x1b[1;96;40m",
-    "GRAY-BLACK": 	"\x1b[0;90;40m",
-    "GREEN-BLACK":  	"\x1b[0;32;40m",
-    "RED-BLACK":    	"\x1b[0;31;40m",
-    "BLUE-BLACK":    	"\x1b[0;34;40m",
-    "BLUE-BLACK-B":    	"\x1b[1;34;40m",
-    "RED-BLACK-B":  	"\x1b[1;31;40m",
-    "YELLOW-BLACK":  	"\x1b[0;33;40m",
-    "YELLOW-BLACK-B":  	"\x1b[1;33;40m",
-    "YELLOW-GRAY":  	"\x1b[0;33;100m",
+    "BLACK-BLUE-B": "\x1b[1;30;44m",
+    "BLUE-BLACK-B": "\x1b[1;34;40m",
+    "CYAN-BLACK": "\x1b[0;96;40m",
+    "CYAN-BLACK-B": "\x1b[1;96;40m",
+    "GRAY-BLACK": "\x1b[0;90;40m",
+    "GREEN-BLACK": "\x1b[0;32;40m",
+    "RED-BLACK": "\x1b[0;31;40m",
+    "BLUE-BLACK": "\x1b[0;34;40m",
+    "BLUE-BLACK-B": "\x1b[1;34;40m",
+    "RED-BLACK-B": "\x1b[1;31;40m",
+    "YELLOW-BLACK": "\x1b[0;33;40m",
+    "YELLOW-BLACK-B": "\x1b[1;33;40m",
+    "YELLOW-GRAY": "\x1b[0;33;100m",
 }
 
-def colored_text(text:str, color:str):
+
+def colored_text(text: str, color: str):
     return colors[color] + text + "\x1b[0m"
+
 
 def default_user_agent() -> str:
     """Gets the default user agent.
@@ -398,7 +400,8 @@ def list_projects() -> List[str]:
             projects.append(filename)
     return projects
 
-def list_hyfiles(project:str) -> List[str]:
+
+def list_hyfiles(project: str) -> List[str]:
     """List hyfiles for a project.
 
     This function returns the list of hyfiles that have been
@@ -505,7 +508,7 @@ def parse_json_filter(raw: str) -> List[str]:
     return parsed_filter
 
 
-def colored_hyfile(filename:str) -> str:
+def colored_hyfile(filename: str) -> str:
     if re.match("^[0-9][0-9]_.*\.hy$", filename):
         color = colors["CYAN-BLACK"]
     elif re.match("^_.*\.hy$", filename):
@@ -513,4 +516,3 @@ def colored_hyfile(filename:str) -> str:
     else:
         color = colors["GREEN-BLACK"]
     return color + filename + "\x1b[0m"
-
