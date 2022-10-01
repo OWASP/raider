@@ -50,7 +50,7 @@
 pkce = "^1.0.3"
 
 [tool.poetry.dev-dependencies]
-    mypy = "^0.961"
+    mypy = "^0.981"
     pre-commit = "^2.20.0"
     flake8 = "^4.0.1"
     pylint = "^2.14.4"
