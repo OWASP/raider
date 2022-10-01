@@ -17,7 +17,6 @@
 """
 
 import igraph
-import logging
 
 from typing import Optional, List, Dict
 
@@ -124,16 +123,18 @@ class Project:
                 if isinstance(shared_locals[key], Flow):
                     flows[hyfile].append(key)
 
+        
         for value in shared_locals.values():
             if isinstance(value, Users):
                 self.users = value
 
-        if hasattr(self, "users"):
-            active_user = self.users.active_user
-            if active_user and active_user in self.users:
-                self.active_user = self.users[active_user]
-            else:
-                self.active_user = self.users.active
+        if not hasattr(self, "users"):
+            self.users = Users()
+        active_user = self.users.active_user
+        if active_user and active_user in self.users:
+            self.active_user = self.users[active_user]
+        else:
+            self.active_user = self.users.active
     
         for key, value in shared_locals.items():
             if isinstance(value, AuthFlow):
@@ -141,8 +142,8 @@ class Project:
             elif isinstance(value, Flow):
                 func_graph.add_flow(key, value)
 
-        self.authentication = Authentication(auth_graph)
-        self.functions = Functions(func_graph)
+        self.authentication = Authentication(self.config, auth_graph)
+        self.functions = Functions(self.config, func_graph)
         self.flows = flows
 
         return shared_locals
@@ -204,8 +205,8 @@ class Project:
             value += create_hy_expression("_cookies", cookies)
             value += create_hy_expression("_headers", headers)
             value += create_hy_expression("_data", data)
-            logging.debug("Writing to session file %s", filename)
-            logging.debug("value = %s", str(value))
+            self.logger.debug("Writing to session file %s", filename)
+            self.logger.debug("value = %s", str(value))
             sess_file.write(value)
 
     def load_session_file(self) -> None:
@@ -247,8 +248,8 @@ class Project:
             value += create_hy_expression(
                 "_active_user", self.active_user.username
             )
-            logging.debug("Writing to session file %s", filename)
-            logging.debug("value = %s", str(value))
+            self.logger.debug("Writing to session file %s", filename)
+            self.logger.debug("value = %s", str(value))
             proj_file.write(value)
 
     def print(self, spacing:int=0) -> None:

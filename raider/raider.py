@@ -16,7 +16,6 @@
 """Main object used to perform common actions.
 """
 
-import logging
 import sys
 from typing import Optional
 
@@ -71,6 +70,7 @@ class Raider:
 
         """
         self.config = Config()
+        self.logger = self.config.logger
         self.args = args
         self._project_name = name or self.config.active_project
         self.projects = Projects(self.config, self._project_name)
@@ -113,7 +113,7 @@ class Raider:
 
         """
         if not hasattr(self, "functions"):
-            logging.critical("No functions defined. Cannot continue.")
+            self.logger.critical("No functions defined. Cannot continue.")
             sys.exit()
 
         if self.session_loaded:
@@ -134,7 +134,7 @@ class Raider:
 
         """
         if not hasattr(self, "functions"):
-            logging.critical("No functions defined. Cannot continue.")
+            self.logger.critical("No functions defined. Cannot continue.")
             sys.exit()
 
         if self.session_loaded:
@@ -188,7 +188,7 @@ class Raider:
                 )
 
         else:
-            logging.critical(
+            self.logger.critical(
                 "Function %s not defined, cannot fuzz!", flow_name
             )
             sys.exit()
@@ -205,7 +205,7 @@ class Raider:
         """
         flow = self.functions[function]
         if not flow:
-            logging.critical(
+            self.logger.critical(
                 "Function %s not found. Cannot continue.", function
             )
             sys.exit()

@@ -27,17 +27,24 @@ import hy
 
 from raider.__version__ import __version__
 
-colors = {"BLACK-BLUE-B": "\x1b[1;30;44m",
-          "BLUE-BLACK-B": "\x1b[1;34;40m",
-          "CYAN-BLACK-B": "\x1b[1;96;40m",
-          "CYAN-BLACK":   "\x1b[0;96;40m",
-          "RED-BLACK":    "\x1b[0;31;40m",
-          "GREEN-BLACK":  "\x1b[0;32;40m",
-          "RED-BLACK-B":  "\x1b[1;31;40m",
-          "BLACK-BLUE-B": "\x1b[1;30;44m",
-          "BLACK-BLUE-B": "\x1b[1;30;44m",
-          }
+colors = {
+    "BLACK-BLUE-B": 	"\x1b[1;30;44m",
+    "BLUE-BLACK-B": 	"\x1b[1;34;40m",
+    "CYAN-BLACK":   	"\x1b[0;96;40m",
+    "CYAN-BLACK-B": 	"\x1b[1;96;40m",
+    "GRAY-BLACK": 	"\x1b[0;90;40m",
+    "GREEN-BLACK":  	"\x1b[0;32;40m",
+    "RED-BLACK":    	"\x1b[0;31;40m",
+    "BLUE-BLACK":    	"\x1b[0;34;40m",
+    "BLUE-BLACK-B":    	"\x1b[1;34;40m",
+    "RED-BLACK-B":  	"\x1b[1;31;40m",
+    "YELLOW-BLACK":  	"\x1b[0;33;40m",
+    "YELLOW-BLACK-B":  	"\x1b[1;33;40m",
+    "YELLOW-GRAY":  	"\x1b[0;33;100m",
+}
 
+def colored_text(text:str, color:str):
+    return colors[color] + text + "\x1b[0m"
 
 def default_user_agent() -> str:
     """Gets the default user agent.
@@ -151,6 +158,7 @@ def import_raider_objects() -> Dict[str, Any]:
         ),
     }
 
+    logging.debug("Loading Raider objects:")
     for module, classes in hy_imports.items():
         if classes == "*":
             expr = hy.read_str("(import raider." + module + " *)")
@@ -160,6 +168,11 @@ def import_raider_objects() -> Dict[str, Any]:
             )
         logging.debug("expr = %s", str(expr))
         hy.eval(expr)
+
+    logging.debug("Loading Macros:")
+    expr = hy.read_str("(require raider.macros *)")
+    logging.debug("expr = %s", str(expr))
+    hy.eval(expr)
 
     return locals()
 
@@ -500,3 +513,4 @@ def colored_hyfile(filename:str) -> str:
     else:
         color = colors["GREEN-BLACK"]
     return color + filename + "\x1b[0m"
+

@@ -17,7 +17,6 @@
 """
 
 import igraph
-import logging
 import sys
 from typing import Dict, Optional, Union
 
@@ -39,7 +38,7 @@ class Authentication:
 
     """
 
-    def __init__(self, graph: igraph.Graph) -> None:
+    def __init__(self, config, graph: igraph.Graph) -> None:
         """Initializes the Authentication object.
 
         Creates an object to handle the authentication process.
@@ -51,6 +50,8 @@ class Authentication:
 
         """
         self.graph = graph
+        self.config = config
+        self.logger = config.logger
         self._current_stage = 0
 
     def __getitem__(self, key: str) -> Optional[AuthFlow]:
@@ -119,7 +120,7 @@ class Authentication:
             A Config object with the global Raider settings.
 
         """
-        logging.info(
+        self.logger.info(
             "Running stage %s",
             self.get_stage_name_by_id(self._current_stage),
         )
@@ -160,7 +161,7 @@ class Authentication:
             stage = self.graph[stage_id]
 
         if not stage:
-            logging.critical("Stage %s not defined. Cannot continue", stage_id)
+            self.logger.critical("Stage %s not defined. Cannot continue", stage_id)
             sys.exit()
 
         stage.execute(user, config)

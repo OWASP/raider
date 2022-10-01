@@ -91,6 +91,7 @@ class Flow:
 
         self.request = request
         self.response: Optional[requests.models.Response] = None
+        self.config = None
 
     def print(self, spacing:int=0) -> None:
         print(" " * spacing
@@ -117,6 +118,7 @@ class Flow:
             The global Raider configuration.
 
         """
+        self.config = config
         self.response = self.request.send(user, config)
         if self.outputs:
             for output in self.outputs:
@@ -157,11 +159,15 @@ class Flow:
 
         if self.operations:
             for item in self.operations:
-                next_stage = item.run(self.response)
+                next_stage = item.run(self.config, self.response)
                 if next_stage:
                     break
 
         return next_stage
+
+    @property
+    def logger(self):
+        return self.config.logger
 
 
 class AuthFlow(Flow):

@@ -16,9 +16,9 @@
 """Config class holding global Raider configuration.
 """
 
-import logging
 import os
 import sys
+import logging
 from typing import Any, Dict
 
 from raider.utils import (
@@ -29,9 +29,11 @@ from raider.utils import (
     get_config_file,
     get_project_dir,
     list_projects,
-    list_hyfiles
+    list_hyfiles,
+    colors,
 )
 
+from raider.logger import get_logger
 
 class Config:
     """Class dealing with global Raider configuration.
@@ -77,10 +79,8 @@ class Config:
             output = {}
 
         self.output = output
-        self.project_config: Dict[str, Any] = {}
 
-        self.logger = logging.getLogger()
-        self.logger.setLevel(self.loglevel)
+        self.logger = get_logger(self.loglevel, "raider")
 
         if not list_projects():
             self.logger.critical(
@@ -109,11 +109,13 @@ class Config:
 
     def print_config(self) -> None:
         """Prints current configuration."""
-        print("proxy: " + self.proxy)
+        print("proxy: " + str(self.proxy))
         print("verify: " + str(self.verify))
         print("loglevel: " + self.loglevel)
         print("user_agent: " + self.user_agent)
-        print("active_project: " + self.active_project)
+        print("active_project: " + str(self.active_project))
+
+
 
     @property
     def proxy(self):
@@ -137,7 +139,7 @@ class Config:
 
     @loglevel.setter
     def loglevel(self, value:str):
-        self.output["logger"] = value
+        self.output["loglevel"] = value
 
     @property
     def user_agent(self):

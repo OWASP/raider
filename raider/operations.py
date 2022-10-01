@@ -16,7 +16,6 @@
 """Operations performed on Flows after the response is received.
 """
 
-import logging
 import re
 import sys
 from functools import partial
@@ -25,9 +24,11 @@ from typing import Any, Callable, List, Optional, Union
 import requests
 
 from raider.plugins.common import Plugin
-
+from raider.logger import get_logger
+from raider.utils import colored_text
 
 def execute_actions(
+    config,
     operations: Union["Operation", List["Operation"]],
     response: requests.models.Response,
 ) -> Optional[str]:
@@ -50,11 +51,11 @@ def execute_actions(
 
     """
     if isinstance(operations, Operation):
-        return operations.run(response)
+        return operations.run(config, response)
 
     if isinstance(operations, list):
         for item in operations:
-            output = item.run(response)
+            output = item.run(config, response)
             if output:
                 return output
 
@@ -127,8 +128,10 @@ class Operation:
         self.flags = flags
         self.action = action
         self.otherwise = otherwise
+        self.config = None
+        self.logger = None
 
-    def run(self, response: requests.models.Response) -> Optional[str]:
+    def run(self, config, response: requests.models.Response) -> Optional[str]:
         """Runs the Operation.
 
         Runs the defined Operation, considering the "flags" set.
@@ -142,7 +145,10 @@ class Operation:
           An optional string with the name of the next stage.
 
         """
-        logging.debug("Running operation %s", str(self))
+        self.config = config
+        if not self.logger:
+            self.logger = get_logger(config.loglevel, "raider.operations")
+        self.logger.debug("Running operation %s", str(self))
         if self.is_conditional:
             return self.run_conditional(response)
         if self.needs_response:
@@ -173,9 +179,9 @@ class Operation:
             check = self.function()
 
         if check and self.action:
-            return execute_actions(self.action, response)
+            return execute_actions(self.config, self.action, response)
         if self.otherwise:
-            return execute_actions(self.otherwise, response)
+            return execute_actions(self.config, self.otherwise, response)
 
         return None
 
@@ -488,7 +494,7 @@ class Print(Operation):
             if isinstance(item, str):
                 print(item)
             else:
-                print(item.name + " = " + str(item.value))
+                print(colored_text(item.name + " = " + str(item.value), "YELLOW-BLACK-B"))
 
     def __str__(self) -> str:
         """Returns a string representation of the Print Operation."""
@@ -499,7 +505,8 @@ class Print(Operation):
         """Classmethod to print the HTTP response body."""
         operation = cls(
             function=lambda response: print(
-                "\nHTTP response body:\n" + response.text
+                colored_text("\nHTTP response body:\n", "YELLOW-BLACK-B")
+                + colored_text(response.text, "YELLOW-GRAY")
             ),
             flags=Operation.NEEDS_RESPONSE,
         )
@@ -532,16 +539,18 @@ class Print(Operation):
 
             """
 
-            print("HTTP response headers:")
+            print(colored_text("HTTP response headers:", "YELLOW-BLACK-B"))
 
             if headers:
                 for header in headers:
                     value = response.headers.get(header)
                     if value:
-                        print(": ".join([header, value]))
+                        print(": ".join([colored_text(header, "CYAN-BLACK-B"),
+                                         colored_text(value, "BLUE-BLACK-B")]))
             else:
                 for name, value in response.headers.items():
-                    print(": ".join([name, value]))
+                    print(": ".join([colored_text(name, "CYAN-BLACK-B"),
+                                     colored_text(value, "BLUE-BLACK-B")]))
 
         operation = cls(
             function=partial(print_headers, headers=headers),
@@ -574,16 +583,18 @@ class Print(Operation):
 
             """
 
-            print("HTTP response cookies:")
+            print(colored_text("HTTP response cookies:", "YELLOW-BLACK-B"))
 
             if cookies:
                 for cookie in cookies:
                     value = response.cookies.get(cookie)
                     if value:
-                        print(": ".join([cookie, value]))
+                        print(": ".join([colored_text(cookie, "CYAN-BLACK-B"),
+                                         colored_text(value, "BLUE-BLACK-B")]))
             else:
                 for name, value in response.cookies.items():
-                    print(": ".join([name, value]))
+                    print(": ".join([colored_text(name, "CYAN-BLACK-B"),
+                                     colored_text(value, "BLUE-BLACK-B")]))
 
         operation = cls(
             function=partial(print_cookies, cookies=cookies),
