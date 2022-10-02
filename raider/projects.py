@@ -60,8 +60,10 @@ class ProjectConfig(Config):
 
     @property
     def active_user(self):
-        username = self.users.active_user
-        return self.users[username]
+        if self.users:
+            username = self.users.active_user
+            return self.users[username]
+        return None
 
 class Project:
     """Class holding all the project related data.
@@ -271,9 +273,10 @@ class Project:
         filename = get_project_file(self.name, "_project.hy")
         value = ""
         with open(filename, "w", encoding="utf-8") as proj_file:
-            value += create_hy_expression(
-                "_active_user", self.config.active_user.username
-            )
+            if self.config.active_user:
+                value += create_hy_expression(
+                    "_active_user", self.config.active_user.username
+                )
             self.logger.debug("Writing to session file %s", filename)
             self.logger.debug("value = %s", str(value))
             proj_file.write(value)

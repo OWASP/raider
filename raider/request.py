@@ -279,7 +279,10 @@ class Request:
 
         """
 
-        userdata = config.active_user.to_dict()
+        if config.active_user:
+            userdata = config.active_user.to_dict()
+        else:
+            userdata = {}
 
         if isinstance(self.url, Plugin):
             self.url = self.url.get_value(userdata)
