@@ -36,6 +36,32 @@ from raider.utils import (
     list_projects,
 )
 
+class ProjectConfig(Config):
+    def __init__(self, config):
+        self.gconfig = config
+        self.logger = config.logger
+        self.users = None
+
+    @property
+    def proxy(self):
+        return self.gconfig.proxy
+
+    @property
+    def verify(self):
+        return self.gconfig.verify
+
+    @property
+    def user_agent(self):
+        return self.gconfig.user_agent
+
+    @property
+    def loglevel(self):
+        return self.gconfig.loglevel
+
+    @property
+    def active_user(self):
+        username = self.users.active_user
+        return self.users[username]
 
 class Project:
     """Class holding all the project related data.
@@ -83,10 +109,10 @@ class Project:
             be selected
 
         """
-        self.config = config
+        self.config = ProjectConfig(config)
         self.name = project
         self.flows = None
-        self.logger = config.logger
+        self.logger = self.config.logger
 
     def load(self):
         """Loads project settings.
@@ -135,13 +161,7 @@ class Project:
 
         for value in shared_locals.values():
             if isinstance(value, Users):
-                self.users = value
-
-        active_user = self.users.active_user
-        if active_user and active_user in self.users:
-            self.active_user = self.users[active_user]
-        else:
-            self.active_user = self.users.active
+                self.config.users = value
 
         for key, value in shared_locals.items():
             if isinstance(value, AuthFlow):
@@ -170,7 +190,7 @@ class Project:
         self.load()
         if username:
             self.active_user = self.users[username]
-        self.authentication.run_all(self.active_user, self.config)
+        self.authentication.run_all(self.config)
         self.write_project_file()
 
     def auth_step(self) -> None:
@@ -252,7 +272,7 @@ class Project:
         value = ""
         with open(filename, "w", encoding="utf-8") as proj_file:
             value += create_hy_expression(
-                "_active_user", self.active_user.username
+                "_active_user", self.config.active_user.username
             )
             self.logger.debug("Writing to session file %s", filename)
             self.logger.debug("value = %s", str(value))
@@ -344,18 +364,13 @@ class Projects(DataStore):
     ) -> List[str]:
         matches = {}
         for project in hyfiles.keys():
+            matches[project] = {}
             for hyfile in hyfiles[project]:
-                if not search:
-                    matches[project] = {}
-                    matches[project][hyfile] = []
-                    matches[project][hyfile].append(
-                        self[project].flows[hyfile]
-                    )
-                else:
-                    for flow in self[project].flows[hyfile]:
+                flows = self[project].flows[hyfile]
+                if flows and not search:
+                    matches[project].update({hyfile: flows})
+                elif flows:
+                    for flow in flows:
                         if search.lower() in flow.lower():
-                            matches[project] = {}
-                            matches[project][hyfile] = []
-                            matches[project][hyfile].append(flow)
-
+                            matches[project].update({hyfile: flows})
         return matches

@@ -278,8 +278,12 @@ class FlowGraph(igraph.Graph):
 
     @property
     def keys(self) -> List[str]:
+        if not self.vs:
+            return []
         return self.vs[::]["name"]
 
     @property
     def values(self) -> List[Any]:
+        if not self.vs:
+            return []
         return self.vs[::]["object"]

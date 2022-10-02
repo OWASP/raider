@@ -259,7 +259,7 @@ class Request:
         return inputs
 
     def process_inputs(
-        self, user: User, config: Config
+        self, config: Config
     ) -> Dict[str, Dict[str, str]]:
         """Process the Request inputs.
 
@@ -279,7 +279,7 @@ class Request:
 
         """
 
-        userdata = user.to_dict()
+        userdata = config.active_user.to_dict()
 
         if isinstance(self.url, Plugin):
             self.url = self.url.get_value(userdata)
@@ -294,7 +294,7 @@ class Request:
         return {"cookies": cookies, "data": httpdata, "headers": headers}
 
     def send(
-        self, user: User, config: Config
+        self, config: Config
     ) -> Optional[requests.models.Response]:
         """Sends the HTTP request.
 
@@ -323,7 +323,7 @@ class Request:
 
         proxies = {"all": config.proxy}
 
-        inputs = self.process_inputs(user, config)
+        inputs = self.process_inputs(config)
         cookies = inputs["cookies"]
         headers = inputs["headers"]
         data = inputs["data"]

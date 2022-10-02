@@ -96,7 +96,7 @@ class Flow:
     def print(self, spacing: int = 0) -> None:
         print(" " * spacing + "\x1b[1;30;44m" + self.request + "\x1b[0m")
 
-    def execute(self, user: User, config: Config) -> None:
+    def execute(self, config: Config) -> None:
         """Sends the request and extracts the outputs.
 
         Given the user in context and the global Raider configuration,
@@ -115,7 +115,7 @@ class Flow:
 
         """
         self.config = config
-        self.response = self.request.send(user, config)
+        self.response = self.request.send(config)
         if self.outputs:
             for output in self.outputs:
                 if output.needs_response:
@@ -124,8 +124,8 @@ class Flow:
                         output.extract_name_from_response(self.response)
                 elif output.depends_on_other_plugins:
                     for item in output.plugins:
-                        item.get_value(user.to_dict())
-                    output.get_value(user.to_dict())
+                        item.get_value(config.user.to_dict())
+                    output.get_value(config.user.to_dict())
 
     def get_plugin_values(self, user: User) -> None:
         """Given a user, get the plugins' values from it.

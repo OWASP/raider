@@ -75,6 +75,8 @@ class Authentication:
           A string with the name of the Flow in the position "stage_id".
 
         """
+        if not self.graph.vs:
+            return None
         return self.graph.vs[stage_id]["name"]
 
     def get_stage_index(self, name: str) -> int:
@@ -86,7 +88,7 @@ class Authentication:
         """
         return self.graph.vs[::]["name"].index(name)
 
-    def run_all(self, user: User, config: Config) -> None:
+    def run_all(self, config: Config) -> None:
         """Runs all authentication stages.
 
         This function will run all authentication stages for the
@@ -102,11 +104,11 @@ class Authentication:
 
         """
         while self._current_stage >= 0:
-            self.run_current_stage(user, config)
+            self.run_current_stage(config)
 
         self._current_stage = 0
 
-    def run_current_stage(self, user: User, config: Config) -> None:
+    def run_current_stage(self, config: Config) -> None:
         """Runs the current stage only.
 
         Authentication class keeps the index of the current stage in the
@@ -125,10 +127,10 @@ class Authentication:
             "Running stage %s",
             self.get_stage_name_by_id(self._current_stage),
         )
-        self.run_stage(self._current_stage, user, config)
+        self.run_stage(self._current_stage, config)
 
     def run_stage(
-        self, stage_id: Union[int, str], user: User, config: Config
+        self, stage_id: Union[int, str], config: Config
     ) -> Optional[str]:
         """Runs one authentication Stage.
 
@@ -167,18 +169,18 @@ class Authentication:
             )
             sys.exit()
 
-        stage.execute(user, config)
+        stage.execute(config)
 
         if stage.outputs:
             for item in stage.outputs:
                 if isinstance(item, Plugins.Cookie):
-                    user.set_cookie(item)
+                    config.active_user.set_cookie(item)
                 elif isinstance(item, Plugins.Header):
-                    user.set_header(item)
+                    config.active_user.set_header(item)
                 elif isinstance(
                     item, (Plugins.Regex, Plugins.Html, Plugins.Json)
                 ):
-                    user.set_data(item)
+                    config.active_user.set_data(item)
 
         next_stage = stage.run_operations()
         if next_stage:
