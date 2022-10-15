@@ -1,7 +1,7 @@
-;; Defines the first AuthFlow object (A Flow that affects
+;; Defines the first Flow object (A Flow that affects
 ;; authentication). In this case it's the `initialization` Flow.
 (setv initialization
-      (AuthFlow
+      (Flow
         :request (Request
                    ;; Sends a GET request.
                    :method "GET"
@@ -27,9 +27,9 @@
                        ;; Quit with an error if no
                        (Error "Cannot initialize session"))]))
 
-;; Defines the second AuthFlow object called `login`.
+;; Defines the second Flow object called `login`.
 (setv login
-      (AuthFlow
+      (Flow
         :request
         (Request
           ;; Sends a POST request
@@ -65,9 +65,9 @@
                        (Print "Authentication successful"))]))
 
 
-;; Defines the last AuthFlow object for MFA.
+;; Defines the last Flow object for MFA.
 (setv multi_factor
-      (AuthFlow
+      (Flow
         :request
         (Request
           ;; Sends a POST request

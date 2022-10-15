@@ -1,7 +1,7 @@
-;; Defines the first AuthFlow object (A Flow that affects
+;; Defines the first Flow object (A Flow that affects
 ;; authentication). In this case it's the `initialization` Flow.
 (setv initialization
-      (AuthFlow
+      (Flow
         :request (Request
                    :method "GET"
                    :url (Combine base_url "/login"))
@@ -10,9 +10,9 @@
         :outputs [session_id csrf_token request_token]
         :operations [(NextStage "login")]))
 
-;; Defines the last AuthFlow object to actually log in.
+;; Defines the last Flow object to actually log in.
 (setv login
-      (AuthFlow
+      (Flow
         :request (Request
                    :method "POST"
                    :url (Combine base_url "/login")

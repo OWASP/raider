@@ -7,7 +7,7 @@
 
 
 (setv simple_form_auth
-      (AuthFlow
+      (Flow
         :request
         (Request
           :url "https://authenticationtest.com/login/?mode=delayChallenge"

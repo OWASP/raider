@@ -23,7 +23,7 @@ import igraph
 
 import raider.plugins as Plugins
 from raider.config import Config
-from raider.flow import AuthFlow, Flow
+from raider.flow import Flow
 from raider.user import User
 
 
@@ -55,7 +55,7 @@ class Authentication:
         self.logger = config.logger
         self._current_stage = 0
 
-    def __getitem__(self, key: str) -> Optional[AuthFlow]:
+    def __getitem__(self, key: str) -> Optional[Flow]:
         if key not in self.graph.keys():
             return None
         return self.graph[key]

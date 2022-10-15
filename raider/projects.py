@@ -22,7 +22,7 @@ import igraph
 
 from raider.authentication import Authentication
 from raider.config import Config
-from raider.flow import AuthFlow, Flow
+from raider.flow import Flow
 from raider.functions import Functions
 from raider.structures import DataStore, FlowGraph
 from raider.user import Users
@@ -87,14 +87,6 @@ class Project:
       active_user:
         A User object pointing to the active user inside the "users"
         object.
-      authentication:
-        An Authentication object containing all the Flows relevant to
-        the authentication process. It's created out of the
-        "_authentication" variable from the hy configuration files.
-      functions:
-        A Functions object with all Flows that don't affect the
-        authentication process. This object is being created out of the
-        "_functions" variable from the hy configuration files.
 
     """
 
@@ -113,7 +105,10 @@ class Project:
         """
         self.config = ProjectConfig(config)
         self.name = project
-        self.flows = None
+        self.graph = FlowGraph()
+
+        self.flows = {}
+
         self.logger = self.config.logger
 
     def load(self):
@@ -142,10 +137,6 @@ class Project:
         shared_locals: Dict[str, Any]
         shared_locals = {}
 
-        flows = {}
-        auth_graph = FlowGraph()
-        func_graph = FlowGraph()
-
         self.logger.debug(
             "Loading data from hyfiles for %s project", self.name
         )
@@ -156,25 +147,21 @@ class Project:
                 eval_project_file(self.name, hyfile, shared_locals)
             )
             env_new = set(shared_locals.keys()) - set(env_old.keys())
-            flows[hyfile] = []
+            self.flows[hyfile] = []
             for key in env_new:
                 if isinstance(shared_locals[key], Flow):
-                    flows[hyfile].append(key)
+                    self.flows[hyfile].append(key)
 
         for value in shared_locals.values():
             if isinstance(value, Users):
+                ## TODO: move users to Projects level
                 self.config.users = value
 
         for key, value in shared_locals.items():
-            if isinstance(value, AuthFlow):
-                auth_graph.add_flow(key, value)
-            elif isinstance(value, Flow):
-                func_graph.add_flow(key, value)
+            if isinstance(value, Flow):
+                self.graph.add_flow(key, value)
 
-        self.authentication = Authentication(self.config, auth_graph)
-        self.functions = Functions(self.config, func_graph)
-        self.flows = flows
-
+        self.authentication = Authentication(self.config, self.graph)
         return shared_locals
 
     def authenticate(self, username: str = None) -> None:

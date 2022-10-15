@@ -41,9 +41,6 @@ class Flow:
     <raider.functions.Functions>` class to run arbitrary actions when
     it doesn't affect the authentication state.
 
-    When the authentication state changes, use :class:`AuthFlow
-    <raider.flow.AuthFlow>` objects.
-
     Attributes:
       request:
         A :class:`Request <raider.request.Request>` object detailing the
@@ -124,8 +121,8 @@ class Flow:
                         output.extract_name_from_response(self.response)
                 elif output.depends_on_other_plugins:
                     for item in output.plugins:
-                        item.get_value(config.user.to_dict())
-                    output.get_value(config.user.to_dict())
+                        item.get_value(config.active_user.to_dict())
+                    output.get_value(config.active_user.to_dict())
 
     def get_plugin_values(self, user: User) -> None:
         """Given a user, get the plugins' values from it.
@@ -165,51 +162,3 @@ class Flow:
     def logger(self):
         return self.config.logger
 
-
-class AuthFlow(Flow):
-    """Class dealing with the authentication Flows.
-
-    It inherits from :class:`Flow <raider.flow.Flow>` so it contains
-    one ``request``, the ``response``, the ``outputs`` that needs to
-    be extracted from the response, and a list of ``operations`` to be
-    run when the exchange is over.
-
-    Use this only when working with requests that *DO* change the
-    authentication state.  It's used in the :class:`Authentication
-    <raider.authentication.Authentication>` class to run actions that
-    affect the authentication state.
-
-    When the authentication state doesn't change, use :class:`Flow
-    <raider.flow.Flow>` objects.
-
-    Attributes:
-      request:
-        A :class:`Request <raider.request.Request>` object detailing the
-        HTTP request with its elements.
-      response:
-        A :class:`requests.model.Response` object. It's empty until the
-        request is sent. When the HTTP response arrives, it's stored
-        here.
-      outputs:
-        A list of :class:`Plugin <raider.plugins.Plugin>` objects
-        detailing the pieces of information to be extracted from the
-        response. Those will be later available for other Flow objects.
-      operations:
-        A list of :class:`Operation <raider.operations.Operation>`
-        objects to be executed after the response is received and
-        outputs are extracted. Should contain a :class:`NextStage
-        <raider.operations.NextStage>` operation if another Flow is
-        expected.
-
-    """
-
-    def __init__(
-        self,
-        request: Request,
-        outputs: Optional[List[Plugin]] = None,
-        operations: Optional[List[Operation]] = None,
-    ) -> None:
-
-        super().__init__(
-            request=request, outputs=outputs, operations=operations
-        )

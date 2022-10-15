@@ -163,6 +163,8 @@ class Combine(Plugin):
         for item in self.args:
             if isinstance(item, str):
                 combined += item
+            elif isinstance(item, bytes):
+                combined += item.decode("utf-8")
             elif item.value:
                 combined += item.value
         return combined

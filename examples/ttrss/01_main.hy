@@ -16,9 +16,9 @@
 ;; Prompt for the MFA code if enabled.
 (setv mfa_code (Prompt "MFA"))
 
-;; First Login AuthFlow
+;; First Login Flow
 (setv login
-      (AuthFlow
+      (Flow
         :request
         (Request
           :method "POST"
@@ -46,7 +46,7 @@
 ;; Runs MFA request, sending the MFA code prompted from the user, and
 ;; goes to main page upon finishing.
 (setv multi_factor
-      (AuthFlow
+      (Flow
         :request
         (Request
           :method "POST"

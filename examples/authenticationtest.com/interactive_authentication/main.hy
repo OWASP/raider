@@ -16,7 +16,7 @@
         :extract "contents"))
 
 (setv get_captcha
-      (AuthFlow
+      (Flow
         :request
         (Request
           :url "https://authenticationtest.com/bootstrapAuth/"
@@ -27,7 +27,7 @@
                   session_id]))
 
 (setv interactive_auth
-      (AuthFlow
+      (Flow
         :request
         (Request
           :url "https://authenticationtest.com/login/?mode=bootstrapAuth"

@@ -232,7 +232,7 @@ class Cookie(Plugin):
                :extract "token"))
 
            (setv get_token
-              (AuthFlow
+              (Flow
                 :request
                   (Request
                     :method "POST"

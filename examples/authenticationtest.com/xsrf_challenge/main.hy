@@ -17,7 +17,7 @@
         :extract "value"))
 
 (setv initialize_session
-      (AuthFlow
+      (Flow
         :request
         (Request
           :url "https://authenticationtest.com/xsrfChallenge/"
@@ -28,7 +28,7 @@
                   session_id]))
 
 (setv login
-      (AuthFlow
+      (Flow
         :request
         (Request
           :url "https://authenticationtest.com/login/?mode=xsrfChallenge"

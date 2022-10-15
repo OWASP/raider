@@ -7,7 +7,7 @@
 
 
 (setv complex_form_auth
-      (AuthFlow
+      (Flow
         :request
         (Request
           :url "https://authenticationtest.com/HTTPAuth/"

@@ -1,7 +1,7 @@
-;; Defines the first AuthFlow object (A Flow that affects
+;; Defines the first Flow object (A Flow that affects
 ;; authentication). In this case it's the `initialization` Flow.
 (setv initialization
-      (AuthFlow
+      (Flow
         :request (Request
                    :method "GET"
                    :url (Combine base_url "/login/"))
@@ -18,7 +18,7 @@
 
 ;; Sends the login information here
 (setv login
-      (AuthFlow
+      (Flow
         :request (Request
                    :method "POST"
                    :url (Combine base_url "login")
@@ -57,7 +57,7 @@
 
 ;; If MFA is enabled, this Flow is needed.
 (setv multi_factor
-      (AuthFlow
+      (Flow
         :request (Request
                    :method "POST"
                    :url "https://www.reddit.com/login"
@@ -95,7 +95,7 @@
 
 ;; Gets the access_token needed for some actions on Reddit
 (setv get_access_token
-      (AuthFlow
+      (Flow
         :request (Request
                    :method "GET"
                    :url "https://www.reddit.com/"

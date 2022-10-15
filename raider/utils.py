@@ -152,7 +152,7 @@ def import_raider_objects() -> Dict[str, Any]:
     """
     hy_imports = {
         "plugins": "*",
-        "flow": "Flow " "AuthFlow ",
+        "flow": "Flow ",
         "user": "Users ",
         "request": ("Request " "PostBody " "Template "),
         "operations": (

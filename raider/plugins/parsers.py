@@ -42,7 +42,10 @@ class Urlparser(Parser):
         def get_query(query: Union[str, bytes], element: str) -> str:
             """Extracts a parameter from the URL query."""
             key = element.split(".")[1]
-            return parse_qs(str(query))[key][0]
+            parsed_query = parse_qs(str(query))
+            if key in parsed_query:
+                return parsed_query[key][0]
+            return None
 
         value: Optional[str] = None
 

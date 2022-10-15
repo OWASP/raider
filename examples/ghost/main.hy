@@ -16,10 +16,10 @@
       (Cookie "ghost-admin-api-session"))
 
 
-;; Defines the first/only AuthFlow object (A Flow that affects
+;; Defines the first/only Flow object (A Flow that affects
 ;; authentication). In this case it's the `login` Flow.
 (setv login
-      (AuthFlow
+      (Flow
         :request (Request
                    ;; Sends a POST request.
                    :method "POST"
@@ -42,7 +42,7 @@
 
 ;; Defines a new Flow object to get the user's information. Doesn't
 ;; affect authentication therefore it's created as a Flow object and
-;; not an AuthFlow one.
+;; not an Flow one.
 (setv get_user_info
       (Flow
         :request (Request
@@ -52,7 +52,7 @@
                    ;; with the absolute path.
                    :url (Combine base_url "/ghost/api/canary/admin/users/me/")
                    ;; Using the `session_id` cookie we got from the
-                   ;; `login` AuthFlow.
+                   ;; `login` Flow.
                    :cookies [session_id]
                    ;; Data to include in the GET query
                    :data {"include" "roles"})
