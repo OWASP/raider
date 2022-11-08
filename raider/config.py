@@ -23,7 +23,6 @@ from typing import Any, Dict
 
 from raider.logger import get_logger
 from raider.utils import (
-    colors,
     create_hy_expression,
     default_user_agent,
     eval_file,
@@ -79,6 +78,7 @@ class Config:
             output = {}
 
         self.output = output
+        self.use_proxy = False
 
         self.logger = get_logger(self.loglevel, "raider")
 

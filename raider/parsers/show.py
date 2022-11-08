@@ -11,7 +11,7 @@ def add_show_parser(parser) -> None:
     )
 
     show_parser.add_argument(
-        "--projects", nargs="?", help="Show projects", const=""
+        "projects", nargs="?", help="Show projects", const=""
     )
     show_parser.add_argument(
         "--hyfiles", nargs="?", help="Show hyfiles", const=""

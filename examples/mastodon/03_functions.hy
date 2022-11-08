@@ -13,7 +13,7 @@
 ;; Go to user's profile to extract the nickname.
 (setv get_nickname
       (Flow
-        :request (Request
+         (Request
                    :method "GET"
                    :cookies [mastodon_session session_id remember_user]
                    :url (Combine base_url "/settings/profile"))

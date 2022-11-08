@@ -1,7 +1,7 @@
 ;; Gets a file from the nextcloud user's storage.
 (setv get_file
       (Flow
-        :request
+        
         (Request
           :method "GET"
           ;; Prompt the user for the file path and gets its webdav url
@@ -17,7 +17,7 @@
 ;; First you need the request_token you get on the health app page.
 (setv get_health_request_token
       (Flow
-        :request
+        
         (Request
           :method "GET"
           :url (Combine base_url "/apps/health/")
@@ -36,7 +36,7 @@
 ;; testing with something like this:
 (setv submit_weight
       (Flow
-        :request
+        
         (Request
           :method "POST"
           :url (Combine base_url "/apps/health/weight/dataset/person/1")

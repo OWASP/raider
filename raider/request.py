@@ -33,7 +33,7 @@ from raider.plugins.basic.header import Header
 from raider.plugins.common import Plugin
 from raider.structures import CookieStore, DataStore, HeaderStore
 from raider.user import User
-
+from raider.utils import colors
 
 class PostBody(DataStore):
     """Holds the POST body data.
@@ -66,6 +66,21 @@ class PostBody(DataStore):
         super().__init__(data)
 
 
+def prompt_empty_value(element:str, name:str):
+    value = input(colors["GREEN-BLACK-B"]
+                  + element
+                  + " \""
+                  + colors["RED-BLACK-B"]
+                  + name
+                  + colors["GREEN-BLACK-B"]
+                  + "\" has an empty value. "
+                  + "Input its value manually (press enter to skip)\n"
+                  + colors["YELLOW-BLACK-B"]
+                  + name
+                  + " = ")
+    return value
+
+
 def process_cookies(
     raw_cookies: CookieStore, userdata: Dict[str, str]
 ) -> Dict[str, str]:
@@ -76,10 +91,12 @@ def process_cookies(
         if raw_cookies[key].name_not_known_in_advance:
             cookies.pop(key)
         value = raw_cookies[key].get_value(userdata)
-        if value:
-            cookies.update({name: value})
-        else:
+        if not value:
+            value = prompt_empty_value("Cookie", name)
+        if not value:
             cookies.pop(key)
+        else:
+            cookies.update({name: value})
     return cookies
 
 
@@ -94,10 +111,12 @@ def process_headers(
         if raw_headers[key].name_not_known_in_advance:
             headers.pop(key)
         value = raw_headers[key].get_value(userdata)
-        if value:
-            headers.update({name: value})
-        else:
+        if not value:
+            value = prompt_empty_value("Header", name)
+        if not value:
             headers.pop(name.lower())
+        else:
+            headers.update({name: value})
     return headers
 
 
@@ -114,20 +133,24 @@ def process_data(
             value = data[key]
             if isinstance(value, Plugin):
                 new_value = value.get_value(userdata)
-                if new_value:
-                    data.update({key: new_value})
-                else:
+                if not new_value:
+                    new_value = prompt_empty_value("Value", value.name)
+                if not new_value:
                     data.pop(key)
+                else:
+                    data.update({key: new_value})
             elif isinstance(value, dict):
                 traverse_dict(value, userdata)
 
             if isinstance(key, Plugin):
                 new_value = data.pop(key)
                 new_key = key.get_value(userdata)
-                if new_key:
-                    data.update({new_key: new_value})
-                else:
+                if not new_key:
+                    new_key = prompt_empty_value("Key", key.name)
+                if not new_key:
                     data.pop(key)
+                else:
+                    data.update({new_key: new_value})
 
     httpdata = raw_data.to_dict().copy()
     traverse_dict(httpdata, userdata)
@@ -135,8 +158,6 @@ def process_data(
     return httpdata
 
 
-# Request needs many arguments
-# pylint: disable=too-many-arguments
 class Request:
     """Class holding the elements of the HTTP request.
 
@@ -324,7 +345,10 @@ class Request:
                 category=InsecureRequestWarning
             )
 
-        proxies = {"all": config.proxy}
+        if config.use_proxy:
+            proxies = {"all": config.proxy}
+        else:
+            proxies = None
 
         inputs = self.process_inputs(config)
         cookies = inputs["cookies"]

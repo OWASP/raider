@@ -7,7 +7,7 @@
 ;; Gets the nickname from main page
 (setv get_nickname
       (Flow
-        :request (Request
+         (Request
                    :method "GET"
                    :cookies [session_id reddit_session]
                    :url base_url)
@@ -18,7 +18,7 @@
 ;; Gets unread messages
 (setv get_unread_messages
       (Flow
-        :request (Request
+         (Request
                    :method "GET"
                    ;; Use the access_token as a Bearer HTTP
                    ;; Authorization header.

@@ -8,7 +8,7 @@
 
 (setv simple_form_auth
       (Flow
-        :request
+        
         (Request
           :url "https://authenticationtest.com/login/?mode=simpleFormAuth"
           :method "POST"

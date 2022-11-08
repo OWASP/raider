@@ -34,6 +34,7 @@ colors = {
     "CYAN-BLACK-B": "\x1b[1;96;40m",
     "GRAY-BLACK": "\x1b[0;90;40m",
     "GREEN-BLACK": "\x1b[0;32;40m",
+    "GREEN-BLACK-B": "\x1b[1;32;40m",
     "RED-BLACK": "\x1b[0;31;40m",
     "BLUE-BLACK": "\x1b[0;34;40m",
     "BLUE-BLACK-B": "\x1b[1;34;40m",
@@ -41,6 +42,7 @@ colors = {
     "YELLOW-BLACK": "\x1b[0;33;40m",
     "YELLOW-BLACK-B": "\x1b[1;33;40m",
     "YELLOW-GRAY": "\x1b[0;33;100m",
+    "RESET": "\x1b[0m",
 }
 
 

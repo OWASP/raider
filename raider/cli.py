@@ -20,20 +20,12 @@ import argparse
 
 from IPython import embed
 
-from raider.parsers.authenticate import (
-    add_authenticate_parser,
-    run_authenticate_command,
-)
 from raider.parsers.config import add_config_parser, run_config_command
 from raider.parsers.edit import add_edit_parser, run_edit_command
 from raider.parsers.inspect import add_inspect_parser, run_inspect_command
 from raider.parsers.new import add_new_parser, run_new_command
 from raider.parsers.delete import add_delete_parser, run_delete_command
-from raider.parsers.run_flow import add_run_flow_parser, run_run_flow_command
-from raider.parsers.run_graph import (
-    add_run_graph_parser,
-    run_run_graph_command,
-)
+from raider.parsers.run import add_run_parser, run_run_command
 from raider.parsers.shell import add_shell_parser, run_shell_command
 from raider.parsers.show import add_show_parser, run_show_command
 from raider.raider import Raider
@@ -48,13 +40,11 @@ def main() -> None:
     commands = {
         "show": run_show_command,
         "config": run_config_command,
-        "authenticate": run_authenticate_command,
         "new": run_new_command,
         "delete": run_delete_command,
         "edit": run_edit_command,
         "shell": run_shell_command,
-        "run_flow": run_run_flow_command,
-        "run_graph": run_run_graph_command,
+        "run": run_run_command,
         "inspect": run_inspect_command,
     }
 
@@ -63,10 +53,8 @@ def main() -> None:
     add_new_parser(subparsers)
     add_delete_parser(subparsers)
     add_edit_parser(subparsers)
-    add_authenticate_parser(subparsers)
     add_inspect_parser(subparsers)
-    add_run_flow_parser(subparsers)
-    add_run_graph_parser(subparsers)
+    add_run_parser(subparsers)
     add_shell_parser(subparsers)
 
     args = parser.parse_args()

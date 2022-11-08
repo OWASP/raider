@@ -19,7 +19,7 @@
 import sys
 from typing import Optional
 
-from raider.authentication import Authentication
+from raider.flowstore import FlowStore
 from raider.config import Config
 from raider.fuzzing import Fuzz
 from raider.plugins.common import Plugin
@@ -78,19 +78,12 @@ class Raider:
         self.projects = Projects(self.config, self._project_name)
         self._flags = flags
 
-    def authenticate(self, username: str = None) -> None:
-        """Authenticates in the chosen project.
+    def run_flow(self, flow: str = None) -> None:
+        self.project.run_flow(flow)
+        self.config.write_config_file()
 
-        Runs the authentication process from start to end on the
-        selected project with the specified user.
-
-        Args:
-          username:
-            A string with the username to authenticate. If not
-            specified, the last used user will be selected.
-
-        """
-        self.project.authenticate(username)
+    def run_flowgraph(self, flowgraph: str = None) -> None:
+        self.project.run_flowgraph(flowgraph)
         self.config.write_config_file()
 
     def load_session(self) -> None:
@@ -101,48 +94,6 @@ class Raider:
     def save_session(self) -> None:
         """Saves session to ``_userdata.hy``."""
         self.project.write_session_file()
-
-    def run_function(self, function: str) -> None:
-        """Runs a function in the chosen project.
-
-        With the selected project and user run the function from the
-        argument.
-
-        Args:
-          function:
-            A string with the function identifier as defined in
-            "_functions" variable.
-
-        """
-        if not hasattr(self, "functions"):
-            self.logger.critical("No functions defined. Cannot continue.")
-            sys.exit()
-
-        if self.session_loaded:
-            self.fix_function_plugins(function)
-
-        self.functions.run_flow(function, self.user, self.config)
-
-    def run_chain(self, function: str) -> None:
-        """Runs a function, and follows the NextStage Operations.
-
-        With the selected project and user run the function from the
-        argument.
-
-        Args:
-          function:
-            A string with the function identifier as defined in
-            "_functions" variable.
-
-        """
-        if not hasattr(self, "functions"):
-            self.logger.critical("No functions defined. Cannot continue.")
-            sys.exit()
-
-        if self.session_loaded:
-            self.fix_function_plugins(function)
-
-        self.functions.run_chain(function, self.user, self.config)
 
     def fuzz(
         self,
@@ -225,7 +176,7 @@ class Raider:
         return self.projects[self.config.active_project]
 
     @property
-    def authentication(self) -> Authentication:
+    def authentication(self) -> FlowStore:
         """Returns the Authentication object"""
         return self.project.authentication
 

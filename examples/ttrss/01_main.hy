@@ -19,7 +19,7 @@
 ;; First Login Flow
 (setv login
       (Flow
-        :request
+        
         (Request
           :method "POST"
           :url (Combine base_url "/public.php")
@@ -47,7 +47,7 @@
 ;; goes to main page upon finishing.
 (setv multi_factor
       (Flow
-        :request
+        
         (Request
           :method "POST"
           :path "/public.php"
@@ -67,7 +67,7 @@
 ;; it doesn't affect the authentication state.
 (setv main_page
       (Flow
-        :request
+        
         (Request
           :url (Combine base_url "/")
           :method "GET"
@@ -81,7 +81,7 @@
 ;; Define request that'll return the list of feeds.
 (setv get_feeds
       (Flow
-        :request
+        
         (Request
           :url (Combine base_url "/backend.php")
           :method "POST"
@@ -100,7 +100,7 @@
 ;; Another Flow to oget the list of labels
 (setv get_labels
       (Flow
-        :request
+        
         (Request
           :url (Combine base_url "/backend.php")
           :method "GET"

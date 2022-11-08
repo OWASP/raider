@@ -2,7 +2,7 @@
 ;; authentication). In this case it's the `initialization` Flow.
 (setv initialization
       (Flow
-        :request (Request
+         (Request
                    :method "GET"
                    :url (Combine base_url "/login/"))
         ;; Extracts the CSRF token and the session id from reddit
@@ -19,7 +19,7 @@
 ;; Sends the login information here
 (setv login
       (Flow
-        :request (Request
+         (Request
                    :method "POST"
                    :url (Combine base_url "login")
                    :cookies [session_id]
@@ -58,7 +58,7 @@
 ;; If MFA is enabled, this Flow is needed.
 (setv multi_factor
       (Flow
-        :request (Request
+         (Request
                    :method "POST"
                    :url "https://www.reddit.com/login"
                    :cookies [session_id]
@@ -96,7 +96,7 @@
 ;; Gets the access_token needed for some actions on Reddit
 (setv get_access_token
       (Flow
-        :request (Request
+         (Request
                    :method "GET"
                    :url "https://www.reddit.com/"
                    :cookies [reddit_session])

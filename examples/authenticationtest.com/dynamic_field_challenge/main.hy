@@ -26,7 +26,7 @@
 
 (setv initialize_session
       (Flow
-        :request
+        
         (Request
           :url "https://authenticationtest.com/dynamicChallenge/"
           :method "GET")
@@ -38,7 +38,7 @@
 
 (setv login
       (Flow
-        :request
+        
         (Request
           :url "https://authenticationtest.com/login/?mode=dynamicChallenge"
           :method "POST"

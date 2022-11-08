@@ -2,7 +2,7 @@
 ;; authentication). In this case it's the `initialization` Flow.
 (setv initialization
       (Flow
-        :request (Request
+         (Request
                    :method "GET"
                    :url (Combine base_url "/login"))
         ;; Just gets the initial tokens from the server needed to start
@@ -13,7 +13,7 @@
 ;; Defines the last Flow object to actually log in.
 (setv login
       (Flow
-        :request (Request
+         (Request
                    :method "POST"
                    :url (Combine base_url "/login")
                    ;; Sends some extra static cookies that nextcloud requires.

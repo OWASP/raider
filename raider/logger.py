@@ -9,7 +9,7 @@ class CustomFormatter(logging.Formatter):
     yellow = colors["YELLOW-BLACK"]
     red = colors["RED-BLACK"]
     bold_red = colors["RED-BLACK-B"]
-    reset = "\x1b[0m"
+    reset = colors["RESET"]
     format = "%(levelname)s:%(asctime)s:%(name)s - %(message)s (%(filename)s:%(lineno)d)"
 
     FORMATS = {

@@ -17,7 +17,7 @@
 
 (setv get_captcha
       (Flow
-        :request
+        
         (Request
           :url "https://authenticationtest.com/bootstrapAuth/"
           :method "GET")
@@ -28,7 +28,7 @@
 
 (setv interactive_auth
       (Flow
-        :request
+        
         (Request
           :url "https://authenticationtest.com/login/?mode=bootstrapAuth"
           :method "POST"

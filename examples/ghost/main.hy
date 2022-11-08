@@ -20,7 +20,7 @@
 ;; authentication). In this case it's the `login` Flow.
 (setv login
       (Flow
-        :request (Request
+         (Request
                    ;; Sends a POST request.
                    :method "POST"
                    ;; To this path, built by combining the base URL
@@ -45,7 +45,7 @@
 ;; not an Flow one.
 (setv get_user_info
       (Flow
-        :request (Request
+         (Request
                    ;; Sends a GET request.
                    :method "GET"
                    ;; To this path, built by combining the base URL
@@ -62,7 +62,7 @@
 ;; Defines a new Flow object to get the existing tags.
 (setv get_tags
       (Flow
-        :request (Request
+         (Request
                    :method "GET"
                    :url (Combine base_url "/ghost/api/v3/admin/tags/?limit=all")
                    :cookies [session_id])
@@ -71,7 +71,7 @@
 ;; Defines a new Flow object to get the existing posts.
 (setv get_posts
       (Flow
-        :request (Request
+         (Request
                    :method "GET"
                    :url (Combine base_url "/ghost/api/canary/admin/posts/")
                    :cookies [session_id])

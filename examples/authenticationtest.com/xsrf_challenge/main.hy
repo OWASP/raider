@@ -18,7 +18,7 @@
 
 (setv initialize_session
       (Flow
-        :request
+        
         (Request
           :url "https://authenticationtest.com/xsrfChallenge/"
           :method "GET")
@@ -29,7 +29,7 @@
 
 (setv login
       (Flow
-        :request
+        
         (Request
           :url "https://authenticationtest.com/login/?mode=xsrfChallenge"
           :method "POST"

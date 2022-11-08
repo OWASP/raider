@@ -11,7 +11,7 @@
 
 (setv initialize_session
       (Flow
-        :request
+        
         (Request
           :url "https://authenticationtest.com/multiStepAuth/"
           :method "GET")
@@ -21,7 +21,7 @@
 
 (setv send_login
       (Flow
-        :request
+        
         (Request
           :url "https://authenticationtest.com/multiStepAuth/?step=2"
           :method "POST"
@@ -33,7 +33,7 @@
 
 (setv send_password
       (Flow
-        :request
+        
         (Request
           :url "https://authenticationtest.com/login/?mode=multiChallenge"
           :method "POST"

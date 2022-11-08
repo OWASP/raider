@@ -2,7 +2,7 @@
 ;; authentication). In this case it's the `initialization` Flow.
 (setv initialization
       (Flow
-        :request (Request
+         (Request
                    ;; Sends a GET request.
                    :method "GET"
                    ;; To https://ghost.server.url/about.
@@ -30,7 +30,7 @@
 ;; Defines the second Flow object called `login`.
 (setv login
       (Flow
-        :request
+        
         (Request
           ;; Sends a POST request
           :method "POST"
@@ -68,7 +68,7 @@
 ;; Defines the last Flow object for MFA.
 (setv multi_factor
       (Flow
-        :request
+        
         (Request
           ;; Sends a POST request
           :method "POST"

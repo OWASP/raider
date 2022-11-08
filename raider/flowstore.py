@@ -17,7 +17,7 @@
 """
 
 import sys
-from typing import Dict, Optional, Union
+from typing import Dict, Optional, Union, Any, List
 
 import igraph
 
@@ -27,7 +27,7 @@ from raider.flow import Flow
 from raider.user import User
 
 
-class Authentication:
+class FlowStore:
     """Class holding authentication stages.
 
     This class holds all the information necessary to authenticate. It
@@ -39,7 +39,7 @@ class Authentication:
 
     """
 
-    def __init__(self, config, graph: igraph.Graph) -> None:
+    def __init__(self, config) -> None:
         """Initializes the Authentication object.
 
         Creates an object to handle the authentication process.
@@ -50,15 +50,38 @@ class Authentication:
             variable in hy configuration files.
 
         """
-        self.graph = graph
+        self.graph = igraph.Graph(directed=True)
         self.config = config
         self.logger = config.logger
         self._current_stage = 0
 
-    def __getitem__(self, key: str) -> Optional[Flow]:
-        if key not in self.graph.keys():
-            return None
-        return self.graph[key]
+    def add_flow(self, key: str, value: str) -> None:
+        self.graph.add_vertices(1)
+        index = self.graph.vcount() - 1
+        self.graph.vs[index]["name"] = key
+        self.graph.vs[index]["object"] = value
+
+    def __getitem__(self, name: Any) -> Any:
+        """Getter to return a Flow by the name."""
+        if name in self.keys:
+            flow_id = self.get_flow_id_by_name(name)
+            return self.graph.vs[flow_id]["object"]
+        return None
+
+    def get_flow_id_by_name(self, flow_name: str) -> int:
+        return self.keys.index(flow_name)
+
+    @property
+    def keys(self) -> List[str]:
+        if not self.graph.vs:
+            return []
+        return self.graph.vs[::]["name"]
+
+    @property
+    def values(self) -> List[Any]:
+        if not self.graph.vs:
+            return []
+        return self.graph.vs[::]["object"]
 
     def get_stage_name_by_id(self, stage_id: int) -> str:
         """Returns the stage name given its number.
@@ -88,7 +111,7 @@ class Authentication:
         """
         return self.graph.vs[::]["name"].index(name)
 
-    def run_all(self, config: Config) -> None:
+    def run_chain(self, config: Config, flograph:str) -> None:
         """Runs all authentication stages.
 
         This function will run all authentication stages for the
@@ -127,10 +150,10 @@ class Authentication:
             "Running stage %s",
             self.get_stage_name_by_id(self._current_stage),
         )
-        self.run_stage(self._current_stage, config)
+        self.run_stage(config, self._current_stage)
 
     def run_stage(
-        self, stage_id: Union[int, str], config: Config
+        self,  config: Config, stage_id: Union[int, str]
     ) -> Optional[str]:
         """Runs one authentication Stage.
 
@@ -159,9 +182,9 @@ class Authentication:
         stage: Optional[Flow]
         if isinstance(stage_id, int):
             stage_name = self.get_stage_name_by_id(stage_id)
-            stage = self.graph[stage_name]
+            stage = self[stage_name]
         elif isinstance(stage_id, str):
-            stage = self.graph[stage_id]
+            stage = self[stage_id]
 
         if not stage:
             self.logger.critical(

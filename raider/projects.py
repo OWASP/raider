@@ -20,11 +20,11 @@ from typing import Dict, List, Optional
 
 import igraph
 
-from raider.authentication import Authentication
+from raider.flowstore import FlowStore
 from raider.config import Config
 from raider.flow import Flow
 from raider.functions import Functions
-from raider.structures import DataStore, FlowGraph
+from raider.structures import DataStore
 from raider.user import Users
 from raider.utils import (
     colored_hyfile,
@@ -45,6 +45,10 @@ class ProjectConfig(Config):
     @property
     def proxy(self):
         return self.gconfig.proxy
+
+    @property
+    def use_proxy(self):
+        return self.gconfig.use_proxy
 
     @property
     def verify(self):
@@ -105,7 +109,7 @@ class Project:
         """
         self.config = ProjectConfig(config)
         self.name = project
-        self.graph = FlowGraph()
+        self.flowstore = FlowStore(config)
 
         self.flows = {}
 
@@ -159,42 +163,17 @@ class Project:
 
         for key, value in shared_locals.items():
             if isinstance(value, Flow):
-                self.graph.add_flow(key, value)
-
-        self.authentication = Authentication(self.config, self.graph)
+                self.flowstore.add_flow(key, value)
         return shared_locals
 
-    def authenticate(self, username: str = None) -> None:
-        """Authenticates the user.
-
-        Runs all the steps of the authentication process defined in the
-        hy config files for the application.
-
-        Args:
-          username:
-            A string with the user to be authenticated. If not supplied,
-            the last used username will be selected.
-
-        """
+    def run_flow(self, flow: str = None) -> None:
         self.load()
-        if username:
-            self.active_user = self.users[username]
-        self.authentication.run_all(self.config)
+        self.flowstore.run_stage(self.config, flow)
         self.write_project_file()
 
-    def auth_step(self) -> None:
-        """Runs next authentication step.
-
-        Runs one the steps of the authentication process defined in the
-        hy config files for the application.
-
-        Args:
-          username:
-            A string with the user to be authenticated. If not supplied,
-            the last used username will be selected.
-
-        """
-        self.authentication.run_current_stage(self.active_user, self.config)
+    def run_flowgraph(self, flowgraph: str = None) -> None:
+        self.load()
+        self.flowstore.run_chain(self.config, flowgraph)
         self.write_project_file()
 
     def write_session_file(self) -> None:
