@@ -20,10 +20,10 @@ from typing import Dict, List, Optional
 
 import igraph
 
-from raider.flowstore import FlowStore
 from raider.config import Config
 from raider.flow import Flow
-from raider.functions import Functions
+from raider.flowgraph import FlowGraph
+from raider.flowstore import FlowStore
 from raider.structures import DataStore
 from raider.user import Users
 from raider.utils import (
@@ -35,6 +35,7 @@ from raider.utils import (
     list_hyfiles,
     list_projects,
 )
+
 
 class ProjectConfig(Config):
     def __init__(self, config):
@@ -68,6 +69,7 @@ class ProjectConfig(Config):
             username = self.users.active_user
             return self.users[username]
         return None
+
 
 class Project:
     """Class holding all the project related data.
@@ -164,11 +166,17 @@ class Project:
         for key, value in shared_locals.items():
             if isinstance(value, Flow):
                 self.flowstore.add_flow(key, value)
+            if isinstance(value, FlowGraph):
+                self.flowstore.add_flowgraph(key, value)
+
+        first_flow = self.flowstore.values[0]
+        self.flowstore.add_flowgraph("DEFAULT", FlowGraph(first_flow))
+
         return shared_locals
 
     def run_flow(self, flow: str = None) -> None:
         self.load()
-        self.flowstore.run_stage(self.config, flow)
+        self.flowstore.run_flow(self.config, flow)
         self.write_project_file()
 
     def run_flowgraph(self, flowgraph: str = None) -> None:
@@ -329,6 +337,22 @@ class Projects(DataStore):
         return matches
 
     def search_flows(
+        self, hyfiles: Dict[str, List[str]], search: str = None
+    ) -> List[str]:
+        matches = {}
+        for project in hyfiles.keys():
+            matches[project] = {}
+            for hyfile in hyfiles[project]:
+                flows = self[project].flows[hyfile]
+                if flows and not search:
+                    matches[project].update({hyfile: flows})
+                elif flows:
+                    for flow in flows:
+                        if search.lower() in flow.lower():
+                            matches[project].update({hyfile: flows})
+        return matches
+
+    def search_flowgraphs(
         self, hyfiles: Dict[str, List[str]], search: str = None
     ) -> List[str]:
         matches = {}

@@ -205,17 +205,17 @@ class Fuzz:
 
         It will first follow the authentication process until reaching
         the desired state, then it will try fuzzing it, and if a
-        :class:`NextStage <raider.operations.NextStage>` operation is
+        :class:`Next <raider.operations.Next>` operation is
         encountered, it will follow the instruction and move to this
-        stage, then continue fuzzing.
+        flow, then continue fuzzing.
 
         """
         authentication = self.project.authentication
         user = self.project.active_user
         config = self.project.config
 
-        while authentication.current_stage_name != self.flow.name:
-            authentication.run_current_stage(user, config)
+        while authentication.current_flow_name != self.flow.name:
+            authentication.run_current_flow(user, config)
 
         flow = deepcopy(self.flow)
         fuzzing_plugin = self.get_fuzzing_input(flow)
@@ -236,18 +236,18 @@ class Fuzz:
             fuzzing_plugin.value = self.processor(item)
             fuzzing_plugin.function = fuzzing_plugin.return_value
             flow.execute(user, config)
-            next_stage = flow.run_operations()
-            if next_stage:
-                while next_stage != flow.name:
-                    if next_stage:
-                        next_stage = authentication.run_stage(
-                            next_stage, user, config
+            next_flow = flow.run_operations()
+            if next_flow:
+                while next_flow != flow.name:
+                    if next_flow:
+                        next_flow = authentication.run_flow(
+                            next_flow, user, config
                         )
                     else:
                         logging.critical(
                             (
-                                "Cannot reach the %s stage. ",
-                                "Make sure you defined NextStage correctly.",
+                                "Cannot reach the %s flow. ",
+                                "Make sure you defined Next correctly.",
                             ),
                             flow.name,
                         )

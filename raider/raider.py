@@ -19,8 +19,8 @@
 import sys
 from typing import Optional
 
-from raider.flowstore import FlowStore
 from raider.config import Config
+from raider.flowstore import FlowStore
 from raider.fuzzing import Fuzz
 from raider.plugins.common import Plugin
 from raider.projects import Project, Projects

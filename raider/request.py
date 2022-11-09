@@ -35,6 +35,7 @@ from raider.structures import CookieStore, DataStore, HeaderStore
 from raider.user import User
 from raider.utils import colors
 
+
 class PostBody(DataStore):
     """Holds the POST body data.
 
@@ -66,18 +67,20 @@ class PostBody(DataStore):
         super().__init__(data)
 
 
-def prompt_empty_value(element:str, name:str):
-    value = input(colors["GREEN-BLACK-B"]
-                  + element
-                  + " \""
-                  + colors["RED-BLACK-B"]
-                  + name
-                  + colors["GREEN-BLACK-B"]
-                  + "\" has an empty value. "
-                  + "Input its value manually (press enter to skip)\n"
-                  + colors["YELLOW-BLACK-B"]
-                  + name
-                  + " = ")
+def prompt_empty_value(element: str, name: str):
+    value = input(
+        colors["GREEN-BLACK-B"]
+        + element
+        + ' "'
+        + colors["RED-BLACK-B"]
+        + name
+        + colors["GREEN-BLACK-B"]
+        + '" has an empty value. '
+        + "Input its value manually (enter to skip)\n"
+        + colors["YELLOW-BLACK-B"]
+        + name
+        + " = "
+    )
     return value
 
 
@@ -279,9 +282,7 @@ class Request:
 
         return inputs
 
-    def process_inputs(
-        self, config: Config
-    ) -> Dict[str, Dict[str, str]]:
+    def process_inputs(self, config: Config) -> Dict[str, Dict[str, str]]:
         """Process the Request inputs.
 
         Uses the supplied user data to replace the Plugins in the inputs
@@ -317,9 +318,7 @@ class Request:
 
         return {"cookies": cookies, "data": httpdata, "headers": headers}
 
-    def send(
-        self, config: Config
-    ) -> Optional[requests.models.Response]:
+    def send(self, config: Config) -> Optional[requests.models.Response]:
         """Sends the HTTP request.
 
         With the given user information, replaces the input plugins with

@@ -62,7 +62,6 @@ class Prompt(Plugin):
 
         """
         self.value = None
-        while not self.value:
-            print("Please provide the input value")
-            self.value = input(self.name + " = ")
+        print("Please provide the input value (enter to skip)")
+        self.value = input(self.name + " = ")
         return self.value

@@ -8,6 +8,7 @@ class Matches:
         self.projects = []
         self.hyfiles = {}
         self.flows = {}
+        self.flowgraphs = {}
 
     def match_projects(self, search):
         self.projects = self.raider.projects.search_projects(search)
@@ -19,6 +20,9 @@ class Matches:
 
     def match_flows(self, search):
         self.flows = self.raider.projects.search_flows(self.hyfiles, search)
+
+    def match_flowgraphs(self, search):
+        self.flows = self.raider.projects.search_flowgraphs(self.hyfiles, search)
 
 
 class Search:
@@ -86,5 +90,11 @@ class Search:
     @property
     def print_flows_enabled(self):
         if isinstance(self.args.flows, str):
+            return True
+        return False
+
+    @property
+    def print_flowgraphs_enabled(self):
+        if isinstance(self.args.graphs, str):
             return True
         return False

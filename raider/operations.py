@@ -38,7 +38,7 @@ def execute_actions(
     In order to allow multiple Operations to be run inside the "action"
     and "otherwise" attributes lists of Operations are accepted. The
     execution will stop if one of the Operations returns a string, to
-    indicate the next stage has been decided.
+    indicate the next flow has been decided.
 
     Args:
       operations:
@@ -48,7 +48,7 @@ def execute_actions(
         might be needed to run the Operation.
 
     Returns:
-      A string with the name of the next stage to be run, or None.
+      A string with the name of the next flow to be run, or None.
 
     """
     if isinstance(operations, Operation):
@@ -143,7 +143,7 @@ class Operation:
             be passed to the operation's "function".
 
         Returns:
-          An optional string with the name of the next stage.
+          An optional string with the name of the next flow.
 
         """
         self.config = config
@@ -171,7 +171,7 @@ class Operation:
             be passed to the operation's "function".
 
         Returns:
-          An optional string with the name of the next stage.
+          An optional string with the name of the next flow.
 
         """
         if self.needs_response:
@@ -632,57 +632,90 @@ class Print(Operation):
         return operation
 
 
-class Error(Operation):
-    """Operation that will exit Raider and print the error message.
+class Failure(Operation):
+    """Operation that will signal a Failure in the process.
 
     Attributes:
       message:
-        A string with the error message to be printed.
+        An optional string with the error message to be printed.
     """
 
-    def __init__(self, message: str) -> None:
+    def __init__(self, message: str = None) -> None:
         """Initializes the Error Operation.
 
         Args:
           message:
-            A string with the error message to be displayed.
+            An optional string with the error message to be displayed.
         """
         self.message = message
         super().__init__(
-            function=lambda: sys.exit(self.message),
+            function=self.return_failure
         )
+
+    def return_failure(self):
+        self.logger.error("Failure: " + str(self.message))
+        return False
 
     def __str__(self) -> str:
         """Returns a string representation of the Operation."""
-        return "(Error:" + str(self.message) + ")"
+        return "(Failure:" + str(self.message) + ")"
 
 
-class NextStage(Operation):
-    """Operation defining the next stage.
+class Success(Operation):
+    """Operation that will signal a Success in the process.
 
-    Inside the Authentication object NextStage is used to define the
+    Attributes:
+      message:
+        An optional string with the message to be printed.
+    """
+
+    def __init__(self, message: str = None) -> None:
+        """Initializes the Success Operation.
+
+        Args:
+          message:
+            An optional string with the message to be displayed.
+        """
+        self.message = message
+        super().__init__(
+            function=self.return_success
+        )
+
+    def return_success(self):
+        self.logger.info("Success: " + str(self.message))
+        return True
+
+    def __str__(self) -> str:
+        """Returns a string representation of the Operation."""
+        return "(Success:" + str(self.message) + ")"
+
+
+class Next(Operation):
+    """Operation defining the next flow.
+
+    Inside the Authentication object Next is used to define the
     next step of the authentication process. It can also be used inside
     "action" attributes of the other Operations to allow conditional
     decision making.
 
     Attributes:
-      next_stage:
-        A string with the name of the next stage to be executed.
+      next_flow:
+        A string with the name of the next flow to be executed.
 
     """
 
-    def __init__(self, next_stage: Optional[str]) -> None:
-        """Initializes the NextStage Operation.
+    def __init__(self, next_flow: Optional[str]) -> None:
+        """Initializes the Next Operation.
 
         Args:
-          next_stage:
-            A string with the name of the next stage.
+          next_flow:
+            A string with the name of the next flow.
         """
-        self.next_stage = str(next_stage)
+        self.next_flow = str(next_flow)
         super().__init__(
-            function=lambda: self.next_stage,
+            function=lambda: self.next_flow,
         )
 
     def __str__(self) -> str:
         """Returns a string representation of the Operation."""
-        return "(NextStage:" + self.next_stage + ")"
+        return "(Next:" + self.next_flow + ")"

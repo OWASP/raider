@@ -56,8 +56,8 @@ class Flow:
       operations:
         A list of :class:`Operation <raider.operations.Operation>`
         objects to be executed after the response is received and
-        outputs are extracted. Should contain a :class:`NextStage
-        <raider.operations.NextStage>` operation if another Flow is
+        outputs are extracted. Should contain a :class:`Next
+        <raider.operations.Next>` operation if another Flow is
         expected.
     """
 
@@ -141,24 +141,23 @@ class Flow:
         """Runs the defined :class:`operations <raider.operations.Operation>`.
 
         Iterates through the defined ``operations`` and executes them
-        one by one. Iteration stops when the first :class:`NextStage
-        <raider.operations.NextStage>` operations is encountered.
+        one by one. Iteration stops when the first :class:`Next
+        <raider.operations.Next>` operations is encountered.
 
         Returns:
-          A string with the name of the next stage to run or None.
+          A string with the name of the next flow to run or None.
 
         """
-        next_stage = None
+        next_flow = None
 
         if self.operations:
             for item in self.operations:
-                next_stage = item.run(self.config, self.response)
-                if next_stage:
+                next_flow = item.run(self.config, self.response)
+                if next_flow:
                     break
 
-        return next_stage
+        return next_flow
 
     @property
     def logger(self):
         return self.config.logger
-

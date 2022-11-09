@@ -13,11 +13,9 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-"""Authentication class responsible for running the defined stages.
-"""
 
 import sys
-from typing import Dict, Optional, Union, Any, List
+from typing import Any, Dict, List, Optional, Union
 
 import igraph
 
@@ -28,142 +26,90 @@ from raider.user import User
 
 
 class FlowStore:
-    """Class holding authentication stages.
-
-    This class holds all the information necessary to authenticate. It
-    provides functions to run those authentication steps.
-
-    Attributes:
-      stages:
-        A list of Flow objects relevant to the authentication process.
-
-    """
-
     def __init__(self, config) -> None:
-        """Initializes the Authentication object.
-
-        Creates an object to handle the authentication process.
-
-        Args:
-          graph:
-            A list of Flow objects defined inside "_authentication"
-            variable in hy configuration files.
-
-        """
-        self.graph = igraph.Graph(directed=True)
+        self.flows = igraph.Graph(directed=True)
+        self.flowgraphs = {}
         self.config = config
         self.logger = config.logger
-        self._current_stage = 0
 
     def add_flow(self, key: str, value: str) -> None:
-        self.graph.add_vertices(1)
-        index = self.graph.vcount() - 1
-        self.graph.vs[index]["name"] = key
-        self.graph.vs[index]["object"] = value
+        self.flows.add_vertices(1)
+        index = self.flows.vcount() - 1
+        self.flows.vs[index]["name"] = key
+        self.flows.vs[index]["object"] = value
+
+    def add_flowgraph(self, key: str, value: str) -> None:
+        self.flowgraphs[key] = value
 
     def __getitem__(self, name: Any) -> Any:
         """Getter to return a Flow by the name."""
         if name in self.keys:
             flow_id = self.get_flow_id_by_name(name)
-            return self.graph.vs[flow_id]["object"]
+            return self.flows.vs[flow_id]["object"]
         return None
 
     def get_flow_id_by_name(self, flow_name: str) -> int:
         return self.keys.index(flow_name)
 
-    @property
-    def keys(self) -> List[str]:
-        if not self.graph.vs:
-            return []
-        return self.graph.vs[::]["name"]
+    def get_flow_id_by_flow(self, flow: Flow) -> int:
+        return self.values.index(flow)
 
-    @property
-    def values(self) -> List[Any]:
-        if not self.graph.vs:
-            return []
-        return self.graph.vs[::]["object"]
-
-    def get_stage_name_by_id(self, stage_id: int) -> str:
-        """Returns the stage name given its number.
+    def get_flow_name_by_id(self, flow_id: int) -> str:
+        """Returns the flow name given its number.
 
         Each authentication step is given an index based on its position
         in the "_authentication" list. This function returns the name of
         the Flow based on its position in this list.
 
         Args:
-          stage_id:
-            An integer with the index of the stage.
+          flow_id:
+            An integer with the index of the flow.
 
         Returns:
-          A string with the name of the Flow in the position "stage_id".
+          A string with the name of the Flow in the position "flow_id".
 
         """
-        if not self.graph.vs:
+        if not self.flows.vs:
             return None
-        return self.graph.vs[stage_id]["name"]
+        return self.flows.vs[flow_id]["name"]
 
-    def get_stage_index(self, name: str) -> int:
-        """Returns the index of the stage given its name.
+    def get_flow_index(self, name: str) -> int:
+        """Returns the index of the flow given its name.
 
 
         Returns:
           An integer with the index of the Flow with the specified "name".
         """
-        return self.graph.vs[::]["name"].index(name)
+        if isinstance(name, bool):
+            return None
+        return self.flows.vs[::]["name"].index(name)
 
-    def run_chain(self, config: Config, flograph:str) -> None:
-        """Runs all authentication stages.
 
-        This function will run all authentication stages for the
-        specified User and will take into account the supplied Config
-        for things like the user agent and the web proxy to use.
 
-        Args:
-          user:
-            A User object containing the credentials and where the user
-            specific data will be stored.
-          config:
-            A Config object with the global Raider settings.
+    @property
+    def keys(self) -> List[str]:
+        if not self.flows.vs:
+            return []
+        return self.flows.vs[::]["name"]
 
-        """
-        while self._current_stage >= 0:
-            self.run_current_stage(config)
+    @property
+    def values(self) -> List[Any]:
+        if not self.flows.vs:
+            return []
+        return self.flows.vs[::]["object"]
 
-        self._current_stage = 0
-
-    def run_current_stage(self, config: Config) -> None:
-        """Runs the current stage only.
-
-        Authentication class keeps the index of the current stage in the
-        "_current_stage" variable. This function runs only one
-        authentication step indexed by this variable.
-
-        Args:
-          user:
-            A User object containing the credentials and where the user
-            specific data will be stored.
-          config:
-            A Config object with the global Raider settings.
-
-        """
-        self.logger.info(
-            "Running stage %s",
-            self.get_stage_name_by_id(self._current_stage),
-        )
-        self.run_stage(config, self._current_stage)
-
-    def run_stage(
-        self,  config: Config, stage_id: Union[int, str]
+    def run_flow(
+        self, config: Config, flow_id: Union[int, str]
     ) -> Optional[str]:
-        """Runs one authentication Stage.
+        """Runs one authentication Flow.
 
-        First, the Flow object of the specified stage is identified,
+        First, the Flow object of the specified flow is identified,
         then the related HTTP request is processed, sent, the response
         is received, and the operations are run on the Flow.
 
         Args:
-          stage_id:
-            A string or an integer identifying the authentication stage
+          flow_id:
+            A string or an integer identifying the authentication flow
             to run. If it's a string, it's the name of the Flow, and if
             it's an integer, it's the index of the Flow object in the
             "_authentication" variable.
@@ -179,23 +125,23 @@ class FlowStore:
 
         """
 
-        stage: Optional[Flow]
-        if isinstance(stage_id, int):
-            stage_name = self.get_stage_name_by_id(stage_id)
-            stage = self[stage_name]
-        elif isinstance(stage_id, str):
-            stage = self[stage_id]
+        flow: Optional[Flow]
+        if isinstance(flow_id, int):
+            flow_name = self.get_flow_name_by_id(flow_id)
+            flow = self[flow_name]
+        elif isinstance(flow_id, str):
+            flow = self[flow_id]
 
-        if not stage:
+        if not flow:
             self.logger.critical(
-                "Stage %s not defined. Cannot continue", stage_id
+                "Flow %s not defined. Cannot continue", flow_id
             )
             sys.exit()
 
-        stage.execute(config)
+        flow.execute(config)
 
-        if stage.outputs:
-            for item in stage.outputs:
+        if flow.outputs:
+            for item in flow.outputs:
                 if isinstance(item, Plugins.Cookie):
                     config.active_user.set_cookie(item)
                 elif isinstance(item, Plugins.Header):
@@ -205,14 +151,33 @@ class FlowStore:
                 ):
                     config.active_user.set_data(item)
 
-        next_stage = stage.run_operations()
-        if next_stage:
-            self._current_stage = self.get_stage_index(next_stage)
+        operations_result = flow.run_operations()
+        if isinstance(operations_result, str):
+            return operations_result
         else:
-            self._current_stage = -1
-        return next_stage
+            return None
 
-    @property
-    def current_stage_name(self) -> str:
-        """Returns the name of the current stage."""
-        return self.get_stage_name_by_id(self._current_stage)
+
+
+
+    def run_chain(self, config: Config, flowgraph: str) -> None:
+        """Runs all authentication flows.
+
+        This function will run all authentication flows for the
+        specified User and will take into account the supplied Config
+        for things like the user agent and the web proxy to use.
+
+        Args:
+          user:
+            A User object containing the credentials and where the user
+            specific data will be stored.
+          config:
+            A Config object with the global Raider settings.
+
+        """
+
+        flow = self.flowgraphs[flowgraph].start
+        flow_id = self.get_flow_id_by_flow(flow)
+        next_flow = self.run_flow(config, flow_id)
+        while next_flow:
+            next_flow = self.run_flow(config, next_flow)

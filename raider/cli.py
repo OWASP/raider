@@ -21,10 +21,10 @@ import argparse
 from IPython import embed
 
 from raider.parsers.config import add_config_parser, run_config_command
+from raider.parsers.delete import add_delete_parser, run_delete_command
 from raider.parsers.edit import add_edit_parser, run_edit_command
 from raider.parsers.inspect import add_inspect_parser, run_inspect_command
 from raider.parsers.new import add_new_parser, run_new_command
-from raider.parsers.delete import add_delete_parser, run_delete_command
 from raider.parsers.run import add_run_parser, run_run_command
 from raider.parsers.shell import add_shell_parser, run_shell_command
 from raider.parsers.show import add_show_parser, run_show_command
