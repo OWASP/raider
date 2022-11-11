@@ -5,24 +5,20 @@ from raider.utils import list_hyfiles, list_projects
 class Matches:
     def __init__(self, raider):
         self.raider = raider
-        self.projects = []
-        self.hyfiles = {}
-        self.flows = {}
-        self.flowgraphs = {}
+        self.results = {}
 
     def match_projects(self, search):
-        self.projects = self.raider.projects.search_projects(search)
+        self.results = self.raider.projects.search_projects(search)
 
     def match_hyfiles(self, search):
-        self.hyfiles = self.raider.projects.search_hyfiles(
-            self.projects, search
+        self.results = self.raider.projects.search_hyfiles(
+            self.results, search
         )
 
-    def match_flows(self, search):
-        self.flows = self.raider.projects.search_flows(self.hyfiles, search)
-
-    def match_flowgraphs(self, search):
-        self.flows = self.raider.projects.search_flowgraphs(self.hyfiles, search)
+    def match_flows(self, search_flows, search_flowgraphs):
+        self.results = self.raider.projects.search_flows(
+            self.results, search_flows, search_flowgraphs
+        )
 
 
 class Search:
@@ -34,52 +30,49 @@ class Search:
     def search(self):
         self.matches.match_projects(self.args.projects)
         self.matches.match_hyfiles(self.args.hyfiles)
-        if self.print_flows_enabled:
-            for project in self.matches.projects:
+        if self.print_flows_enabled or self.print_flowgraphs_enabled:
+            for project in self.matches.results:
                 self.raider.projects[project].load()
-            self.matches.match_flows(self.args.flows)
+            self.matches.match_flows(self.args.flows, self.args.graphs)
 
-    def print_projects(self, spacing: int = 0):
-        projects_padding = spacing
-        for item in self.matches.projects:
-            self.raider.projects[item].print(projects_padding)
+            results = self.matches.results
+            for project in list(results):
+                for hyfile in list(results[project]):
+                    flows = results[project][hyfile]["flows"]
+                    flowgraphs = results[project][hyfile]["flowgraphs"]
+                    if any([(not self.print_flows_enabled and not flowgraphs),
+                            (not self.print_flowgraphs_enabled and not flows),
+                            (not flows and not flowgraphs)]):
+                        del self.matches.results[project][hyfile]
 
-    def print_hyfiles(self, spacing: int = 0):
-        for key, value in self.matches.hyfiles.items():
-            hyfiles_padding = projects_padding = spacing
-            project = self.raider.projects[key]
-            if value:
-                hyfiles_padding += 4
-                project.print(projects_padding)
+                if not results[project]:
+                    del self.matches.results[project]
 
-                project.print_hyfiles(matches=value, spacing=hyfiles_padding)
-
-    def print_flows(self, spacing: int = 0):
-        for item in self.matches.flows.keys():
-            flows_padding = hyfiles_padding = projects_padding = spacing
+    def print(self):
+        projects_padding = 0
+        for item in self.matches.results:
             project = self.raider.projects[item]
-            if project.name in self.matches.hyfiles:
-                hyfiles_padding += 4
-                flows_padding += 4
-                project.print(projects_padding)
+            project.print(projects_padding)
 
-            for hyfile in self.matches.flows[project.name].keys():
-                flows_padding = hyfiles_padding
-                flows = self.matches.flows[project.name][hyfile]
-                if flows:
-                    flows_padding += 4
-                    project.print_hyfiles(
-                        matches=[hyfile], spacing=hyfiles_padding
-                    )
-                    project.print_flows(
-                        hyfile=hyfile, matches=flows, spacing=flows_padding
-                    )
+            for hyfile in self.matches.results[item]:
+                hyfiles_padding = projects_padding + 4
+                hyfiles_flows = self.matches.results[item]
+                flowstore = project.flowstore
 
-    @property
-    def print_projects_enabled(self):
-        if isinstance(self.args.projects, str):
-            return True
-        return False
+                if hyfile in hyfiles_flows:
+                    project.print_hyfile(hyfile, spacing=hyfiles_padding)
+                    if self.print_flowgraphs_enabled:
+                        for flowgraph in hyfiles_flows[hyfile]["flowgraphs"]:
+                            flowgraphs_padding = hyfiles_padding + 4
+                            start_flow = flowstore.flowgraphs[flowgraph].start
+                            flow_name = flowstore.get_flow_name_by_flow(start_flow)
+                            project.print_flowgraph(
+                                flowgraph, flow_name, spacing=flowgraphs_padding
+                            )
+                    if self.print_flows_enabled:
+                        for flow in hyfiles_flows[hyfile]["flows"]:
+                            flows_padding = hyfiles_padding + 4
+                            project.print_flow(flow, spacing=flows_padding)
 
     @property
     def print_hyfiles_enabled(self):

@@ -54,6 +54,9 @@ class FlowStore:
     def get_flow_id_by_flow(self, flow: Flow) -> int:
         return self.values.index(flow)
 
+    def get_flow_name_by_flow(self, flow: Flow) -> int:
+        return self.get_flow_name_by_id(self.get_flow_id_by_flow(flow))
+
     def get_flow_name_by_id(self, flow_id: int) -> str:
         """Returns the flow name given its number.
 
@@ -83,8 +86,6 @@ class FlowStore:
         if isinstance(name, bool):
             return None
         return self.flows.vs[::]["name"].index(name)
-
-
 
     @property
     def keys(self) -> List[str]:
@@ -156,9 +157,6 @@ class FlowStore:
             return operations_result
         else:
             return None
-
-
-
 
     def run_chain(self, config: Config, flowgraph: str) -> None:
         """Runs all authentication flows.

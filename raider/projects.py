@@ -28,6 +28,7 @@ from raider.structures import DataStore
 from raider.user import Users
 from raider.utils import (
     colored_hyfile,
+    colored_text,
     create_hy_expression,
     eval_file,
     eval_project_file,
@@ -114,6 +115,7 @@ class Project:
         self.flowstore = FlowStore(config)
 
         self.flows = {}
+        self.flowgraphs = {}
 
         self.logger = self.config.logger
 
@@ -153,10 +155,14 @@ class Project:
                 eval_project_file(self.name, hyfile, shared_locals)
             )
             env_new = set(shared_locals.keys()) - set(env_old.keys())
+            env_new = [item for item in shared_locals if item not in env_old]
             self.flows[hyfile] = []
+            self.flowgraphs[hyfile] = []
             for key in env_new:
                 if isinstance(shared_locals[key], Flow):
                     self.flows[hyfile].append(key)
+                if isinstance(shared_locals[key], FlowGraph):
+                    self.flowgraphs[hyfile].append(key)
 
         for value in shared_locals.values():
             if isinstance(value, Users):
@@ -170,7 +176,13 @@ class Project:
                 self.flowstore.add_flowgraph(key, value)
 
         first_flow = self.flowstore.values[0]
+        first_flow_name = self.flowstore.get_flow_name_by_flow(first_flow)
+        for hyfile, flows in self.flows.items():
+            if first_flow_name in flows:
+                first_flow_hyfile = hyfile
+
         self.flowstore.add_flowgraph("DEFAULT", FlowGraph(first_flow))
+        self.flowgraphs[first_flow_hyfile].insert(0, "DEFAULT")
 
         return shared_locals
 
@@ -258,19 +270,15 @@ class Project:
     def print(self, spacing: int = 0) -> None:
         print(" " * spacing + "\x1b[1;30;44m" + self.name + "\x1b[0m")
 
-    def print_hyfiles(
-        self, matches: List[str] = None, spacing: int = 0
-    ) -> None:
-        for hyfile in self.hyfiles:
-            if not matches or hyfile in matches:
-                print(" " * spacing + "- " + colored_hyfile(hyfile))
+    def print_hyfile(self, hyfile: str, spacing: int = 0) -> None:
+        print(" " * spacing + "- " + colored_hyfile(hyfile))
 
-    def print_flows(
-        self, hyfile: str, matches: List[str] = None, spacing: int = 0
-    ) -> None:
-        for flow in self.flows[hyfile]:
-            if not matches or flow in matches:
-                print(" " * spacing + "• " + (flow))
+    def print_flow(self, flow: str, spacing: int = 0) -> None:
+        print(" " * spacing + "• " + (flow))
+
+    def print_flowgraph(self, flowgraph: str, start: str, spacing: int = 0) -> None:
+        print(" " * spacing + "+ " + colored_text(flowgraph, "RED-BLACK-B")
+              + " -> " + colored_text(start, "RESET"))
 
     @property
     def hyfiles(self):
@@ -318,52 +326,54 @@ class Projects(DataStore):
                 matches.add(project.name)
 
         matches = sorted(list(matches))
-        return matches
+        return {project: {} for project in matches}
 
-    def search_hyfiles(
-        self, projects: List[str], search: str = None
-    ) -> List[str]:
+    def search_hyfiles(self, results, search: str = None) -> List[str]:
         matches = {}
-        for project in projects:
+        for project in results:
             project_hyfiles = sorted(list_hyfiles(project))
             if not search:
-                matches.update({project: project_hyfiles})
+                matches.update(
+                    {project: {hyfile: {} for hyfile in project_hyfiles}}
+                )
             else:
-                matches[project] = []
                 for hyfile in project_hyfiles:
                     if search.lower() in hyfile.lower():
-                        matches[project].append(hyfile)
+                        if not project in matches:
+                            matches[project] = {}
+                        matches[project][hyfile] = {}
 
         return matches
 
     def search_flows(
-        self, hyfiles: Dict[str, List[str]], search: str = None
+        self,
+        results,
+        search_flows: str = None,
+        search_flowgraphs: str = None,
     ) -> List[str]:
-        matches = {}
-        for project in hyfiles.keys():
-            matches[project] = {}
-            for hyfile in hyfiles[project]:
+        matches = results
+        for project in results.keys():
+            hyfiles = results[project]
+            for hyfile in hyfiles:
                 flows = self[project].flows[hyfile]
-                if flows and not search:
-                    matches[project].update({hyfile: flows})
-                elif flows:
+                flowgraphs = self[project].flowgraphs[hyfile]
+                hyfile_flows = []
+                hyfile_flowgraphs = []
+                if not search_flows:
+                    hyfile_flows = flows
+                else:
                     for flow in flows:
-                        if search.lower() in flow.lower():
-                            matches[project].update({hyfile: flows})
-        return matches
+                        if search_flows.lower() in flow.lower():
+                            hyfile_flows.append(flow)
 
-    def search_flowgraphs(
-        self, hyfiles: Dict[str, List[str]], search: str = None
-    ) -> List[str]:
-        matches = {}
-        for project in hyfiles.keys():
-            matches[project] = {}
-            for hyfile in hyfiles[project]:
-                flows = self[project].flows[hyfile]
-                if flows and not search:
-                    matches[project].update({hyfile: flows})
-                elif flows:
-                    for flow in flows:
-                        if search.lower() in flow.lower():
-                            matches[project].update({hyfile: flows})
+                if not search_flowgraphs:
+                    hyfile_flowgraphs = flowgraphs
+                else:
+                    for flowgraph in flowgraphs:
+                        if search_flowgraphs.lower() in flowgraph.lower():
+                            hyfile_flowgraphs.append(flowgraph)
+
+                matches[project][hyfile]["flows"] = hyfile_flows
+                matches[project][hyfile]["flowgraphs"] = hyfile_flowgraphs
+
         return matches

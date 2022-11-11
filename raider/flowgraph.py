@@ -24,4 +24,3 @@ class FlowGraph:
         self.start = start
         self.test = test
         self.completed = False
-

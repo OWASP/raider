@@ -648,9 +648,7 @@ class Failure(Operation):
             An optional string with the error message to be displayed.
         """
         self.message = message
-        super().__init__(
-            function=self.return_failure
-        )
+        super().__init__(function=self.return_failure)
 
     def return_failure(self):
         self.logger.error("Failure: " + str(self.message))
@@ -677,9 +675,7 @@ class Success(Operation):
             An optional string with the message to be displayed.
         """
         self.message = message
-        super().__init__(
-            function=self.return_success
-        )
+        super().__init__(function=self.return_success)
 
     def return_success(self):
         self.logger.info("Success: " + str(self.message))

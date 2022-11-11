@@ -9,9 +9,9 @@ def add_run_parser(parser) -> None:
     run_parser.add_argument("--flow", help="Run a single Flow")
     run_parser.add_argument(
         "--graph",
-        nargs = "?",
-        const = "DEFAULT",
-        default = "DEFAULT",
+        nargs="?",
+        const="DEFAULT",
+        default="DEFAULT",
         help="Run a series of Flows in the FlowGraph until no Next Operation is found",
     )
     run_parser.add_argument(
