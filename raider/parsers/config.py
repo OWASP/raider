@@ -30,15 +30,15 @@ def add_config_parser(parser) -> None:
 def run_config_command(args):
     raider = Raider()
     if args.proxy:
-        raider.config.proxy = args.proxy
+        raider.gconfig.proxy = args.proxy
     if args.verify:
-        raider.config.verify = args.verify
+        raider.gconfig.verify = args.verify
     if args.loglevel:
-        raider.config.loglevel = args.loglevel
+        raider.gconfig.loglevel = args.loglevel
     if args.user_agent:
-        raider.config.user_agent = args.user_agent
+        raider.gconfig.user_agent = args.user_agent
     if args.active_project:
-        raider.config.active_project = args.active_project
+        raider.gconfig.active_project = args.active_project
 
-    raider.config.write_config_file()
-    raider.config.print_config()
+    raider.gconfig.write_config_file()
+    raider.gconfig.print_config()

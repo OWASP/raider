@@ -24,9 +24,12 @@ def add_run_parser(parser) -> None:
 def run_run_command(args: argparse.Namespace) -> None:
     raider = Raider(args.project)
     if args.proxy:
-        raider.config.use_proxy = True
+        raider.gconfig.use_proxy = True
 
+    raider.project.load()
     if args.flow:
-        raider.run_flow(args.flow)
+        raider.flowstore.run_flow(raider.pconfig, args.flow)
     else:
-        raider.run_flowgraph(args.graph)
+        raider.flowstore.run_flowgraph(raider.pconfig, args.graph)
+
+    raider.project.write_project_file()

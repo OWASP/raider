@@ -88,12 +88,12 @@ class Flow:
 
         self.request = request
         self.response: Optional[requests.models.Response] = None
-        self.config = None
+        self.pconfig = None
 
     def print(self, spacing: int = 0) -> None:
         print(" " * spacing + "\x1b[1;30;44m" + self.request + "\x1b[0m")
 
-    def execute(self, config: Config) -> None:
+    def execute(self, pconfig: Config) -> None:
         """Sends the request and extracts the outputs.
 
         Given the user in context and the global Raider configuration,
@@ -111,8 +111,8 @@ class Flow:
             The global Raider configuration.
 
         """
-        self.config = config
-        self.response = self.request.send(config)
+        self.pconfig = pconfig
+        self.response = self.request.send(pconfig)
         if self.outputs:
             for output in self.outputs:
                 if output.needs_response:
@@ -121,8 +121,8 @@ class Flow:
                         output.extract_name_from_response(self.response)
                 elif output.depends_on_other_plugins:
                     for item in output.plugins:
-                        item.get_value(config.active_user.to_dict())
-                    output.get_value(config.active_user.to_dict())
+                        item.get_value(pconfig.active_user.to_dict())
+                    output.get_value(pconfig.active_user.to_dict())
 
     def get_plugin_values(self, user: User) -> None:
         """Given a user, get the plugins' values from it.
@@ -152,7 +152,7 @@ class Flow:
 
         if self.operations:
             for item in self.operations:
-                next_flow = item.run(self.config, self.response)
+                next_flow = item.run(self.pconfig, self.response)
                 if next_flow:
                     break
 
@@ -160,4 +160,4 @@ class Flow:
 
     @property
     def logger(self):
-        return self.config.logger
+        return self.pconfig.logger

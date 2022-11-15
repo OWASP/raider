@@ -97,7 +97,7 @@ class Project:
 
     """
 
-    def __init__(self, config, project: str) -> None:
+    def __init__(self, gconfig, project: str) -> None:
         """Initializes the Project object.
 
         Sets up the environment necessary to test the specified
@@ -110,14 +110,14 @@ class Project:
             be selected
 
         """
-        self.config = ProjectConfig(config)
+        self.pconfig = ProjectConfig(gconfig)
         self.name = project
-        self.flowstore = FlowStore(config)
+        self.flowstore = FlowStore(self.pconfig)
 
         self.flows = {}
         self.flowgraphs = {}
 
-        self.logger = self.config.logger
+        self.logger = gconfig.logger
 
     def load(self):
         """Loads project settings.
@@ -167,7 +167,7 @@ class Project:
         for value in shared_locals.values():
             if isinstance(value, Users):
                 ## TODO: move users to Projects level
-                self.config.users = value
+                self.pconfig.users = value
 
         for key, value in shared_locals.items():
             if isinstance(value, Flow):
@@ -185,16 +185,6 @@ class Project:
         self.flowgraphs[first_flow_hyfile].insert(0, "DEFAULT")
 
         return shared_locals
-
-    def run_flow(self, flow: str = None) -> None:
-        self.load()
-        self.flowstore.run_flow(self.config, flow)
-        self.write_project_file()
-
-    def run_flowgraph(self, flowgraph: str = None) -> None:
-        self.load()
-        self.flowstore.run_chain(self.config, flowgraph)
-        self.write_project_file()
 
     def write_session_file(self) -> None:
         """Saves session data.
@@ -259,9 +249,9 @@ class Project:
         filename = get_project_file(self.name, "_project.hy")
         value = ""
         with open(filename, "w", encoding="utf-8") as proj_file:
-            if self.config.active_user:
+            if self.pconfig.active_user:
                 value += create_hy_expression(
-                    "_active_user", self.config.active_user.username
+                    "_active_user", self.pconfig.active_user.username
                 )
             self.logger.debug("Writing to session file %s", filename)
             self.logger.debug("value = %s", str(value))

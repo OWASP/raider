@@ -20,17 +20,16 @@ from typing import Any, Dict, List, Optional, Union
 import igraph
 
 import raider.plugins as Plugins
-from raider.config import Config
 from raider.flow import Flow
 from raider.user import User
 
 
 class FlowStore:
-    def __init__(self, config) -> None:
+    def __init__(self, pconfig) -> None:
         self.flows = igraph.Graph(directed=True)
         self.flowgraphs = {}
-        self.config = config
-        self.logger = config.logger
+        self.pconfig = pconfig
+        self.logger = pconfig.logger
 
     def add_flow(self, key: str, value: str) -> None:
         self.flows.add_vertices(1)
@@ -100,7 +99,7 @@ class FlowStore:
         return self.flows.vs[::]["object"]
 
     def run_flow(
-        self, config: Config, flow_id: Union[int, str]
+        self, pconfig, flow_id: Union[int, str]
     ) -> Optional[str]:
         """Runs one authentication Flow.
 
@@ -114,9 +113,6 @@ class FlowStore:
             to run. If it's a string, it's the name of the Flow, and if
             it's an integer, it's the index of the Flow object in the
             "_authentication" variable.
-          user:
-            A User object containing the credentials and where the user
-            specific data will be stored.
           config:
             A Config object with the global Raider settings.
 
@@ -139,18 +135,18 @@ class FlowStore:
             )
             sys.exit()
 
-        flow.execute(config)
+        flow.execute(pconfig)
 
         if flow.outputs:
             for item in flow.outputs:
                 if isinstance(item, Plugins.Cookie):
-                    config.active_user.set_cookie(item)
+                    pconfig.active_user.set_cookie(item)
                 elif isinstance(item, Plugins.Header):
-                    config.active_user.set_header(item)
+                    pconfig.active_user.set_header(item)
                 elif isinstance(
                     item, (Plugins.Regex, Plugins.Html, Plugins.Json)
                 ):
-                    config.active_user.set_data(item)
+                    pconfig.active_user.set_data(item)
 
         operations_result = flow.run_operations()
         if isinstance(operations_result, str):
@@ -158,7 +154,7 @@ class FlowStore:
         else:
             return None
 
-    def run_chain(self, config: Config, flowgraph: str) -> None:
+    def run_flowgraph(self, pconfig, flowgraph_id: str) -> None:
         """Runs all authentication flows.
 
         This function will run all authentication flows for the
@@ -173,9 +169,14 @@ class FlowStore:
             A Config object with the global Raider settings.
 
         """
-
-        flow = self.flowgraphs[flowgraph].start
+        flowgraph = self.flowgraphs[flowgraph_id]
+        flow = flowgraph.start
         flow_id = self.get_flow_id_by_flow(flow)
-        next_flow = self.run_flow(config, flow_id)
+        next_flow = self.run_flow(pconfig, flow_id)
         while next_flow:
-            next_flow = self.run_flow(config, next_flow)
+            next_flow = self.run_flow(pconfig, next_flow)
+
+
+        if flowgraph.test:
+            flow_id = self.get_flow_id_by_flow(flowgraph.test)
+            result = self.run_flow(pconfig, flow_id)

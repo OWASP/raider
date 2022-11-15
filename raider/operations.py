@@ -29,7 +29,7 @@ from raider.utils import colored_text
 
 
 def execute_actions(
-    config,
+    pconfig,
     operations: Union["Operation", List["Operation"]],
     response: requests.models.Response,
 ) -> Optional[str]:
@@ -52,11 +52,11 @@ def execute_actions(
 
     """
     if isinstance(operations, Operation):
-        return operations.run(config, response)
+        return operations.run(pconfig, response)
 
     if isinstance(operations, list):
         for item in operations:
-            output = item.run(config, response)
+            output = item.run(pconfig, response)
             if output:
                 return output
 
@@ -98,9 +98,12 @@ class Operation:
     # Operation's function needs the HTTP response to run.
     NEEDS_RESPONSE = 0x02
 
+    # Operation uses plugins with userdata
+    NEEDS_USERDATA = 0x04
+
     # Operation will append instead of overwrite. Used when dealing with files
     # to make sure old data doesn't get overwritten.
-    WILL_APPEND = 0x04
+    WILL_APPEND = 0x08
 
     def __init__(
         self,
@@ -129,10 +132,10 @@ class Operation:
         self.flags = flags
         self.action = action
         self.otherwise = otherwise
-        self.config = None
+        self.pconfig = None
         self.logger = None
 
-    def run(self, config, response: requests.models.Response) -> Optional[str]:
+    def run(self, pconfig, response: requests.models.Response) -> Optional[str]:
         """Runs the Operation.
 
         Runs the defined Operation, considering the "flags" set.
@@ -146,15 +149,23 @@ class Operation:
           An optional string with the name of the next flow.
 
         """
-        self.config = config
-        if not self.logger:
-            self.logger = get_logger(config.loglevel, "raider.operations")
+        self.pconfig = pconfig
+        self.logger = self.pconfig.logger
+
         self.logger.debug("Running operation %s", str(self))
+        if self.needs_userdata:
+            self.get_plugin_values()
         if self.is_conditional:
             return self.run_conditional(response)
         if self.needs_response:
             return self.function(response)
         return self.function()
+
+    def get_plugin_values(self):
+        for item in self.args:
+            if isinstance(item, Plugin):
+                userdata = self.pconfig.active_user.to_dict()
+                item.get_value(userdata)
 
     def run_conditional(
         self, response: requests.models.Response
@@ -180,9 +191,9 @@ class Operation:
             check = self.function()
 
         if check and self.action:
-            return execute_actions(self.config, self.action, response)
+            return execute_actions(self.pconfig, self.action, response)
         if self.otherwise:
-            return execute_actions(self.config, self.otherwise, response)
+            return execute_actions(self.pconfig, self.otherwise, response)
 
         return None
 
@@ -190,6 +201,11 @@ class Operation:
     def needs_response(self) -> bool:
         """Returns True if the NEEDS_RESPONSE flag is set."""
         return bool(self.flags & self.NEEDS_RESPONSE)
+
+    @property
+    def needs_userdata(self) -> bool:
+        """Returns True if the NEEDS_USERDATA flag is set."""
+        return bool(self.flags & self.NEEDS_USERDATA)
 
     @property
     def is_conditional(self) -> bool:
@@ -326,6 +342,55 @@ class Grep(Operation):
             + str(self.otherwise)
             + ")"
         )
+
+
+class Match(Operation):
+    def __init__(
+        self,
+        match1: Union[str, Plugin],
+        match2: Union[str, Plugin],
+        action: Operation,
+        otherwise: Optional[Operation] = None,
+    ) -> None:
+        self.args = (match1, match2)
+        super().__init__(
+            function=self.check_match,
+            action=action,
+            otherwise=otherwise,
+            flags=Operation.IS_CONDITIONAL | Operation.NEEDS_USERDATA
+        )
+
+    def check_match(self) -> bool:
+        if isinstance(self.args[0], Plugin):
+            value1 = self.args[0].value
+        else:
+            value1 = self.args[0]
+
+        if isinstance(self.args[1], Plugin):
+            value2 = self.args[1].value
+        else:
+            value2 = self.args[1]
+
+        return (value1 == value2)
+            
+
+    def __str__(self) -> str:
+        """Returns a string representation of the Operation."""
+        return (
+            "(Match:"
+            + str(self.args[0])
+            + ","
+            + str(self.args[1])
+            + "="
+            + str(self.action)
+            + "/"
+            + str(self.otherwise)
+            + ")"
+        )
+
+
+
+
 
 
 class Save(Operation):
@@ -468,7 +533,7 @@ class Print(Operation):
     def __init__(
         self,
         *args: Union[str, Plugin],
-        flags: int = 0,
+        flags: int = Operation.NEEDS_USERDATA,
         function: Callable[..., Any] = None,
     ):
         """Initializes the Print Operation.

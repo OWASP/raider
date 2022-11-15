@@ -194,7 +194,7 @@ class Request:
     def __init__(
         self,
         method: str,
-        url: Optional[Union[str, Plugin]] = None,
+        url: Union[str, Plugin],
         cookies: Optional[List[Cookie]] = None,
         headers: Optional[List[Header]] = None,
         data: Optional[Union[Dict[Any, Any], PostBody, File]] = None,
@@ -367,15 +367,19 @@ class Request:
             params = urllib.parse.urlencode(
                 data, quote_via=urllib.parse.quote
             )  # type: ignore
-            req = requests.get(
-                self.url,
-                params=params,
-                headers=headers,
-                cookies=cookies,
-                proxies=proxies,
-                verify=verify,
-                allow_redirects=False,
-            )
+            try:
+                req = requests.get(
+                    self.url,
+                    params=params,
+                    headers=headers,
+                    cookies=cookies,
+                    proxies=proxies,
+                    verify=verify,
+                    allow_redirects=False,
+                )
+            except requests.exceptions.ProxyError:
+                logging.critical("Proxy server not reachable, cannot continue!")
+                sys.exit()
 
             return req
 

@@ -161,6 +161,7 @@ def import_raider_objects() -> Dict[str, Any]:
         "operations": (
             "Http "
             "Grep "
+            "Match "
             "Print "
             "Success "
             "Failure "

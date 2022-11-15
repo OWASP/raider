@@ -71,20 +71,12 @@ class Raider:
             which means the plugins should get their value from userdata.
 
         """
-        self.config = Config()
-        self.logger = self.config.logger
+        self.gconfig = Config()
+        self.logger = self.gconfig.logger
         self.args = args
-        self._project_name = name or self.config.active_project
-        self.projects = Projects(self.config, self._project_name)
+        self._project_name = name or self.gconfig.active_project
+        self.projects = Projects(self.gconfig, self._project_name)
         self._flags = flags
-
-    def run_flow(self, flow: str = None) -> None:
-        self.project.run_flow(flow)
-        self.config.write_config_file()
-
-    def run_flowgraph(self, flowgraph: str = None) -> None:
-        self.project.run_flowgraph(flowgraph)
-        self.config.write_config_file()
 
     def load_session(self) -> None:
         """Loads saved session from ``_userdata.hy``."""
@@ -173,12 +165,20 @@ class Raider:
 
     @property
     def project(self) -> Project:
-        return self.projects[self.config.active_project]
+        return self.projects[self.gconfig.active_project]
 
     @property
-    def authentication(self) -> FlowStore:
+    def flowstore(self):
+        return self.project.flowstore
+
+    @property
+    def pconfig(self):
+        return self.project.pconfig
+
+    @property
+    def flowstore(self) -> FlowStore:
         """Returns the Authentication object"""
-        return self.project.authentication
+        return self.project.flowstore
 
     @property
     def user(self) -> User:
