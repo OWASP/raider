@@ -128,6 +128,7 @@ class FlowStore:
             flow = self[flow_name]
         elif isinstance(flow_id, str):
             flow = self[flow_id]
+            flow_name = flow_id
 
         if not flow:
             self.logger.critical(
@@ -135,6 +136,7 @@ class FlowStore:
             )
             sys.exit()
 
+        self.logger.info("Running flow " + flow_name)
         flow.execute(pconfig)
 
         if flow.outputs:
@@ -149,12 +151,9 @@ class FlowStore:
                     pconfig.active_user.set_data(item)
 
         operations_result = flow.run_operations()
-        if isinstance(operations_result, str):
-            return operations_result
-        else:
-            return None
+        return operations_result
 
-    def run_flowgraph(self, pconfig, flowgraph_id: str) -> None:
+    def run_flowgraph(self, pconfig, flowgraph_id: str, test: bool = False) -> None:
         """Runs all authentication flows.
 
         This function will run all authentication flows for the
@@ -173,10 +172,17 @@ class FlowStore:
         flow = flowgraph.start
         flow_id = self.get_flow_id_by_flow(flow)
         next_flow = self.run_flow(pconfig, flow_id)
-        while next_flow:
+        while isinstance(next_flow, str):
             next_flow = self.run_flow(pconfig, next_flow)
 
 
-        if flowgraph.test:
+        if test and flowgraph.test:
             flow_id = self.get_flow_id_by_flow(flowgraph.test)
             result = self.run_flow(pconfig, flow_id)
+
+            if isinstance(result, bool):
+                flowgraph.completed = result
+                self.logger.info("FlowGraph.completed = " + str(result))
+            else:
+                self.logger.critical("FlowGraph's test flow must return (Success) or (Failure)")
+                sys.exit()

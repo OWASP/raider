@@ -39,13 +39,3 @@ def run_show_command(args):
     matches = Search(raider, args)
     matches.search()
     matches.print()
-    # if matches.print_flows_enabled:
-    #     matches.print_flows()
-    # elif matches.print_hyfiles_enabled:
-    #     matches.print_hyfiles()
-    # elif matches.print_projects_enabled:
-    #     matches.print_projects()
-    # else:
-    #     args.projects = ""
-    #     args.hyfiles = ""
-    #     matches.print_hyfiles()

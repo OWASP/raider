@@ -26,7 +26,6 @@ from typing import Any, Dict, List, Optional, Union
 import requests
 from urllib3.exceptions import InsecureRequestWarning
 
-from raider.config import Config
 from raider.plugins.basic.cookie import Cookie
 from raider.plugins.basic.file import File
 from raider.plugins.basic.header import Header
@@ -104,11 +103,11 @@ def process_cookies(
 
 
 def process_headers(
-    raw_headers: HeaderStore, userdata: Dict[str, str], config: Config
+    raw_headers: HeaderStore, userdata: Dict[str, str], pconfig
 ) -> Dict[str, str]:
     """Process the raw headers and replace with the real data."""
     headers = raw_headers.to_dict().copy()
-    headers.update({"user-agent": config.user_agent})
+    headers.update({"user-agent": pconfig.user_agent})
     for key in raw_headers:
         name = raw_headers[key].name
         if raw_headers[key].name_not_known_in_advance:
@@ -220,14 +219,9 @@ class Request:
 
         """
         self.method = method
-        if not self.method:
-            logging.critical("Required :method parameter, can't run without")
-
-        if not url:
-            logging.critical("Required :url parameter, can't run without")
-            sys.exit()
-
         self.url = url
+
+        self.logger = None
 
         self.headers = HeaderStore(headers)
         self.cookies = CookieStore(cookies)
@@ -239,6 +233,84 @@ class Request:
             self.data = data
         else:
             self.data = DataStore(data)
+
+    @classmethod
+    def get(cls, url, *args, **kwargs) -> "Request":
+        request = cls(method="GET",
+                      url=url,
+                      *args,
+                      **kwargs)
+        return request
+
+
+    @classmethod
+    def head(cls, url, *args, **kwargs) -> "Request":
+        request = cls(method="HEAD",
+                      url=url,
+                      *args,
+                      **kwargs)
+        return request
+
+
+    @classmethod
+    def post(cls, url, *args, **kwargs) -> "Request":
+        request = cls(method="POST",
+                      url=url,
+                      *args,
+                      **kwargs)
+        return request
+
+    @classmethod
+    def put(cls, url, *args, **kwargs) -> "Request":
+        request = cls(method="PUT",
+                      url=url,
+                      *args,
+                      **kwargs)
+        return request
+
+
+    @classmethod
+    def delete(cls, url, *args, **kwargs) -> "Request":
+        request = cls(method="DELETE",
+                      url=url,
+                      *args,
+                      **kwargs)
+        return request
+
+    @classmethod
+    def connect(cls, url, *args, **kwargs) -> "Request":
+        request = cls(method="CONNECT",
+                      url=url,
+                      *args,
+                      **kwargs)
+        return request
+
+    @classmethod
+    def options(cls, url, *args, **kwargs) -> "Request":
+        request = cls(method="OPTIONS",
+                      url=url,
+                      *args,
+                      **kwargs)
+        return request
+
+    @classmethod
+    def trace(cls, url, *args, **kwargs) -> "Request":
+        request = cls(method="TRACE",
+                      url=url,
+                      *args,
+                      **kwargs)
+        return request
+
+    @classmethod
+    def patch(cls, url, *args, **kwargs) -> "Request":
+        request = cls(method="PATCH",
+                      url=url,
+                      *args,
+                      **kwargs)
+        return request
+    
+
+
 
     def list_inputs(self) -> Optional[Dict[str, Plugin]]:
         """Returns a list of request's inputs."""
@@ -282,7 +354,7 @@ class Request:
 
         return inputs
 
-    def process_inputs(self, config: Config) -> Dict[str, Dict[str, str]]:
+    def process_inputs(self, pconfig) -> Dict[str, Dict[str, str]]:
         """Process the Request inputs.
 
         Uses the supplied user data to replace the Plugins in the inputs
@@ -292,8 +364,7 @@ class Request:
           user:
             A User object containing the user specific data to be used
             when processing the inputs.
-          config:
-            A Config object with the global Raider configuration.
+          pconfig:
 
         Returns:
           A dictionary with the cookies, headers, and other data created
@@ -301,8 +372,8 @@ class Request:
 
         """
 
-        if config.active_user:
-            userdata = config.active_user.to_dict()
+        if pconfig.active_user:
+            userdata = pconfig.active_user.to_dict()
         else:
             userdata = {}
 
@@ -310,7 +381,7 @@ class Request:
             self.url = self.url.get_value(userdata)
 
         cookies = process_cookies(self.cookies, userdata)
-        headers = process_headers(self.headers, userdata, config)
+        headers = process_headers(self.headers, userdata, pconfig)
         if isinstance(self.data, File):
             httpdata = self.data.get_value(userdata)
         else:
@@ -318,7 +389,7 @@ class Request:
 
         return {"cookies": cookies, "data": httpdata, "headers": headers}
 
-    def send(self, config: Config) -> Optional[requests.models.Response]:
+    def send(self, pconfig) -> Optional[requests.models.Response]:
         """Sends the HTTP request.
 
         With the given user information, replaces the input plugins with
@@ -328,7 +399,7 @@ class Request:
           user:
             A User object with the user specific data to be used when
             processing inputs.
-          config:
+          pconfig:
             A Config object with the global Raider configuration.
 
         Returns:
@@ -336,7 +407,9 @@ class Request:
           received after sending the generated request.
 
         """
-        verify = config.verify
+        verify = pconfig.verify
+
+        self.logger = pconfig.logger
         if not verify:
             # False positive
             # pylint: disable=no-member
@@ -344,21 +417,21 @@ class Request:
                 category=InsecureRequestWarning
             )
 
-        if config.use_proxy:
-            proxies = {"all": config.proxy}
+        if pconfig.use_proxy:
+            proxies = {"all": pconfig.proxy}
         else:
             proxies = None
 
-        inputs = self.process_inputs(config)
+        inputs = self.process_inputs(pconfig)
         cookies = inputs["cookies"]
         headers = inputs["headers"]
         data = inputs["data"]
 
-        logging.debug("Sending HTTP request:")
-        logging.debug("%s %s", self.method, self.url)
-        logging.debug("Cookies: %s", str(cookies))
-        logging.debug("Headers: %s", str(headers))
-        logging.debug("Data: %s", str(data))
+        self.logger.debug("Sending HTTP request:")
+        self.logger.debug("%s %s", self.method, self.url)
+        self.logger.debug("Cookies: %s", str(cookies))
+        self.logger.debug("Headers: %s", str(headers))
+        self.logger.debug("Data: %s", str(data))
 
         if self.method == "GET":
             # Encode special characters. This will replace "+" signs with "%20"
@@ -378,7 +451,7 @@ class Request:
                     allow_redirects=False,
                 )
             except requests.exceptions.ProxyError:
-                logging.critical("Proxy server not reachable, cannot continue!")
+                self.logger.critical("Proxy server not reachable, cannot continue!")
                 sys.exit()
 
             return req
@@ -448,7 +521,7 @@ class Request:
 
             return req
 
-        logging.critical("Method %s not allowed", self.method)
+        self.logger.critical("Method %s not allowed", self.method)
         sys.exit()
         return None
 

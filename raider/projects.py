@@ -266,9 +266,14 @@ class Project:
     def print_flow(self, flow: str, spacing: int = 0) -> None:
         print(" " * spacing + "• " + (flow))
 
-    def print_flowgraph(self, flowgraph: str, start: str, spacing: int = 0) -> None:
-        print(" " * spacing + "+ " + colored_text(flowgraph, "RED-BLACK-B")
-              + " -> " + colored_text(start, "RESET"))
+    def print_flowgraph(self, flowgraph: str, start: str, test:str=None, spacing: int = 0) -> None:
+        if test:
+            print(" " * spacing + "+ " + colored_text(flowgraph, "RED-BLACK-B")
+                  + " -> " + colored_text(start, "RESET")
+                  + " (" + colored_text(test, "GREEN-BLACK") + ")")
+        else:
+            print(" " * spacing + "+ " + colored_text(flowgraph, "RED-BLACK-B")
+                  + " -> " + colored_text(start, "RESET"))
 
     @property
     def hyfiles(self):

@@ -18,7 +18,7 @@
 
 import base64
 import urllib
-from typing import Optional
+from typing import Optional, Union
 
 from raider.plugins.common import Plugin, Processor
 
@@ -84,17 +84,27 @@ class B64decode(Processor):
 class B64encode(Processor):
     """Base64 encode the plugin."""
 
-    def __init__(self, parent_plugin: Plugin) -> None:
+    def __init__(self, original: Union[Plugin, str]) -> None:
         """Initializes the B64encode plugin."""
-        super().__init__(
-            name=parent_plugin.name + "_b64encoded", function=self.b64encode
-        )
-        self.plugins = [parent_plugin]
+        if isinstance(original, Plugin):
+            super().__init__(
+                name=original.name + "_b64encoded", function=self.b64encode
+            )
+            self.plugins = [original]
+        else:
+            super().__init__(
+                name=original + "_b64encoded", function=self.b64encode
+            )
+            self.original = original
 
     def b64encode(self) -> Optional[str]:
-        """Base64 encodes a plugin's value."""
+        """Base64 encodes a value."""
 
-        original = self.plugins[0].value
+        if self.plugins:
+            original = self.plugins[0].value
+        else:
+            original = self.original
+            
         if original:
             encoded = base64.b64encode(original.encode("utf-8")).decode(
                 "utf-8"

@@ -19,6 +19,11 @@ def add_run_parser(parser) -> None:
         help="Send the request through the specified web proxy.",
         action="store_true",
     )
+    run_parser.add_argument(
+        "--test",
+        help="Run the FlowGraph's test Flow.",
+        action="store_true",
+    )
 
 
 def run_run_command(args: argparse.Namespace) -> None:
@@ -30,6 +35,6 @@ def run_run_command(args: argparse.Namespace) -> None:
     if args.flow:
         raider.flowstore.run_flow(raider.pconfig, args.flow)
     else:
-        raider.flowstore.run_flowgraph(raider.pconfig, args.graph)
+        raider.flowstore.run_flowgraph(raider.pconfig, args.graph, args.test)
 
     raider.project.write_project_file()

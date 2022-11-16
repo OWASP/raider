@@ -62,16 +62,25 @@ class Search:
                 if hyfile in hyfiles_flows:
                     project.print_hyfile(hyfile, spacing=hyfiles_padding)
                     if self.print_flowgraphs_enabled:
-                        for flowgraph in hyfiles_flows[hyfile]["flowgraphs"]:
+                        for flowgraph_id in hyfiles_flows[hyfile]["flowgraphs"]:
                             flowgraphs_padding = hyfiles_padding + 4
-                            start_flow = flowstore.flowgraphs[flowgraph].start
-                            flow_name = flowstore.get_flow_name_by_flow(start_flow)
+                            flowgraph = flowstore.flowgraphs[flowgraph_id]
+                            start_flow = flowgraph.start
+                            start_flow_name = flowstore.get_flow_name_by_flow(start_flow)
+                            if flowgraph.test:
+                                test_flow_name = flowstore.get_flow_name_by_flow(flowgraph.test)
+                            else:
+                                test_flow_name = None
+
                             project.print_flowgraph(
-                                flowgraph, flow_name, spacing=flowgraphs_padding
+                                flowgraph_id, start_flow_name, test_flow_name, spacing=flowgraphs_padding
                             )
                     if self.print_flows_enabled:
                         for flow in hyfiles_flows[hyfile]["flows"]:
-                            flows_padding = hyfiles_padding + 4
+                            if self.print_flowgraphs_enabled:
+                                flows_padding = flowgraphs_padding + 2
+                            else:
+                                flows_padding = hyfiles_padding + 4
                             project.print_flow(flow, spacing=flows_padding)
 
     @property
