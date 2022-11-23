@@ -42,7 +42,7 @@ class ProjectConfig(Config):
     def __init__(self, config):
         self.gconfig = config
         self.logger = config.logger
-        self.users = None
+        self.users = Users()
 
     @property
     def proxy(self):

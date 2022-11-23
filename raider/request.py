@@ -20,6 +20,7 @@
 import logging
 import sys
 import urllib
+import json
 from copy import deepcopy
 from typing import Any, Dict, List, Optional, Union
 from functools import partial
@@ -119,16 +120,19 @@ def process_data(
                 new_key = key.get_value(userdata)
                 if not new_key:
                     new_key = prompt_empty_value("Key", key.name)
-                if not new_key:
+                if not new_key and key in data:
                     data.pop(key)
                 else:
                     data.update({new_key: new_value})
 
     httpdata = {}
     for key, value in raw_data.items():
-        new_dict = value.to_dict().copy()
-        traverse_dict(new_dict, userdata)
-        httpdata[key] = new_dict
+        if isinstance(value, File):
+            httpdata[key] = value.get_value(userdata)
+        else:
+            new_dict = value.to_dict().copy()
+            traverse_dict(new_dict, userdata)
+            httpdata[key] = new_dict
 
     return httpdata
 
@@ -182,9 +186,12 @@ class Request:
         self.kwargs = kwargs
 
         data = {}
-        for item, value in kwargs.items():
-            if item in ["params", "data", "json", "multipart"]:
-                data[item] = DataStore(value)
+        for key, value in kwargs.items():
+            if key in ["params", "data", "json", "multipart"]:
+                if isinstance(value, File):
+                    data[key] = value
+                else:
+                    data[key] = DataStore(value)
         self.data = data
 
     @classmethod
@@ -331,7 +338,10 @@ class Request:
 
         """
         verify = pconfig.verify
-        userdata = pconfig.active_user.to_dict() or {}
+        if pconfig.active_user:
+            userdata = pconfig.active_user.to_dict()
+        else:
+            userdata = {}
 
         self.logger = pconfig.logger
         if not verify:
@@ -361,6 +371,11 @@ class Request:
         else:
             params = None
 
+        if "json" in self.kwargs:
+            json_data = json.loads(processed['json'])
+        else:
+            json_data = None
+
         attrs = {"data", "json", "multipart"}.intersection(set(self.kwargs))
         if (self.method == "GET") and attrs:
             self.logger.warning("GET requests can only contain :params. Ignoring :" + ", :".join(attrs))
@@ -389,7 +404,7 @@ class Request:
                 allow_redirects=False,
                 params=params,
                 data=processed.get("data"),
-                json=processed.get("json"),
+                json=json_data,
                 files=processed.get("multipart")
             )
         except requests.exceptions.ProxyError:

@@ -66,8 +66,8 @@ class User:
 
     def __init__(
         self,
-        username: str,
-        password: str,
+        username: str = None,
+        password: str = None,
         **kwargs: Dict[str, str],
     ) -> None:
         """Initializes a :class:`User` object.
@@ -231,8 +231,8 @@ class Users(DataStore):
 
     def __init__(
         self,
-        users: List[Dict[hy.models.Keyword, str]],
-        active_user: str = None,
+        users: List[Dict[hy.models.Keyword, str]] = None,
+        active_user: str = "DEFAULT",
     ) -> None:
         """Initializes the :class:`Users` object.
 
@@ -251,19 +251,25 @@ class Users(DataStore):
             An optional string specifying the default :class:`User`.
 
         """
-        if not active_user:
+        if users and not active_user:
             self.active_user = list(users[0].keys())[0]
-        else:
+        elif active_user:
             self.active_user = active_user
 
         values = {}
-        for item in users:
-            username = list(item.keys())[0]
-            password = item[username]
-            item.pop(username)
-            user = User(
-                username, password, **{"data": hy_dict_to_python(item)}
-            )
+        if users:
+            for item in users:
+                username = list(item.keys())[0]
+                password = item[username]
+                item.pop(username)
+                user = User(
+                    username, password, **{"data": hy_dict_to_python(item)}
+                )
+                values[username] = user
+        else:
+            username = "DEFAULT"
+            password = ""
+            user = User(username, password)
             values[username] = user
 
         super().__init__(values)

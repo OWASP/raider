@@ -105,7 +105,7 @@ class File(Plugin):
         """
         with open(self.path, "rb") as finput:
             self.value = finput.read()
-        return self.value.decode("utf-8")
+        return self.value
 
     @classmethod
     def replace(
