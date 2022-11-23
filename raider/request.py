@@ -22,6 +22,7 @@ import sys
 import urllib
 from copy import deepcopy
 from typing import Any, Dict, List, Optional, Union
+from functools import partial
 
 import requests
 from urllib3.exceptions import InsecureRequestWarning
@@ -33,37 +34,6 @@ from raider.plugins.common import Plugin
 from raider.structures import CookieStore, DataStore, HeaderStore
 from raider.user import User
 from raider.utils import colors
-
-
-class PostBody(DataStore):
-    """Holds the POST body data.
-
-    This class was created to enable the user to send the POST body in a
-    different format than the default url encoded. For now only JSON
-    encoding has been implemented.
-
-    Attributes:
-      encoding:
-        A string with the desired encoding. For now only "json" is
-        supported. If the encoding is skipped, the request will be url
-        encoded, and the Content-Type will be
-        ``application/x-www-form-urlencoded``.
-
-    """
-
-    def __init__(self, data: Dict[Any, Any], encoding: str) -> None:
-        """Initializes the PostBody object.
-
-        Args:
-          data:
-            A dictionary with the data to be sent.
-          encoding:
-            A string with the encoding. Only "json" is supported for
-            now.
-
-        """
-        self.encoding = encoding
-        super().__init__(data)
 
 
 def prompt_empty_value(element: str, name: str):
@@ -123,7 +93,7 @@ def process_headers(
 
 
 def process_data(
-    raw_data: Union[PostBody, DataStore], userdata: Dict[str, str]
+    raw_data: Dict[str, DataStore], userdata: Dict[str, str]
 ) -> Dict[str, str]:
     """Process the raw HTTP data and replace with the real data."""
 
@@ -154,8 +124,11 @@ def process_data(
                 else:
                     data.update({new_key: new_value})
 
-    httpdata = raw_data.to_dict().copy()
-    traverse_dict(httpdata, userdata)
+    httpdata = {}
+    for key, value in raw_data.items():
+        new_dict = value.to_dict().copy()
+        traverse_dict(new_dict, userdata)
+        httpdata[key] = new_dict
 
     return httpdata
 
@@ -192,122 +165,107 @@ class Request:
 
     def __init__(
         self,
+        function,
+        url: str,
         method: str,
-        url: Union[str, Plugin],
-        cookies: Optional[List[Cookie]] = None,
-        headers: Optional[List[Header]] = None,
-        data: Optional[Union[Dict[Any, Any], PostBody, File]] = None,
+        **kwargs
     ) -> None:
         """Initializes the Request object.
-
-        Args:
-          method:
-            A string with the HTTP method. Can be either "GET" or "POST".
-          url:
-            A string with the full URL of the Request.
-          cookies:
-            A list of Cookie Plugins. Its values will be calculated and
-            inserted into the HTTP Request on runtime.
-          headers:
-            A list of Header Plugins. Its values will be calculated and
-            inserted into the HTTP Request on runtime.
-          data:
-            A dictionary with values to be inserted into the HTTP GET
-            parameters or POST body. Both keys and values of the
-            dictionary can be Plugins. Those values will be inserted
-            into the Request on runtime.
-
         """
         self.method = method
+        self.function = function
         self.url = url
 
         self.logger = None
+        self.headers = HeaderStore(kwargs.get("headers"))
+        self.cookies = CookieStore(kwargs.get("cookies"))
+        self.kwargs = kwargs
 
-        self.headers = HeaderStore(headers)
-        self.cookies = CookieStore(cookies)
-
-        self.data: Union[PostBody, DataStore]
-        if isinstance(data, PostBody):
-            self.data = data
-        elif isinstance(data, File):
-            self.data = data
-        else:
-            self.data = DataStore(data)
+        data = {}
+        for item, value in kwargs.items():
+            if item in ["params", "data", "json", "multipart"]:
+                data[item] = DataStore(value)
+        self.data = data
 
     @classmethod
-    def get(cls, url, *args, **kwargs) -> "Request":
-        request = cls(method="GET",
-                      url=url,
-                      *args,
-                      **kwargs)
-        return request
+    def get(cls, url, **kwargs) -> "Request":
+        return cls(function=requests.get,
+                   url=url,
+                   method="GET",
+                   **kwargs)
 
 
     @classmethod
-    def head(cls, url, *args, **kwargs) -> "Request":
-        request = cls(method="HEAD",
-                      url=url,
-                      *args,
-                      **kwargs)
-        return request
+    def post(cls, url, **kwargs) -> "Request":
+        return cls(function=requests.post,
+                   url=url,
+                   method="GET",
+                   **kwargs)
+
+    @classmethod
+    def put(cls, url, **kwargs) -> "Request":
+        return cls(function=requests.put,
+                   url=url,
+                   method="PUT",
+                   **kwargs)
 
 
     @classmethod
-    def post(cls, url, *args, **kwargs) -> "Request":
-        request = cls(method="POST",
-                      url=url,
-                      *args,
-                      **kwargs)
-        return request
-
-    @classmethod
-    def put(cls, url, *args, **kwargs) -> "Request":
-        request = cls(method="PUT",
-                      url=url,
-                      *args,
-                      **kwargs)
-        return request
+    def patch(cls, url, **kwargs) -> "Request":
+        return cls(function=requests.patch,
+                   url=url,
+                   method="PATCH",
+                   **kwargs)
 
 
     @classmethod
-    def delete(cls, url, *args, **kwargs) -> "Request":
-        request = cls(method="DELETE",
-                      url=url,
-                      *args,
-                      **kwargs)
-        return request
+    def head(cls, url, **kwargs) -> "Request":
+        return cls(function=requests.head,
+                   url=url,
+                   method="HEAD",
+                   **kwargs)
+
 
     @classmethod
-    def connect(cls, url, *args, **kwargs) -> "Request":
-        request = cls(method="CONNECT",
-                      url=url,
-                      *args,
-                      **kwargs)
-        return request
+    def delete(cls, url, **kwargs) -> "Request":
+        return cls(function=requests.delete,
+                   url=url,
+                   method="DELETE",
+                   **kwargs)
 
     @classmethod
-    def options(cls, url, *args, **kwargs) -> "Request":
-        request = cls(method="OPTIONS",
-                      url=url,
-                      *args,
-                      **kwargs)
-        return request
+    def connect(cls, url, **kwargs) -> "Request":
+        function = partial(requests.request,
+                           method="CONNECT")
+        return cls(function=function,
+                   url=url,
+                   method="CONNECT",
+                   **kwargs)
 
     @classmethod
-    def trace(cls, url, *args, **kwargs) -> "Request":
-        request = cls(method="TRACE",
-                      url=url,
-                      *args,
-                      **kwargs)
-        return request
+    def options(cls, url, **kwargs) -> "Request":
+        return cls(function=requests.options,
+                   url=url,
+                   method="OPTIONS",
+                   **kwargs)
 
     @classmethod
-    def patch(cls, url, *args, **kwargs) -> "Request":
-        request = cls(method="PATCH",
-                      url=url,
-                      *args,
-                      **kwargs)
-        return request
+    def trace(cls, url, **kwargs) -> "Request":
+        function = partial(requests.request,
+                           method="TRACE")
+        return cls(function=function,
+                   url=url,
+                   method="TRACE",
+                   **kwargs)
+
+    @classmethod
+    def custom(cls, method, url, **kwargs) -> "Request":
+        function = partial(requests.request,
+                           method=method)
+        return cls(function=function,
+                   url=url,
+                   method=method,
+                   **kwargs)
     
 
 
@@ -354,41 +312,6 @@ class Request:
 
         return inputs
 
-    def process_inputs(self, pconfig) -> Dict[str, Dict[str, str]]:
-        """Process the Request inputs.
-
-        Uses the supplied user data to replace the Plugins in the inputs
-        with their actual value. Returns those values.
-
-        Args:
-          user:
-            A User object containing the user specific data to be used
-            when processing the inputs.
-          pconfig:
-
-        Returns:
-          A dictionary with the cookies, headers, and other data created
-          from processing the inputs.
-
-        """
-
-        if pconfig.active_user:
-            userdata = pconfig.active_user.to_dict()
-        else:
-            userdata = {}
-
-        if isinstance(self.url, Plugin):
-            self.url = self.url.get_value(userdata)
-
-        cookies = process_cookies(self.cookies, userdata)
-        headers = process_headers(self.headers, userdata, pconfig)
-        if isinstance(self.data, File):
-            httpdata = self.data.get_value(userdata)
-        else:
-            httpdata = process_data(self.data, userdata)
-
-        return {"cookies": cookies, "data": httpdata, "headers": headers}
-
     def send(self, pconfig) -> Optional[requests.models.Response]:
         """Sends the HTTP request.
 
@@ -408,6 +331,7 @@ class Request:
 
         """
         verify = pconfig.verify
+        userdata = pconfig.active_user.to_dict() or {}
 
         self.logger = pconfig.logger
         if not verify:
@@ -422,109 +346,57 @@ class Request:
         else:
             proxies = None
 
-        inputs = self.process_inputs(pconfig)
-        cookies = inputs["cookies"]
-        headers = inputs["headers"]
-        data = inputs["data"]
+        if isinstance(self.url, Plugin):
+            self.url = self.url.get_value(userdata)
+
+        cookies = process_cookies(self.cookies, userdata)
+        headers = process_headers(self.headers, userdata, pconfig)
+        processed = process_data(self.data, userdata)
+
+        # Encode special characters. This will replace "+" signs with "%20"
+        if "params" in self.kwargs:
+            params = urllib.parse.urlencode(
+                processed["params"], quote_via=urllib.parse.quote
+            )
+        else:
+            params = None
+
+        attrs = {"data", "json", "multipart"}.intersection(set(self.kwargs))
+        if (self.method == "GET") and attrs:
+            self.logger.warning("GET requests can only contain :params. Ignoring :" + ", :".join(attrs))
+        elif attrs:
+            self.logger.warning(self.method
+                                + " requests cannot contain :"
+                                + ", :".join(attrs)
+                                + " at the same time. Undefined behaviour!")
 
         self.logger.debug("Sending HTTP request:")
         self.logger.debug("%s %s", self.method, self.url)
         self.logger.debug("Cookies: %s", str(cookies))
         self.logger.debug("Headers: %s", str(headers))
-        self.logger.debug("Data: %s", str(data))
+        self.logger.debug("Params: %s", str(params))
+        self.logger.debug("Data: %s", str(processed.get("data")))
+        self.logger.debug("JSON: %s", str(processed.get("json")))
+        self.logger.debug("Multipart: %s", str(processed.get("multipart")))
 
-        if self.method == "GET":
-            # Encode special characters. This will replace "+" signs with "%20"
-            # in URLs. For some reason mypy doesn't like this, so typing will
-            # be ignored for this line.
-            params = urllib.parse.urlencode(
-                data, quote_via=urllib.parse.quote
-            )  # type: ignore
-            try:
-                req = requests.get(
-                    self.url,
-                    params=params,
-                    headers=headers,
-                    cookies=cookies,
-                    proxies=proxies,
-                    verify=verify,
-                    allow_redirects=False,
-                )
-            except requests.exceptions.ProxyError:
-                self.logger.critical("Proxy server not reachable, cannot continue!")
-                sys.exit()
-
-            return req
-
-        if self.method == "POST":
-            if (
-                isinstance(self.data, PostBody)
-                and self.data.encoding == "json"
-            ):
-                req = requests.post(
-                    self.url,
-                    json=data,
-                    headers=headers,
-                    cookies=cookies,
-                    proxies=proxies,
-                    verify=verify,
-                    allow_redirects=False,
-                )
-            else:
-                req = requests.post(
-                    self.url,
-                    data=data,
-                    headers=headers,
-                    cookies=cookies,
-                    proxies=proxies,
-                    verify=verify,
-                    allow_redirects=False,
-                )
-            return req
-
-        if self.method == "PATCH":
-            if (
-                isinstance(self.data, PostBody)
-                and self.data.encoding == "json"
-            ):
-                req = requests.patch(
-                    self.url,
-                    json=data,
-                    headers=headers,
-                    cookies=cookies,
-                    proxies=proxies,
-                    verify=verify,
-                    allow_redirects=False,
-                )
-            else:
-                req = requests.patch(
-                    self.url,
-                    data=data,
-                    headers=headers,
-                    cookies=cookies,
-                    proxies=proxies,
-                    verify=verify,
-                    allow_redirects=False,
-                )
-            return req
-
-        if self.method == "PUT":
-            req = requests.put(
-                self.url,
-                data=data,
+        try:
+            req = self.function(
+                url=self.url,
                 headers=headers,
                 cookies=cookies,
                 proxies=proxies,
                 verify=verify,
                 allow_redirects=False,
+                params=params,
+                data=processed.get("data"),
+                json=processed.get("json"),
+                files=processed.get("multipart")
             )
+        except requests.exceptions.ProxyError:
+            self.logger.critical("Cannot establish connection!")
+            sys.exit()
 
-            return req
-
-        self.logger.critical("Method %s not allowed", self.method)
-        sys.exit()
-        return None
-
+        return req
 
 class Template(Request):
     """Template class to hold requests.
@@ -541,10 +413,13 @@ class Template(Request):
         url: Optional[Union[str, Plugin]] = None,
         cookies: Optional[List[Cookie]] = None,
         headers: Optional[List[Header]] = None,
-        data: Optional[Union[Dict[Any, Any], PostBody]] = None,
+        data: Optional[Union[Dict[Any, Any]]] = None,
     ) -> None:
         """Initializes the template object."""
+        function = partial(requests.request,
+                           method=method)
         super().__init__(
+            function=function,
             method=method,
             url=url,
             cookies=cookies,
@@ -558,7 +433,7 @@ class Template(Request):
         url: Optional[Union[str, Plugin]] = None,
         cookies: Optional[List[Cookie]] = None,
         headers: Optional[List[Header]] = None,
-        data: Optional[Union[Dict[Any, Any], PostBody]] = None,
+        data: Optional[Union[Dict[Any, Any]]] = None,
     ) -> "Template":
         """Allow the object to be called.
 
@@ -582,9 +457,6 @@ class Template(Request):
             template.headers.merge(HeaderStore(headers))
 
         if data:
-            if isinstance(data, PostBody):
-                template.data.update(data.to_dict())
-            else:
-                template.data.update(data)
+            template.data.update(data)
 
         return template

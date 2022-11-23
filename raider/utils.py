@@ -157,7 +157,7 @@ def import_raider_objects() -> Dict[str, Any]:
         "flow": "Flow",
         "flowgraph": "FlowGraph",
         "user": "Users",
-        "request": ("Request " "PostBody " "Template "),
+        "request": ("Request " "Template "),
         "operations": (
             "Http "
             "Grep "

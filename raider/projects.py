@@ -146,7 +146,7 @@ class Project:
         shared_locals = {}
 
         self.logger.debug(
-            "Loading data from hyfiles for %s project", self.name
+            "Loading hyfiles for %s project", self.name
         )
         for hyfile in list_hyfiles(self.name):
             self.logger.debug("Loading data from %s", hyfile)

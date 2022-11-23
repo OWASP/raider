@@ -138,7 +138,6 @@ class FlowStore:
 
         self.logger.info("Running flow " + flow_name)
         flow.execute(pconfig)
-
         if flow.outputs:
             for item in flow.outputs:
                 if isinstance(item, Plugins.Cookie):
@@ -146,7 +145,7 @@ class FlowStore:
                 elif isinstance(item, Plugins.Header):
                     pconfig.active_user.set_header(item)
                 elif isinstance(
-                    item, (Plugins.Regex, Plugins.Html, Plugins.Json)
+                    item, Plugins.Plugin
                 ):
                     pconfig.active_user.set_data(item)
 

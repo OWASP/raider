@@ -48,7 +48,6 @@ class Urlparser(Parser):
             return None
 
         value: Optional[str] = None
-
         self.url = self.plugins[0].value
         parsed_url = urlsplit(self.url)
 
