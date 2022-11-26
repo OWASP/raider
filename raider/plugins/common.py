@@ -21,8 +21,6 @@ from typing import Callable, Dict, List, Optional
 
 import requests
 
-from raider.config import Config
-
 
 class Plugin:
     """Parent class for all :class:`Plugins <Plugin>`.
@@ -118,6 +116,7 @@ class Plugin:
         self.plugins: List["Plugin"] = []
         self.value: Optional[str] = value
         self.flags = flags
+        self.logger = None
 
         self.function: Callable[..., Optional[str]]
         self.name_function: Optional[Callable[..., Optional[str]]] = None
@@ -131,7 +130,7 @@ class Plugin:
 
     def get_value(
         self,
-        userdata: Dict[str, str],
+        pconfig
     ) -> Optional[str]:
         """Gets the ``value`` from the :class:`Plugin`.
 
@@ -149,10 +148,10 @@ class Plugin:
         """
         if not self.needs_response:
             if self.needs_userdata:
-                self.value = self.function(userdata)
+                self.value = self.function(pconfig)
             elif self.depends_on_other_plugins:
                 for item in self.plugins:
-                    item.get_value(userdata)
+                    item.get_value(pconfig)
                 self.value = self.function()
             else:
                 self.value = self.function()
@@ -211,7 +210,7 @@ class Plugin:
             logging.warning("Couldn't extract name: %s", str(self.name))
 
     def extract_value_from_userdata(
-        self, data: Optional[Dict[str, str]] = None
+        self, pconfig
     ) -> Optional[str]:
         """Extracts the :class:`Plugin` ``value`` from userdata.
 
@@ -227,6 +226,7 @@ class Plugin:
           found. Returns None if it cannot be extracted.
 
         """
+        data = pconfig.active_user.to_dict()
         if data and self.name in data:
             self.value = data[self.name]
         return self.value

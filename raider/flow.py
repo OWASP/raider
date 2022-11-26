@@ -121,21 +121,9 @@ class Flow:
                         output.extract_name_from_response(self.response)
                 elif output.depends_on_other_plugins:
                     for item in output.plugins:
-                        item.get_value(pconfig.active_user.to_dict())
-                    output.get_value(pconfig.active_user.to_dict())
+                        item.get_value(pconfig)
+                    output.get_value(pconfig)
 
-    def get_plugin_values(self, user: User) -> None:
-        """Given a user, get the plugins' values from it.
-
-        Args:
-          user:
-            A :class:`User <raider.user.User>` object with the userdata.
-
-        """
-        flow_inputs = self.request.list_inputs()
-        if flow_inputs:
-            for plugin in flow_inputs.values():
-                plugin.get_value(user.to_dict())
 
     def run_operations(self) -> Optional[str]:
         """Runs the defined :class:`operations <raider.operations.Operation>`.

@@ -23,7 +23,6 @@ from typing import Any, Callable, List, Optional, Union
 
 import requests
 
-from raider.logger import get_logger
 from raider.plugins.common import Plugin
 from raider.utils import colored_text
 
@@ -164,8 +163,7 @@ class Operation:
     def get_plugin_values(self):
         for item in self.args:
             if isinstance(item, Plugin):
-                userdata = self.pconfig.active_user.to_dict()
-                item.get_value(userdata)
+                item.get_value(self.pconfig)
 
     def run_conditional(
         self, response: requests.models.Response

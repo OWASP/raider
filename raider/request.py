@@ -206,7 +206,7 @@ class Request:
     def post(cls, url, **kwargs) -> "Request":
         return cls(function=requests.post,
                    url=url,
-                   method="GET",
+                   method="POST",
                    **kwargs)
 
     @classmethod
@@ -357,7 +357,9 @@ class Request:
             proxies = None
 
         if isinstance(self.url, Plugin):
-            self.url = self.url.get_value(userdata)
+            url = self.url.get_value(userdata)
+        else:
+            url = self.url
 
         cookies = process_cookies(self.cookies, userdata)
         headers = process_headers(self.headers, userdata, pconfig)
@@ -371,8 +373,11 @@ class Request:
         else:
             params = None
 
-        if "json" in self.kwargs:
-            json_data = json.loads(processed['json'])
+        if self.kwargs.get("json"):
+            if isinstance(processed['json'], str):
+                json_data = json.loads(processed['json'])
+            else:
+                json_data = processed['json']
         else:
             json_data = None
 
@@ -386,7 +391,7 @@ class Request:
                                 + " at the same time. Undefined behaviour!")
 
         self.logger.debug("Sending HTTP request:")
-        self.logger.debug("%s %s", self.method, self.url)
+        self.logger.debug("%s %s", self.method, url)
         self.logger.debug("Cookies: %s", str(cookies))
         self.logger.debug("Headers: %s", str(headers))
         self.logger.debug("Params: %s", str(params))
@@ -396,7 +401,7 @@ class Request:
 
         try:
             req = self.function(
-                url=self.url,
+                url=url,
                 headers=headers,
                 cookies=cookies,
                 proxies=proxies,

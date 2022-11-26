@@ -251,9 +251,9 @@ class Users(DataStore):
             An optional string specifying the default :class:`User`.
 
         """
-        if users and not active_user:
+        if users:
             self.active_user = list(users[0].keys())[0]
-        elif active_user:
+        else:
             self.active_user = active_user
 
         values = {}

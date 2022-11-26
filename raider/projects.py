@@ -42,7 +42,7 @@ class ProjectConfig(Config):
     def __init__(self, config):
         self.gconfig = config
         self.logger = config.logger
-        self.users = Users()
+        self.users = None
 
     @property
     def proxy(self):
@@ -68,9 +68,12 @@ class ProjectConfig(Config):
     def active_user(self):
         if self.users:
             username = self.users.active_user
-            return self.users[username]
-        return None
+        else:
+            self.users = Users()
+            username = self.users.active_user
 
+        return self.users[username]
+        
 
 class Project:
     """Class holding all the project related data.
@@ -166,7 +169,6 @@ class Project:
 
         for value in shared_locals.values():
             if isinstance(value, Users):
-                ## TODO: move users to Projects level
                 self.pconfig.users = value
 
         for key, value in shared_locals.items():
