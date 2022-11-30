@@ -8,7 +8,7 @@ def add_run_parser(parser) -> None:
     run_parser.add_argument("project", nargs="?", help="Project name")
     run_parser.add_argument("--flow", help="Run a single Flow")
     run_parser.add_argument(
-        "--graph",
+        "--graphs",
         nargs="?",
         const="DEFAULT",
         default="DEFAULT",
@@ -35,6 +35,6 @@ def run_run_command(args: argparse.Namespace) -> None:
     if args.flow:
         raider.flowstore.run_flow(raider.pconfig, args.flow)
     else:
-        raider.flowstore.run_flowgraph(raider.pconfig, args.graph, args.test)
+        raider.flowstore.run_flowgraph(raider.pconfig, args.graphs, args.test)
 
     raider.project.write_project_file()

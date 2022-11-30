@@ -121,6 +121,7 @@ class Project:
         self.flowgraphs = {}
 
         self.logger = gconfig.logger
+        self.loaded = False
 
     def load(self):
         """Loads project settings.
@@ -145,6 +146,9 @@ class Project:
           all of the locally defined objects in the ".hy" configuration
           files.
         """
+        if self.loaded:
+            return
+
         shared_locals: Dict[str, Any]
         shared_locals = {}
 
@@ -185,6 +189,8 @@ class Project:
 
         self.flowstore.add_flowgraph("DEFAULT", FlowGraph(first_flow))
         self.flowgraphs[first_flow_hyfile].insert(0, "DEFAULT")
+
+        self.loaded = True
 
         return shared_locals
 

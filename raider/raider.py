@@ -78,6 +78,14 @@ class Raider:
         self.projects = Projects(self.gconfig, self._project_name)
         self._flags = flags
 
+    def run_flow(self, flow_name:str):
+        self.project.load()
+        self.flowstore.run_flow(self.pconfig, flow_name)
+
+    def run_flowgraph(self, flowgraph_name:str="DEFAULT", test=False):
+        self.project.load()
+        self.flowstore.run_flowgraph(self.pconfig, flowgraph_name, test)
+
     def load_session(self) -> None:
         """Loads saved session from ``_userdata.hy``."""
         self.project.load_session_file()

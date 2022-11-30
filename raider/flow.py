@@ -141,7 +141,7 @@ class Flow:
         if self.operations:
             for item in self.operations:
                 next_flow = item.run(self.pconfig, self.response)
-                if next_flow:
+                if next_flow or isinstance(next_flow, bool):
                     break
 
         return next_flow
