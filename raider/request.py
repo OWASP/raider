@@ -86,43 +86,47 @@ def get_empty_plugin_value(plugin, name):
         return prompt_empty_value("Plugin", name)
 
 def process_cookies(
-    raw_cookies: CookieStore, userdata: Dict[str, str]
+    raw_cookies: CookieStore, pconfig
 ) -> Dict[str, str]:
     """Process the raw cookies and replace with the real data."""
     cookies = raw_cookies.to_dict().copy()
     for key in raw_cookies:
         cookie = raw_cookies[key]
-        name = cookie.name
         if cookie.name_not_known_in_advance:
             cookies.pop(key)
-        value = cookie.get_value(userdata)
+        value = cookie.get_value(pconfig)
         if not value:
-            value = get_empty_plugin_value(cookie, name)
             if cookie.name_not_known_in_advance:
-                name = get_empty_plugin_name(cookie)
+                cookie.name = get_empty_plugin_name(cookie)
+                cookie.flags &= cookie.NAME_NOT_KNOWN_IN_ADVANCE
+                cookie.flags |= cookie.NEEDS_USERDATA
+                cookie.function = cookie.extract_value_from_userdata
+            value = get_empty_plugin_value(cookie, cookie.name)
         if not value:
             cookies.pop(key)
         else:
-            cookies.update({name: value})
+            cookies.update({cookie.name: value})
     return cookies
 
 
 def process_headers(
-    raw_headers: HeaderStore, userdata: Dict[str, str], pconfig
+    raw_headers: HeaderStore, pconfig
 ) -> Dict[str, str]:
     """Process the raw headers and replace with the real data."""
     headers = raw_headers.to_dict().copy()
     headers.update({"user-agent": pconfig.user_agent})
     for key in raw_headers:
         header = raw_headers[key]
-        name = header.name
         if header.name_not_known_in_advance:
             headers.pop(key)
-        value = header.get_value(userdata)
+        value = header.get_value(pconfig)
         if not value:
-            value = get_empty_plugin_value(header, name)
             if header.name_not_known_in_advance:
-                name = get_empty_plugin_name(header)
+                header.name = get_empty_plugin_name(header)
+                header.flags &= header.NAME_NOT_KNOWN_IN_ADVANCE
+                header.flags |= header.NEEDS_USERDATA
+                header.function = header.extract_value_from_userdata
+            value = get_empty_plugin_value(header, header.name)
         if not value:
             headers.pop(header.name.lower())
         else:
@@ -131,18 +135,18 @@ def process_headers(
 
 
 def process_data(
-    raw_data: Dict[str, DataStore], userdata: Dict[str, str]
+    raw_data: Dict[str, DataStore], pconfig
 ) -> Dict[str, str]:
     """Process the raw HTTP data and replace with the real data."""
 
-    def traverse_dict(data: Dict[str, Any], userdata: Dict[str, str]) -> None:
+    def traverse_dict(data: Dict[str, Any], pconfig) -> None:
         """Traverse a dictionary recursively and replace plugins
         with real data
         """
         for key in list(data):
             value = data[key]
             if isinstance(value, Plugin):
-                new_value = value.get_value(userdata)
+                new_value = value.get_value(pconfig)
                 if not new_value:
                     new_value = get_empty_plugin_value(value, value.name)
                 if not new_value:
@@ -150,11 +154,11 @@ def process_data(
                 else:
                     data.update({key: new_value})
             elif isinstance(value, dict):
-                traverse_dict(value, userdata)
+                traverse_dict(value, pconfig)
 
             if isinstance(key, Plugin):
                 new_value = data.pop(key)
-                new_key = key.get_value(userdata)
+                new_key = key.get_value(pconfig)
                 if not new_key:
                     new_key = get_empty_plugin_value(key, key.name)
                 if not new_key and key in data:
@@ -165,10 +169,10 @@ def process_data(
     httpdata = {}
     for key, value in raw_data.items():
         if isinstance(value, File):
-            httpdata[key] = value.get_value(userdata)
+            httpdata[key] = value.get_value(pconfig)
         else:
             new_dict = value.to_dict().copy()
-            traverse_dict(new_dict, userdata)
+            traverse_dict(new_dict, pconfig)
             httpdata[key] = new_dict
 
     return httpdata
@@ -375,10 +379,6 @@ class Request:
 
         """
         verify = pconfig.verify
-        if pconfig.active_user:
-            userdata = pconfig.active_user.to_dict()
-        else:
-            userdata = {}
 
         self.logger = pconfig.logger
         if not verify:
@@ -394,13 +394,16 @@ class Request:
             proxies = None
 
         if isinstance(self.url, Plugin):
-            url = self.url.get_value(userdata)
+            url = self.url.get_value(pconfig)
         else:
             url = self.url
 
-        cookies = process_cookies(self.cookies, userdata)
-        headers = process_headers(self.headers, userdata, pconfig)
-        processed = process_data(self.data, userdata)
+        cookies = process_cookies(self.cookies, pconfig)
+        headers = process_headers(self.headers, pconfig)
+        processed = process_data(self.data, pconfig)
+        pconfig.active_user.set_cookies_from_dict(cookies)
+        pconfig.active_user.set_headers_from_dict(headers)
+        pconfig.active_user.set_data_from_dict(processed)
 
         # Encode special characters. This will replace "+" signs with "%20"
         if "params" in self.kwargs:
@@ -417,15 +420,6 @@ class Request:
                 json_data = processed['json']
         else:
             json_data = None
-
-        attrs = {"data", "json", "multipart"}.intersection(set(self.kwargs))
-        if (self.method == "GET") and attrs:
-            self.logger.warning("GET requests can only contain :params. Ignoring :" + ", :".join(attrs))
-        elif attrs:
-            self.logger.warning(self.method
-                                + " requests cannot contain :"
-                                + ", :".join(attrs)
-                                + " at the same time. Undefined behaviour!")
 
         self.logger.debug("Sending HTTP request:")
         self.logger.debug("%s %s", self.method, url)
