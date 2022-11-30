@@ -179,7 +179,7 @@ class FlowStore:
                 if not next_flow:
                     self.logger.critical("FlowGraph "
                                          + flowgraph_id
-                                         + " returned (Failure). Exiting!")
+                                         + " didn't return (Success). Exiting!")
                     sys.exit()
         
                 if test and flowgraph.test:

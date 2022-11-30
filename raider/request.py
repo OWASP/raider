@@ -37,6 +37,22 @@ from raider.user import User
 from raider.utils import colors
 
 
+def prompt_empty_key(element: str, name: str):
+    key = input(
+        colors["GREEN-BLACK-B"]
+        + element
+        + ' "'
+        + colors["RED-BLACK-B"]
+        + name
+        + colors["GREEN-BLACK-B"]
+        + '" has a value not known in advance. '
+        + "Input its value manually (enter to skip)\n"
+        + colors["YELLOW-BLACK-B"]
+        + name
+        + " = "
+    )
+    return key
+
 def prompt_empty_value(element: str, name: str):
     value = input(
         colors["GREEN-BLACK-B"]
@@ -53,6 +69,21 @@ def prompt_empty_value(element: str, name: str):
     )
     return value
 
+def get_empty_plugin_name(plugin):
+    if isinstance(plugin, Cookie):
+        return prompt_empty_value("Cookie name", plugin.name)
+    elif isinstance(plugin, Header):
+        return prompt_empty_value("Header name", plugin.name)
+    else:
+        return prompt_empty_value("Plugin name", plugin.name)
+
+def get_empty_plugin_value(plugin, name):
+    if isinstance(plugin, Cookie):
+        return prompt_empty_value("Cookie", name)
+    elif isinstance(plugin, Header):
+        return prompt_empty_value("Header", name)
+    else:
+        return prompt_empty_value("Plugin", name)
 
 def process_cookies(
     raw_cookies: CookieStore, userdata: Dict[str, str]
@@ -60,12 +91,15 @@ def process_cookies(
     """Process the raw cookies and replace with the real data."""
     cookies = raw_cookies.to_dict().copy()
     for key in raw_cookies:
-        name = raw_cookies[key].name
-        if raw_cookies[key].name_not_known_in_advance:
+        cookie = raw_cookies[key]
+        if cookie.name_not_known_in_advance:
             cookies.pop(key)
-        value = raw_cookies[key].get_value(userdata)
+            name = get_empty_plugin_name(cookie)
+        else:
+            name = cookie.name
+        value = cookie.get_value(userdata)
         if not value:
-            value = prompt_empty_value("Cookie", name)
+            value = get_empty_plugin_value(cookie, name)
         if not value:
             cookies.pop(key)
         else:
@@ -80,16 +114,19 @@ def process_headers(
     headers = raw_headers.to_dict().copy()
     headers.update({"user-agent": pconfig.user_agent})
     for key in raw_headers:
-        name = raw_headers[key].name
-        if raw_headers[key].name_not_known_in_advance:
+        header = raw_headers[key]
+        if header.name_not_known_in_advance:
             headers.pop(key)
-        value = raw_headers[key].get_value(userdata)
-        if not value:
-            value = prompt_empty_value("Header", name)
-        if not value:
-            headers.pop(name.lower())
+            name = get_empty_plugin_name(header)
         else:
-            headers.update({name: value})
+            name = header.name
+        value = header.get_value(userdata)
+        if not value:
+            value = get_empty_plugin_value(header, name)
+        if not value:
+            headers.pop(header.name.lower())
+        else:
+            headers.update({header.name: value})
     return headers
 
 
@@ -107,7 +144,7 @@ def process_data(
             if isinstance(value, Plugin):
                 new_value = value.get_value(userdata)
                 if not new_value:
-                    new_value = prompt_empty_value("Value", value.name)
+                    new_value = get_empty_plugin_value(value, value.name)
                 if not new_value:
                     data.pop(key)
                 else:
@@ -119,7 +156,7 @@ def process_data(
                 new_value = data.pop(key)
                 new_key = key.get_value(userdata)
                 if not new_key:
-                    new_key = prompt_empty_value("Key", key.name)
+                    new_key = get_empty_plugin_value(key, key.name)
                 if not new_key and key in data:
                     data.pop(key)
                 else:
