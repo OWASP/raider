@@ -92,14 +92,14 @@ def process_cookies(
     cookies = raw_cookies.to_dict().copy()
     for key in raw_cookies:
         cookie = raw_cookies[key]
+        name = cookie.name
         if cookie.name_not_known_in_advance:
             cookies.pop(key)
-            name = get_empty_plugin_name(cookie)
-        else:
-            name = cookie.name
         value = cookie.get_value(userdata)
         if not value:
             value = get_empty_plugin_value(cookie, name)
+            if cookie.name_not_known_in_advance:
+                name = get_empty_plugin_name(cookie)
         if not value:
             cookies.pop(key)
         else:
@@ -115,14 +115,14 @@ def process_headers(
     headers.update({"user-agent": pconfig.user_agent})
     for key in raw_headers:
         header = raw_headers[key]
+        name = header.name
         if header.name_not_known_in_advance:
             headers.pop(key)
-            name = get_empty_plugin_name(header)
-        else:
-            name = header.name
         value = header.get_value(userdata)
         if not value:
             value = get_empty_plugin_value(header, name)
+            if header.name_not_known_in_advance:
+                name = get_empty_plugin_name(header)
         if not value:
             headers.pop(header.name.lower())
         else:
