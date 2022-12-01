@@ -4,15 +4,13 @@ from raider import Raider
 
 
 def add_run_parser(parser) -> None:
-    run_parser = parser.add_parser("run", help="Run flow or flowgraph")
+    run_parser = parser.add_parser("run", help="Run Flow or Flowgraph")
     run_parser.add_argument("project", nargs="?", help="Project name")
-    run_parser.add_argument("--flow", help="Run a single Flow")
-    run_parser.add_argument(
-        "--graphs",
+    run_parser.add_argument("flows",
         nargs="?",
         const="DEFAULT",
         default="DEFAULT",
-        help="Run a series of Flows in the FlowGraph until no Next Operation is found",
+        help="Run a series of Flows/FlowGraphs",
     )
     run_parser.add_argument(
         "--proxy",
@@ -32,9 +30,12 @@ def run_run_command(args: argparse.Namespace) -> None:
         raider.gconfig.use_proxy = True
 
     raider.project.load()
-    if args.flow:
-        raider.flowstore.run_flow(raider.pconfig, args.flow)
-    else:
-        raider.flowstore.run_flowgraph(raider.pconfig, args.graphs, args.test)
+
+    raider.run(args.flows, args.test)
+
+    # if args.flow:
+    #     raider.flowstore.run_flow(raider.pconfig, args.flow)
+    # else:
+    #     raider.flowstore.run_flowgraph(raider.pconfig, args.graphs, args.test)
 
     raider.project.write_project_file()

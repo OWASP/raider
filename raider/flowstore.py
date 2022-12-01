@@ -86,6 +86,16 @@ class FlowStore:
             return None
         return self.flows.vs[::]["name"].index(name)
 
+    def is_flow(self, name):
+        if name in self.keys:
+            return True
+        return False
+
+    def is_flowgraph(self, name):
+        if name in self.flowgraphs:
+            return True
+        return False
+
     @property
     def keys(self) -> List[str]:
         if not self.flows.vs:
@@ -152,7 +162,7 @@ class FlowStore:
         operations_result = flow.run_operations()
         return operations_result
 
-    def run_flowgraph(self, pconfig, flowgraphs: str, test: bool = False) -> None:
+    def run_flowgraph(self, pconfig, name: str, test: bool = False) -> None:
         """Runs all authentication flows.
 
         This function will run all authentication flows for the
@@ -167,29 +177,27 @@ class FlowStore:
             A Config object with the global Raider settings.
 
         """
-        for flowgraph_id in flowgraphs.split(","):
-            if flowgraph_id in self.flowgraphs:
-                flowgraph = self.flowgraphs[flowgraph_id]
-                flow = flowgraph.start
-                flow_id = self.get_flow_id_by_flow(flow)
-                next_flow = self.run_flow(pconfig, flow_id)
-                while isinstance(next_flow, str):
-                    next_flow = self.run_flow(pconfig, next_flow)
+        flowgraph = self.flowgraphs[name]
+        flow = flowgraph.start
+        flow_id = self.get_flow_id_by_flow(flow)
+        next_flow = self.run_flow(pconfig, flow_id)
+        while isinstance(next_flow, str):
+            next_flow = self.run_flow(pconfig, next_flow)
 
-                if not next_flow:
-                    self.logger.critical("FlowGraph "
-                                         + flowgraph_id
-                                         + " didn't return (Success). Exiting!")
-                    sys.exit()
-        
-                if test and flowgraph.test:
-                    flow_id = self.get_flow_id_by_flow(flowgraph.test)
-                    result = self.run_flow(pconfig, flow_id)
-        
-                    if isinstance(result, bool):
-                        flowgraph.completed = result
-                        self.logger.info("FlowGraph.completed = " + str(result))
-                    else:
-                        self.logger.critical("FlowGraph's test flow must return (Success) or (Failure)")
-                        sys.exit()
+        if not next_flow:
+            self.logger.critical("FlowGraph "
+                                 + name
+                                 + " didn't return (Success). Exiting!")
+            sys.exit()
+
+        if test and flowgraph.test:
+            flow_id = self.get_flow_id_by_flow(flowgraph.test)
+            result = self.run_flow(pconfig, flow_id)
+
+            if isinstance(result, bool):
+                flowgraph.completed = result
+                self.logger.info("FlowGraph.completed = " + str(result))
+            else:
+                self.logger.critical("FlowGraph's test flow must return (Success) or (Failure)")
+                sys.exit()
     
