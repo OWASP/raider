@@ -1,5 +1,5 @@
-Definitions
-===========
+Glossary
+========
 
 
 .. glossary::

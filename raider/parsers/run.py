@@ -33,9 +33,4 @@ def run_run_command(args: argparse.Namespace) -> None:
 
     raider.run(args.flows, args.test)
 
-    # if args.flow:
-    #     raider.flowstore.run_flow(raider.pconfig, args.flow)
-    # else:
-    #     raider.flowstore.run_flowgraph(raider.pconfig, args.graphs, args.test)
-
     raider.project.write_project_file()

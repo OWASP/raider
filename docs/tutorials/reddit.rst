@@ -1,7 +1,7 @@
 .. _tutorials:
 
-Tutorials
-========
+Reddit authentication
+=====================
 
 This section will include tutorials with examples to give you a
 starting point when building your own configuration.
