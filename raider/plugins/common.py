@@ -148,7 +148,7 @@ class Plugin:
         """
         if not self.needs_response:
             if self.needs_userdata:
-                self.value = self.function(pconfig)
+                self.value = self.function(pconfig.active_user.to_dict())
             elif self.depends_on_other_plugins:
                 for item in self.plugins:
                     item.get_value(pconfig)

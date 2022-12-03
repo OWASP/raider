@@ -84,3 +84,6 @@ Once the response is received, the :term:`Operations <operation>` will
 be executed. The primary function of operations is to define which Flow
 comes next. But they can do anything, and *Raider* :ref:`makes it easy
 to write new operations <operations_api>`.
+
+
+.. uml:: ../diagrams/graph.uml

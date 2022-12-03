@@ -78,13 +78,16 @@ class Raider:
         self.projects = Projects(self.gconfig, self._project_name)
         self._flags = flags
 
-    def run_flow(self, flow_name:str):
+    def run(self, flows:str, test:bool = False):
         self.project.load()
-        self.flowstore.run_flow(self.pconfig, flow_name)
-
-    def run_flowgraph(self, flowgraph_name:str="DEFAULT", test=False):
-        self.project.load()
-        self.flowstore.run_flowgraph(self.pconfig, flowgraph_name, test)
+        for name in flows.split(","):
+            if self.flowstore.is_flow(name):
+                self.flowstore.run_flow(self.pconfig, name)
+            elif self.flowstore.is_flowgraph(name):
+                self.flowstore.run_flowgraph(self.pconfig, name, test)
+            else:
+                self.logger.critical(name + " not defined, cannot run!")
+                sys.exit()
 
     def load_session(self) -> None:
         """Loads saved session from ``_userdata.hy``."""

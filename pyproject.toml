@@ -51,9 +51,9 @@ pkce = "^1.0.3"
 igraph = "^0.10.2"
 
 [tool.poetry.dev-dependencies]
-    mypy = "^0.961"
+    mypy = "^0.991"
     pre-commit = "^2.20.0"
-    flake8 = "^4.0.1"
+    flake8 = "^5.0.4"
     pylint = "^2.15.7"
     black = "^22.1.0"
     isort = "^5.9.1"
