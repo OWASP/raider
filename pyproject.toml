@@ -20,10 +20,11 @@
     ]
     keywords = ["authentication", "security", "raider", "digeex", "hy"]
     classifiers = [
-      "Development Status :: 3 - Alpha",
+      "Development Status :: 4 - Beta",
       "Environment :: Console",
       "Intended Audience :: Developers",
       "Intended Audience :: System Administrators",
+      "Intended Audience :: Information Technology",
       "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
       "Natural Language :: English",
       "Operating System :: POSIX :: Linux",
@@ -47,8 +48,8 @@
     bs4 = "^0.0.1"
     funcparserlib = "^1.0.0a0"
     ipython = "^8.4.0"
-pkce = "^1.0.3"
-igraph = "^0.10.2"
+    pkce = "^1.0.3"
+    igraph = "^0.10.2"
 
 [tool.poetry.dev-dependencies]
     mypy = "^0.991"
@@ -61,7 +62,7 @@ igraph = "^0.10.2"
     sphinx-autodoc-typehints = "^1.18.3"
     sphinx-rtd-theme = "^1.0.0"
     sphinxcontrib-plantuml = "^0.24"
-tox = "^3.25.1"
+    tox = "^3.25.1"
 
 [build-system]
     requires = ["poetry-core>=1.0.0"]
