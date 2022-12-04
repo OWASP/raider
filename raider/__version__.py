@@ -18,7 +18,7 @@
 
 __title__ = "raider"
 __description__ = "Authentication testing tool"
-__version__ = "0.2.3"
+__version__ = "0.3.0"
 __author__ = "Daniel Neagaru"
 __author_email__ = "daniel@digeex.de"
 __license__ = "GPLv3+"

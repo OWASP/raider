@@ -60,7 +60,7 @@ def default_user_agent() -> str:
       A string with the user agent.
 
     """
-    return "digeex_raider/" + __version__
+    return "OWASP raider/" + __version__
 
 
 def get_config_dir() -> str:
