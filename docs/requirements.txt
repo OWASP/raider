@@ -5,4 +5,4 @@ sphinx-rtd-theme == 0.5.2
 sphinxcontrib-plantuml >= 0.21
 sphinxcontrib-needs == 0.7.0
 funcparserlib == 1.0.0
-igraph
+igraph == 10.0.2
