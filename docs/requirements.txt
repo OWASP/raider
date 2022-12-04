@@ -1,7 +1,8 @@
-raider == 0.3.0
-funcparserlib == 1.0.0
-igraph == 0.10.2
-sphinx-rtd-theme == 0.5.2
-sphinx_autodoc_typehints == 1.12.0
-sphinxcontrib-needs == 0.7.0
-sphinxcontrib-plantuml >= 0.21
+raider >= 0.3.0
+funcparserlib >= 1.0.1
+igraph >= 0.10.2
+sphinx >= 5.3.0
+sphinx-rtd-theme >= 1.1.1
+sphinx_autodoc_typehints >= 1.19.5
+sphinxcontrib-needs >= 0.7.9
+sphinxcontrib-plantuml >= 0.24.1
