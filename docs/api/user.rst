@@ -1,8 +1,15 @@
-.. _api:
+.. _user_api:
 
-User API reference
-==================
+.. include:: user/flows.rst
+.. include:: user/plugins.rst
+.. include:: user/operations.rst
+.. include:: user/users.rst
+.. include:: user/attacks.rst
+
+
+
 .. module:: raider
+
 
 Main Raider class
 -----------------
@@ -36,32 +43,3 @@ Functions
    :members:
 
 
-Internal API reference
-======================
-
-Request
---------
-
-.. automodule:: raider.request
-   :members:
-
-
-Structures
-----------
-
-.. automodule:: raider.structures
-   :members:
-
-
-User
-----
-
-.. automodule:: raider.user
-   :members:
-
-
-utils
------
-
-.. automodule:: raider.utils
-  :members:		

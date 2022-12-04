@@ -50,12 +50,9 @@ Welcome to Raider's documentation!
    :maxdepth: 1
    :caption: API Reference
 
-   api/api
-   api/flows
-   api/users
-   api/plugins
-   api/operations
-   api/attacks
+   api/cli
+   api/user
+   api/internal
 
 
 Indices and tables
