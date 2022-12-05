@@ -459,7 +459,8 @@ class Save(Operation):
             if isinstance(content, requests.models.Response):
                 outfile.write(content.content)
             elif isinstance(content, Plugin):
-                outfile.write(bytes(content.value, "utf-8"))
+                if content:value:
+                    outfile.write(bytes(content.value, "utf-8"))
             else:
                 outfile.write(bytes(content, "utf-8"))
             outfile.write(b"\n")
