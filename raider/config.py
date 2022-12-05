@@ -82,12 +82,6 @@ class Config:
 
         self.logger = get_logger(self.loglevel, "raider")
 
-        if not list_projects():
-            self.logger.critical(
-                "No application have been configured. Cannot run."
-            )
-            sys.exit()
-
     def write_config_file(self) -> None:
         """Writes global configuration to common.hy.
 

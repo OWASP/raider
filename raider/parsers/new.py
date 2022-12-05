@@ -60,4 +60,5 @@ def run_new_command(args):
         raider.logger.info("Creating file %s.", filepath)
         open(filepath, "w").close()
 
-    os.system("%s %s" % (os.getenv("EDITOR"), filepath))
+    editor = os.getenv("EDITOR") or "vim"
+    os.system("%s %s" % (editor, filepath))

@@ -1,6 +1,7 @@
 import argparse
 
 from raider import Raider
+from raider.utils import list_projects
 
 
 def add_run_parser(parser) -> None:
@@ -28,6 +29,12 @@ def run_run_command(args: argparse.Namespace) -> None:
     raider = Raider(args.project)
     if args.proxy:
         raider.gconfig.use_proxy = True
+
+    if not list_projects():
+        self.logger.critical(
+            "No application have been configured. Cannot run!"
+        )
+        sys.exit()
 
     raider.project.load()
 
