@@ -1,4 +1,4 @@
 .. _cli:
 
-CLI reference
-=============
+Command Line Interface reference
+================================

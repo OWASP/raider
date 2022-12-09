@@ -1,4 +1,4 @@
-.. _tutorials:
+.. _reddit_tutorial:
 
 Reddit authentication
 =====================

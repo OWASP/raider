@@ -8,8 +8,8 @@ Welcome to Raider's documentation!
    code <https://github.com/OWASP/raider>`_ to understand better how
    Raider works, `open Github issues
    <https://github.com/OWASP/raider/issues>`_ if you find some
-   mistakes, or come `talk to us in the community forum
-   <https://community.raiderauth.com/>`_.
+   mistakes, or come `talk to us in the Github Discussions
+   <https://github.com/OWASP/raider/discussions>`_.
 
 
 
@@ -24,27 +24,30 @@ Welcome to Raider's documentation!
    overview/faq
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
    :caption: Tutorials
 
    tutorials/prerequisites
    tutorials/getting_started
    tutorials/reddit
+   tutorials/keycloak
+   tutorials/juiceshop
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
    :caption: Examples
 
-   examples/example
+   examples/writing_custom_operations
+   examples/writing_custom_plugins
+   examples/writing_macros
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
    :caption: Case Studies
 
    case_studies/architecture
    case_studies/lisp
-
-
+   case_studies/macros
 
 .. toctree::
    :maxdepth: 1
@@ -52,6 +55,7 @@ Welcome to Raider's documentation!
 
    api/cli
    api/user
+   api/macros
    api/internal
 
 

@@ -24,9 +24,6 @@ files for each new project. Those files contain information describing
 the authentication process. **Raider** evaluates them, and gives you
 back a Python object to interact with the application.
 
-Read the `Tutorials <https://community.raiderauth.com/c/tutorials/5>`_
-for more information and examples.
-
 .. _faq_eval:
 
 You're telling me it'll evaluate all user input? Isn't that unsafe?

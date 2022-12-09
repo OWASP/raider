@@ -91,5 +91,5 @@ to write new operations <operations_api>`.
 
 
 .. uml:: ../diagrams/graph.uml
-
+	 
 .. image:: ../diagrams/graph.png
