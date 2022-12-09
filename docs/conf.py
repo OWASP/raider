@@ -91,6 +91,6 @@ def setup(app):
     app.connect("autodoc-skip-member", skip)
 
 
-on_rtd = os.environ.get("READTHEDOCS") == "True"
-if on_rtd:
-    plantuml = '/usr/share/plantuml/plantuml.jar'
+plantuml = 'java -jar %s' % os.path.join(os.path.dirname(__file__), "utils", "plantuml.jar"))
+
+plantuml_output_format = 'png'
