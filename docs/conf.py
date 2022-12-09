@@ -91,6 +91,6 @@ def setup(app):
     app.connect("autodoc-skip-member", skip)
 
 
-plantuml = 'java -jar %s' % os.path.join(os.path.dirname(__file__), "utils", "plantuml.jar"))
+plantuml = 'java -jar %s' % os.path.join(os.path.dirname(__file__), "utils", "plantuml.jar")
 
 plantuml_output_format = 'png'
