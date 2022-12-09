@@ -1,7 +1,7 @@
 skinparam componentStyle rectangle
 
 package "Flow0" {
-  frame "Stage0" {
+  frame {
   [Request0] -down- [Response0]
   }
 
@@ -29,7 +29,7 @@ package "Flow0" {
 
 
 package "Flow1" {
-  frame "Stage1" {
+  frame {
   [Request1] -down- [Response1]
   }
 

@@ -108,10 +108,8 @@ Example:
 
    (setv attack
      (Flow
-       :request
-       (Request
-         :method "POST"
-	 :url "https://example.com/"
+       (Request.post
+	 "https://example.com/"
 	 :data
 	 {"item" "123"
 	  "filename" placeholder     ;; Sends empty filename by default.
@@ -164,11 +162,9 @@ Example:
 
 
    (setv login
-     (AuthFlow
-       :request
-         (Request
-	   :method "POST"
-	   :url "https://www.example.com/login"
+     (Flow
+         (Request.post
+	   "https://www.example.com/login"
 	   :data
 	   {"username" username          ;; Sends the active user's credentials
 	    "password" password          ;; and the email in the respective fields.
@@ -197,11 +193,9 @@ Example:
    (setv mfa_code (Prompt "Input code here:"))      ;; Asks user for the MFA code.
 
    (setv multifactor
-     (AuthFlow
-       :request
-         (Request
-	   :method "POST"
-	   :url "https://www.example.com/login"
+     (Flow
+         (Request.post
+	   "https://www.example.com/login"
            :data
 	   {"username" username
 	    "password" password
@@ -240,21 +234,17 @@ Example:
        :extract "token"))          ;; Stored in `token`.
 
    (setv initialization
-     (AuthFlow
-       :request
-         (Request
-	   :method "GET"
-	   :url "https://www.example.com")
+     (Flow
+         (Request.get
+	   "https://www.example.com")
        :outputs [session_cookie                 ;; Extracts `PHPSESSID` from response.
                  csrf_token]                    ;; Extracts CSRF token using `Cookie.regex`.
-       :operations [(NextStage "login")]))
+       :operations [(Next "login")]))
 
    (setv login
-     (AuthFlow
-       :request
-         (Request
-	   :method "POST"
-	   :url "https://www.example.com/login"
+     (Flow
+         (Request.post
+	   "https://www.example.com/login"
            :cookies [session_cookie             ;; Uses the `PHPSESSID` extracted above.
 
 	             (Cookie "admin" "true")    ;; Sends a custom cookie named `admin`
@@ -267,14 +257,12 @@ Example:
 
    (setv my_function
      (Flow
-       :name "my_function"
-       :request (Request
-                  :method "GET"
-                  :url "https://www.example.com/my_function"
+       (Request.get
+       "https://www.example.com/my_function"
 
-                  ;; Sends the cookie `mycookie` with the value of
-                  ;; `access_token` extracted from JSON.
-                  :cookies [(Cookie.from_plugin access_token "mycookie" )])))
+       ;; Sends the cookie `mycookie` with the value of
+       ;; `access_token` extracted from JSON.
+       :cookies [(Cookie.from_plugin access_token "mycookie" )])))
 
 
 
@@ -312,11 +300,9 @@ Example:
    (setv password (Variable "password"))
 
    (setv login
-     (AuthFlow
-       :request
-         (Request
-	   :method "POST"
-	   :url "https://www.example.com/login"
+     (Flow
+         (Request.post
+	   "https://www.example.com/login"
 	   :headers [useragent                    ;; Sets the user agent.
 
 	             (Headers.from_plugin         ;; Creates new header from ``user_id``
@@ -329,11 +315,9 @@ Example:
 
    (setv my_function
      (Flow
-       :name "my_function"
-       :request (Request
-                  :method "GET"
-                  :url "https://www.example.com/my_function"
-                  :headers [authheader])))
+       (Request.get
+       "https://www.example.com/my_function"
+       :headers [authheader])))
 
 
 

@@ -65,22 +65,17 @@ in hy:
 
        (setv get_unread_messages
              (Flow
-               :name "get_unread_messages"
-               :request (Request
-                          :method "GET"
-                          :headers [(Header.bearerauth access_token)]
-                          :url "https://s.reddit.com/api/v1/sendbird/unread_message_count")))
+		(Request.get
+		"https://s.reddit.com/api/v1/sendbird/unread_message_count"
+                :headers [(Header.bearerauth access_token)])))
 
        
 In Hy, ``setv`` is used to set up new variables. Here we created the
 variable ``get_unread_messages`` that will hold the information about
-this Flow. This will be hold in the :ref:`_functions special variable
-<var_functions>` which stores the Flows which aren't affecting the
-authentication.
+this Flow.
        
 The only required parameters for :class:`Flow <raider.flow.Flow>`
-objects are the name and the request. The name is a string that is used
-for reference purposes, and the request contains the actual HTTP request
+objects is the request and it contains the actual HTTP request
 definition as a :class:`Request <raider.request.Request>` object.
        
 The Request object requires only the method and url. Other parameters
@@ -153,14 +148,11 @@ of the request:
 
        (setv get_access_token
              (Flow
-               :name "get_access_token"
-               :request (Request
-                          :method "GET"
-                          :url "https://www.reddit.com/"
+		(Request.get "https://www.reddit.com/"
                           :cookies [reddit_session])
                :outputs [access_token]
                :operations [(Print access_token)
-                            (NextStage "get_unread_messages")]))
+                            (Next "get_unread_messages")]))
 
        
 Here we can see that we specified the ``reddit_session`` cookie to be
@@ -176,7 +168,7 @@ Now we define the cookie like this:
        
 When the stage is complete, two operations will be executed. The first
 will print the value of the ``access_token`` on the command line, and
-the next will tell **Raider** to go to the next stage that we defined
+the next will tell **Raider** to go to the next Flow that we defined
 previously.
        
 
@@ -259,30 +251,28 @@ I defined the multi_factor stage as shown below:
    
        (setv multi_factor
              (Flow
-               :name "multi_factor"
-               :request (Request
-                          :method "POST"
-                          :url "https://www.reddit.com/login"
-                          :cookies [session_id]
-                          :data
-                          {"password" password
-                           "username" username
-                           "csrf_token" csrf_token
-                           "otp" mfa_code
-                           "dest" "https://www.reddit.com"})
+		(Request.post
+		   "https://www.reddit.com/login"
+		   :cookies [session_id]
+                   :data
+                   {"password" password
+                    "username" username
+                    "csrf_token" csrf_token
+                    "otp" mfa_code
+                    "dest" "https://www.reddit.com"})
                :outputs [reddit_session]
                :operations [(Print reddit_session csrf_token)
                             (Http
                               :status 200
                               :action
-                              (NextStage "get_access_token"))
+                              (Next "get_access_token"))
                             (Http
                               :status 400
                               :action
                               (Grep
                                 :regex "WRONG_OTP"
                                 :action
-                                (NextStage "initialization")
+                                (Next "initialization")
                                 :otherwise
                                 (Error "Multi-factor authentication error")))]))
 
@@ -295,7 +285,7 @@ first operations will just print to the CLI output the values of the
 ``csrf_token`` and ``reddit_session``.
 
 The second operation will instruct **Raider** to go to the
-``get_access_token`` stage if the HTTP response code is 200.
+``get_access_token`` Flow if the HTTP response code is 200.
 
 The third operation will run only if the status code is 400, which
 means the authentication failed. Inside the response body of a failed
@@ -303,7 +293,7 @@ request will be a message indicating why it failed. **Raider** will
 then :ref:`Grep <operations_grep>` the response for the string
 "WRONG_OTP" in case we gave the wrong multi-factor authentication
 code. If it matches, **Raider** will go to the ``initialization``
-stage starting the authentication from a clean state again.
+Flow starting the authentication from a clean state again.
 
 We will define this stage later in this tutorial. If the string
 "WRONG_OTP" isn't found, **Raider** will quit with the error message
@@ -314,23 +304,21 @@ Login
 -----
        
 On reddit, the login request looks similar to the multi-factor one, so
-the stage definition is pretty similar:
+the Flow definition is pretty similar:
        
 .. code-block:: hylang
 
        (setv login
              (Flow
-               :name "login"
-               :request (Request
-                          :method "POST"
-                          :url "https://www.reddit.com/login"
-                          :cookies [session_id]
-                          :data
-                          {"password" password
-                           "username" username
-                           "csrf_token" csrf_token
-                           "otp" ""
-                           "dest" "https://www.reddit.com"})
+               (Request.post
+	          "https://www.reddit.com/login"
+                  :cookies [session_id]
+                  :data
+                  {"password" password
+                   "username" username
+                   "csrf_token" csrf_token
+                   "otp" ""
+                   "dest" "https://www.reddit.com"})
                :outputs [session_id reddit_session]
                :operations [(Print session_id reddit_session)
                             (Http
@@ -339,9 +327,9 @@ the stage definition is pretty similar:
                               (Grep
                                 :regex "TWO_FA_REQUIRED"
                                 :action
-                                (NextStage "multi_factor")
+                                (Next "multi_factor")
                                 :otherwise
-                                (NextStage "get_access_token"))
+                                (Next "get_access_token"))
                               :otherwise
                               (Error "Login error"))]))
        
@@ -384,35 +372,21 @@ input where necessary.
        
 The token can be found by multiple means. The simplest way I found is
 by sending a simple GET request to https://www.reddit.com/login/ with
-no additional information. Now we can define this stage:
+no additional information. Now we can define this Flow:
        
 .. code-block:: hylang
        
        (setv initialization
              (Flow
-               :name "initialization"
-               :request (Request
-                          :method "GET"
-                          :url "https://www.reddit.com/login/")
-               :outputs [csrf_token session_id]
-               :operations [(Print session_id csrf_token)
-                            (NextStage "login")]))
+	        (Request.get
+		  "https://www.reddit.com/login/")
+		  :outputs [csrf_token session_id]
+		  :operations [(Print session_id csrf_token)
+		               (Next "login")]))
 
        
 Finishing configuration
 -----------------------
-
-The request will give us the token we need, and the session
-cookie. The configuration file is almost complete. To finish, we set
-the special variables:
-
-* :ref:`_authentication <var_authentication>` - containing the list of
-  the authentication steps we defined.
-  
-* :ref:`_functions <var_functions>` - we will put the other defined
-  Flows which don't affect authentication.
-       
-* :ref:`_users <var_users>` - user credentials go here
 
 
 Adding one more function `get_nickname`, and the complete
@@ -422,7 +396,7 @@ configuration file for reddit looks like this:
 .. code-block:: hylang
 
    (print "Reddit")
-   (setv _base_url "https://www.reddit.com/")
+   (setv base_url "https://www.reddit.com/")
           
    (setv username (Variable "username"))
    (setv password (Variable "password"))
@@ -449,91 +423,81 @@ configuration file for reddit looks like this:
           
    (setv initialization
      (Flow
-       :name "initialization"
-       :request (Request
-                 :method "GET"
-       		 :url "https://www.reddit.com/login/")
-       :outputs [csrf_token session_id]
-       :operations
-       [(Print session_id csrf_token)
-        (NextStage "login")]))
+       (Request.get
+          "https://www.reddit.com/login/")
+        :outputs [csrf_token session_id]
+        :operations
+        [(Print session_id csrf_token)
+         (Next "login")]))
           
    (setv login
      (Flow
-       :name "login"
-       :request (Request
-               :method "POST"
-     	       :url "https://www.reddit.com/login"
-     	       :cookies [session_id]
-     	       :data
-     	       {"password" password
-     	        "username" username
-     		"csrf_token" csrf_token
-     		"otp" ""
-     		"dest" "https://www.reddit.com"})
-      :outputs [session_id reddit_session]
-      :operations
-      [(Print session_id reddit_session)
-       (Http
-        :status 200
-        :action
-         (Grep
-          :regex "TWO_FA_REQUIRED"
-     	:action
-     	 [(Print "Multi-factor authentication required")
-     	  (NextStage "multi_factor")]
-     	:otherwise (NextStage "get_access_token"))
-        :otherwise (Error "Login error"))]))
+        (Request.post
+	  "https://www.reddit.com/login"
+     	  :cookies [session_id]
+     	  :data
+     	  {"password" password
+	   "username" username
+	   "csrf_token" csrf_token
+     	   "otp" ""
+     	   "dest" "https://www.reddit.com"})
+	:outputs [session_id reddit_session]
+	:operations
+         [(Print session_id reddit_session)
+          (Http
+           :status 200
+           :action
+            (Grep
+             :regex "TWO_FA_REQUIRED"
+        	:action
+        	 [(Print "Multi-factor authentication required")
+        	  (Next "multi_factor")]
+        	:otherwise (Next "get_access_token"))
+           :otherwise (Error "Login error"))]))
           
    (setv multi_factor
      (Flow
-      :name "multi_factor"
-      :request (Request
-                 :method "POST"
-                 :url "https://www.reddit.com/login"
-                 :cookies [session_id]
-                 :data
-                 {"password" password
-                  "username" username
-                  "csrf_token" csrf_token
-                  "otp" mfa_code
-                  "dest" "https://www.reddit.com"})
+       (Request.post
+          "https://www.reddit.com/login"
+          :cookies [session_id]
+          :data
+          {"password" password
+           "username" username
+           "csrf_token" csrf_token
+           "otp" mfa_code
+           "dest" "https://www.reddit.com"})
       :outputs [reddit_session]
       :operations [(Print reddit_session)
                    (Print csrf_token)
                    (Http
                      :status 200
                      :action
-                     (NextStage "get_access_token"))
+                     (Next "get_access_token"))
                    (Http
                      :status 400
                      :action
                      (Grep
                        :regex "WRONG_OTP"
                        :action
-                       (NextStage "initialization")
+                       (Next "initialization")
                        :otherwise
                        (Error "Multi-factor authentication error")))]))
    
    
    (setv get_access_token
      (Flow
-       :name "get_access_token"
-       :request (Request
-                  :method "GET"
-                  :url "https://www.reddit.com/"
-                  :cookies [reddit_session])
-       :outputs [access_token]
-       :operations [(Print access_token)
-                    (NextStage "get_unread_messages")]))
+       (Request.get
+          "https://www.reddit.com/"
+          :cookies [reddit_session])
+     :outputs [access_token]
+     :operations [(Print access_token)
+		  (Next "get_unread_messages")]))
    
    (setv get_unread_messages
      (Flow
-       :name "get_unread_messages"
-       :request (Request
-                  :method "GET"
-                  :headers [(Header.bearerauth access_token)]
-                  :url "https://s.reddit.com/api/v1/sendbird/unread_message_count")))
+       (Request.get
+       :headers [(Header.bearerauth access_token)]
+       :url "https://s.reddit.com/api/v1/sendbird/unread_message_count")))
    
    (setv nickname
          (Regex
@@ -551,21 +515,9 @@ configuration file for reddit looks like this:
            :operations [(Print nickname)]))
 
 
-   (setv _authentication
-     [initialization
-      login
-      multi_factor
-      get_access_token])
-
-
-   (setv _functions
-     [get_unread_messages
-      get_nickname])
-
-
-   (setv _users
-      [{:username "user1"
-        :password "s3cr3tP4ssWrd1"}])
+   (setv users
+     (Users
+      [{"user1" "s3cr3tP4ssWrd1"}]))
 
 
 
@@ -573,50 +525,27 @@ Running Raider
 --------------
 
 
-Now, with the configuration finished, we can run **Raider** with a python
-script:
+Now, with the configuration finished, we can run **Raider**:
 
-.. code-block:: python
+.. code-block:: bash
 
-   import raider
-   
-   app = raider.Raider("reddit")
-   # Create a Raider() object for application "reddit"
-   
-   app.config.proxy = "http://localhost:8080"
-   # Run traffic through the local web proxy
-
-   app.authenticate()
-   # Run authentication stages one by one
-   
-   app.run_function("get_nickname")
-   app.run_function("get_unread_messages")
-   # Run both defined functions
-
-
-Running the script, we can see its output, and entries in the web
-proxy listening on port 8080:
-
-.. code-block::
-
-   $ python script.py
-
+   $ raider run reddit
    Reddit
-   INFO:root:Running stage initialization
+   INFO:root:Running flow initialization
    session = [REDACTED]
    csrf_token = [REDACTED]
-   INFO:root:Running stage login
+   INFO:root:Running flow login
    WARNING:root:Couldn't extract output: session
    WARNING:root:Couldn't extract output: reddit_session
    session = [REDACTED]
    reddit_session = None
    Multi-factor authentication enabled
-   INFO:root:Running stage multi_factor
+   INFO:root:Running flow multi_factor
    reddit_session = [REDACTED]
    csrf_token = [REDACTED]
-   INFO:root:Running stage get_access_token
+   INFO:root:Running flow get_access_token
    access_token = [REDACTED]
-   INFO:root:Running function get_nickname
+   INFO:root:Running flow get_nickname
    nickname = [REDACTED]
 
 

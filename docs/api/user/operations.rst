@@ -6,7 +6,7 @@ Operations
 ----------
 
 *Raider* operations are pieces of code that will be executed when the
-HTTP response is received. The most important one is **NextStage**
+HTTP response is received. The most important one is **Next**
 which controls the authentication flow. But anything can be done with
 the operations, and *Raider* allows writing custom ones in hylang to
 enable users to add functionality that isn't supported by the main
@@ -17,10 +17,10 @@ code.
 Next
 ++++
 
-Inside the Authentication object NextStage is used to define the
-next step of the authentication process. It can also be used inside
-"action" attributes of the other Operations to allow conditional
-decision making.
+Inside the Authentication object Next is used to define the next step
+of the authentication process. It can also be used inside "action"
+attributes of the other Operations to allow conditional decision
+making.
 
 .. code-block:: hylang
 
@@ -37,13 +37,15 @@ decision making.
 Success
 +++++++
 
-Operation that will exit Raider and print the error message.
+Operation that will indicate that the FlowGraph has completed
+successfully and stop running any further. Print the optional successh
+message.
 
 .. code-block:: hylang
 
-   (Error "Login failed.")
+   (Success "Login succeeded.")
 
-.. autoclass:: Error
+.. autoclass:: Success
    :members:
 
 .. _operations_failure:
@@ -51,7 +53,8 @@ Operation that will exit Raider and print the error message.
 Failure
 +++++++
 
-Operation that will exit Raider and print the error message.
+Operation that will indicate that the FlowGraph has failed and stop
+running any further. Print the optional error message.
 
 .. code-block:: hylang
 
@@ -118,9 +121,9 @@ Http
    (Http
       :status 200
       :action
-        (NextStage "login")
+        (Next "login")
       :otherwise
-        (NextStage "multi_factor"))
+        (Next "multi_factor"))
 
 .. autoclass:: Http
    :members:
@@ -135,7 +138,7 @@ Grep
    (Grep
      :regex "TWO_FA_REQUIRED"
      :action
-       (NextStage "multi_factor")
+       (Next "multi_factor")
      :otherwise
        (Print "Logged in successfully"))
 
