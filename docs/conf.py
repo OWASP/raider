@@ -93,4 +93,4 @@ def setup(app):
 
 on_rtd = os.environ.get("READTHEDOCS") == "True"
 if on_rtd:
-    plantuml = 'java -Djava.awt.headless=true -jar /usr/share/plantuml/plantuml.jar'
+    plantuml = '/usr/share/plantuml/plantuml.jar'
