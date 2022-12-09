@@ -2,7 +2,7 @@
 .. module:: raider.plugins.common
 
 Plugins
-=======
+-------
 
 :term:`Plugins <Plugin>` in **Raider** are pieces of code that are
 used to get inputs from, and put them in the HTTP :term:`Request`,
@@ -17,14 +17,14 @@ are also encouraged to :ref:`write their own plugins <plugin_api>`.
 
 
 Common
-------
+++++++
 
 Users most often won't need to use those unless they're writing their
 own :term:`Plugins <Plugin>`. Common :term:`Plugins <Plugin>` are
 mostly used as parent classes for other :term:`Plugins <Plugin>`.
 
 Plugin
-++++++
+******
 
 Use this class only when creating new :term:`Plugins <Plugin>`. Either
 when :ref:`writing custom plugins <plugin_api>` in `hylang
@@ -69,7 +69,7 @@ example:
    :members:
 
 Parser
-++++++
+******
 
 The :class:`Parser` :class:`Plugin` takes other :class:`Plugins
 <Plugin>` as input, parses it, and extracts the piece of information
@@ -80,7 +80,7 @@ for further use. :class:`Parser` :class:`Plugins <Plugin>` can
    :members:
 
 Processor
-+++++++++
+*********
 
 The :class:`Processor` :class:`Plugin` encodes, decodes and otherwise
 processes other :class:`Plugins <Plugin>`. :class:`Processor`
@@ -90,7 +90,7 @@ processes other :class:`Plugins <Plugin>`. :class:`Processor`
    :members:
 
 Empty
-+++++
+*****
 
 The :class:`Empty` :class:`Plugin` is unique in that it contains no
 function or ``value``. Its only use is when fuzzing but no previous
@@ -122,7 +122,7 @@ Example:
 .. module:: raider.plugins.basic
 
 Basic
------
++++++
 
 Basic :class:`Plugins <Plugin>` are the most commonly used ones, that
 don't depend on other plugins to get its ``value``. Basic
@@ -130,7 +130,7 @@ don't depend on other plugins to get its ``value``. Basic
 
 
 Variable
-++++++++
+********
 
 The :class:`Variable` :class:`Plugin <raider.plugins.common.Plugin>`
 extracts the ``value`` defined in the :class:`User <raider.user.User>`
@@ -177,7 +177,7 @@ Example:
 .. _plugin_prompt:
 
 Prompt
-++++++
+******
 
 The prompt plugin accepts user input mid-flow. Use it when you don't
 know in advance the data you will need to send, like in case of
@@ -210,7 +210,7 @@ Example:
 .. _plugin_cookie:      
 
 Cookie
-++++++
+******
 
 The :class:`Cookie` :class:`Plugin <raider.plugins.common.Plugin>`
 extracts its ``value`` from the :term:`Response's <Response>`
@@ -280,7 +280,7 @@ Example:
 
 
 Header
-++++++
+******
 
 The :class:`Header` :class:`Plugin <raider.plugins.common.Plugin>`
 extracts and sets new headers.  :class:`Cookie` :class:`Plugins
@@ -339,7 +339,7 @@ Example:
 
 
 File
-++++
+****
 
 The File plugin sets the plugin's ``value`` to the contents of a provided file
 and allows string substitution within the content.
@@ -350,7 +350,7 @@ and allows string substitution within the content.
 .. _plugin_command:
 
 Command
-+++++++
+*******
 
 The Command plugin runs shell commands and extracts their output. 
 
@@ -369,7 +369,7 @@ Example:
 .. _plugin_regex:
 
 Regex
-+++++
+*****
 
 The Regex plugin extracts a matched expression from the HTTP response.
 
@@ -389,7 +389,7 @@ Example:
 .. _plugin_html:      
 
 Html
-++++
+****
 
 The Html plugin extracts tags matching attributes specified by the user.
 
@@ -414,7 +414,7 @@ Example:
 .. _plugin_json:
       
 Json
-++++
+****
 
 The Json plugin extracts fields from JSON tables.
 
@@ -425,10 +425,10 @@ The Json plugin extracts fields from JSON tables.
 
 
 Modifiers
----------
++++++++++
 
 Alter
-+++++
+*****
 
 The Alter plugin extracts and alters the ``value`` of other plugins.
 
@@ -436,7 +436,7 @@ The Alter plugin extracts and alters the ``value`` of other plugins.
    :members:	       
 
 Combine
-+++++++
+*******
 
 The Combine plugin concatenates the ``value`` of other plugins.
 
@@ -448,10 +448,10 @@ The Combine plugin concatenates the ``value`` of other plugins.
 .. module:: raider.plugins.parsers
 
 Parsers
--------
++++++++
 
 Urlparser
-+++++++++
+*********
 
 The URLParser plugin parses URLs and extracts elements from it.
 
@@ -461,10 +461,10 @@ The URLParser plugin parses URLs and extracts elements from it.
 .. module:: raider.plugins.processors
 
 Processors
-----------
+++++++++++
 
 Urlencode
-+++++++++
+*********
 
 The Urlencode plugin URL encodes a processor plugin.
 
@@ -472,7 +472,7 @@ The Urlencode plugin URL encodes a processor plugin.
    :members:
 
 Urldecode
-+++++++++
+*********
 
 The Urldecode plugin URL decodes a processor plugin.
 
@@ -480,12 +480,12 @@ The Urldecode plugin URL decodes a processor plugin.
    :members:
 
 B64encode
-+++++++++
+*********
 
 The B64encode plugin base64 encodes a processor plugin.
 
 B64decode
-+++++++++
+*********
 
 The B64decode plugin base64 decodes a processor plugin.
 
@@ -494,64 +494,3 @@ The B64decode plugin base64 decodes a processor plugin.
 
 .. _plugin_api:
 
-Writing custom plugins
-----------------------
-
-
-In case the existing plugins are not enough, the user can write
-their own to add the new functionality. Those new plugins should be
-written in the project's configuration directory in a ".hy" file. To
-do this, a new class has to be defined, which will inherit from
-*Raider*'s Plugin class:
-
-
-Let's assume we want a new plugin that will use `unix password store
-<https://www.passwordstore.org/>`_ to extract the OTP from our website.
-
-
-.. code-block:: hylang
-
-
-    (defclass PasswordStore [Plugin]
-    ;; Define class PasswordStore which inherits from Plugin
-
-      (defn __init__ [self path]
-      ;; Initiatialize the object given the path
-
-        (.__init__ (super)
-                   :name path
-                   :function (. self run_command)))
-      ;; Call the super() class, i.e. Plugin, and give it the
-      ;; path as the name identifier, and the function
-      ;; self.run_command() as a function to get the value.
-      ;;
-      ;; We don't need the response nor the user data to use
-      ;; this plugin, so no flags will be set.
-		   
-      (defn run_command [self]
-        (import os)
-	;; We need os.popen() to run the command
-	
-        (setv self.value
-              ((. ((. (os.popen
-                        (+ "pass otp " self.path))
-                      read))
-                  strip)))
-	;; set self.value to the output from "pass otp",
-	;; with the newline stripped.
-	
-        (return self.value)))
-
-
-And we can create a new variable that will use this class:
-
-.. code-block:: hylang
-
-    (setv mfa_code (PasswordStore "personal/reddit"))
-
-
-Now whenever we use the ``mfa_code`` in our requests, its ``value`` will
-be extracted from the password store.
-
-
-      

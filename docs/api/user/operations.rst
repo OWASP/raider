@@ -3,7 +3,7 @@
 .. module:: raider.operations
 
 Operations
-==========
+----------
 
 *Raider* operations are pieces of code that will be executed when the
 HTTP response is received. The most important one is **NextStage**
@@ -12,10 +12,10 @@ the operations, and *Raider* allows writing custom ones in hylang to
 enable users to add functionality that isn't supported by the main
 code.
 
-.. _operations_nextstage:
+.. _operations_next:
 
-NextStage
----------
+Next
+++++
 
 Inside the Authentication object NextStage is used to define the
 next step of the authentication process. It can also be used inside
@@ -24,15 +24,48 @@ decision making.
 
 .. code-block:: hylang
 
-   (NextStage "login")
+   (Next "login")
 
-.. autoclass:: NextStage
+.. autoclass:: Next
    :members:
 
 .. _operations_print:
 	       
+
+.. _operations_success:
+	       
+Success
++++++++
+
+Operation that will exit Raider and print the error message.
+
+.. code-block:: hylang
+
+   (Error "Login failed.")
+
+.. autoclass:: Error
+   :members:
+
+.. _operations_failure:
+	       
+Failure
++++++++
+
+Operation that will exit Raider and print the error message.
+
+.. code-block:: hylang
+
+   (Error "Login failed.")
+
+.. autoclass:: Error
+   :members:
+
+
+
+
+
 Print
------
++++++
 
 When this Operation is executed, it will print each of its elements
 in a new line.
@@ -60,7 +93,7 @@ in a new line.
 .. _operations_save:
 	       
 Save
-----
+++++
 
 When this Operation is executed, it will save its elements
 in a file.
@@ -75,25 +108,10 @@ in a file.
    :members:
 
 
-.. _operations_error:
-	       
-Error
------
-
-Operation that will exit Raider and print the error message.
-
-.. code-block:: hylang
-
-   (Error "Login failed.")
-
-.. autoclass:: Error
-   :members:
-
-
 .. _operations_http:
 
 Http
-----
+++++
 
 .. code-block:: hylang
 
@@ -110,7 +128,7 @@ Http
 .. _operations_grep:
 
 Grep
-----
+++++
 
 .. code-block:: hylang
 
@@ -123,21 +141,3 @@ Grep
 
 .. autoclass:: Grep       
    :members:
-
-.. _operations_api:
-
-
-
-Writing custom operations
--------------------------
-
-In case the existing operations are not enough, the user can write
-their own to add the new functionality. Those new operations should be
-written in the project's configuration directory in a ".hy" file. To
-do this, a new class has to be defined, which will inherit from
-*Raider*'s Operation class:
-
-.. autoclass:: Operation
-   :members:
-
-		

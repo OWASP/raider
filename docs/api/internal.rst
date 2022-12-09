@@ -3,29 +3,17 @@
 Internal API reference
 ======================
 
-Request
---------
-
-.. automodule:: raider.request
-   :members:
+.. module:: raider
 
 
-Structures
-----------
+.. include:: internal/raider.rst
+.. include:: internal/config.rst
+.. include:: internal/flowstore.rst
+.. include:: internal/projects.rst
+.. include:: internal/search.rst
+.. include:: internal/structures.rst
+.. include:: internal/logger.rst
+.. include:: internal/utils.rst
+.. include:: internal/raider.rst
+.. include:: internal/raider.rst
 
-.. automodule:: raider.structures
-   :members:
-
-
-User
-----
-
-.. automodule:: raider.user
-   :members:
-
-
-utils
------
-
-.. automodule:: raider.utils
-  :members:		

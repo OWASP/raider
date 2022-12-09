@@ -1,7 +1,7 @@
 .. _flows:
 
 Flows
-=====
+-----
 
 :term:`Flows <Flow>` are the main concept in **Raider**, used to
 define the HTTP information exchange. Each :term:`request` you want to
@@ -32,7 +32,7 @@ Raider.
 
 
 Examples
---------
+++++++++
 
 Create the variable ``initialization`` with the AuthFlow. It'll send a
 GET request to ``https://example.com/admin/``. If the HTTP response

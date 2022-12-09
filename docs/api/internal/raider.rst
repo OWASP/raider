@@ -1,0 +1,7 @@
+
+Raider
+------
+
+.. autoclass:: Raider
+   :members:
+

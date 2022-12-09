@@ -2,7 +2,7 @@
 .. module:: raider.user
 
 Users
-=====
+-----
 
 Use the :class:`Users` class when setting up your users in :term:`hyfiles`
 like this:
