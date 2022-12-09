@@ -19,6 +19,8 @@ the following in a diagram:
 
 .. uml:: ../diagrams/high_level_authentication.uml
 
+.. image:: ../diagrams/high_level_authentication.png
+	   
 
 Basic concepts in Raider
 ------------------------
@@ -35,6 +37,7 @@ for an imaginary web application:
 
 .. uml:: ../diagrams/detailed_authentication.uml
 
+.. image:: ../diagrams/detailed_authentication.png
 
 To describe the authentication process from the example defined above,
 we need three **stages**. The first one, *Initialization*, doesn't
@@ -66,6 +69,7 @@ to stage X if the HTTP response code is 200 or to stage Y if it's 403.
 
 
 .. uml:: ../diagrams/raider_flows.uml
+.. image:: ../diagrams/raider_flows.png
 
 
 Inputs and outputs are often the same object, and you may want to
@@ -87,3 +91,5 @@ to write new operations <operations_api>`.
 
 
 .. uml:: ../diagrams/graph.uml
+
+.. image:: ../diagrams/graph.png
