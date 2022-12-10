@@ -1,13 +1,18 @@
 .. _internal_api:
 
 Internal API reference
-======================
+=========================
 
-.. include:: internal/raider.rst
-.. include:: internal/config.rst
-.. include:: internal/flowstore.rst
-.. include:: internal/projects.rst
-.. include:: internal/search.rst
-.. include:: internal/structures.rst
-.. include:: internal/utils.rst
-.. include:: internal/logger.rst
+.. toctree::
+   :maxdepth: 2
+   :caption: Internal API
+
+   internal/raider.rst
+   internal/config.rst
+   internal/flowstore.rst
+   internal/project.rst
+   internal/search.rst
+   internal/structures.rst
+   internal/utils.rst
+   internal/logger.rst
+   internal/parsers.rst

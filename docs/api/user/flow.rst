@@ -20,6 +20,7 @@ extracted for later use.
 
 .. automodule:: raider.flow
    :members:
+   :undoc-members:
 
 
 Examples
@@ -76,7 +77,7 @@ objects. Later they're being used in the body of the :class:`Request
 <raider.request.Request>`.
 
 If the HTTP response code is 200 means the :term:`MFA <Multi-factor
-authentication (MFA)>` was enabled and the ``multi_factor`` :term:`stage`
+authentication (MFA)>` was enabled and the ``multi_factor`` stage
 needs to run next. Otherwise, try to log in again. Here the password
 is asked from the user by a :class:`Prompt <raider.plugins.Prompt>`.
 

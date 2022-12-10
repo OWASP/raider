@@ -7,13 +7,13 @@ User facing API reference
    :maxdepth: 2
    :caption: User API
 
-   user/flows
-   user/requests
-   user/flowgraphs
-   user/plugins
-   user/operations
-   user/users
-   user/attacks
+   user/flow
+   user/request
+   user/flowgraph
+   user/plugin
+   user/operation
+   user/user
+   user/attack
 
 
 

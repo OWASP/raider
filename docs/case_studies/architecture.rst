@@ -27,8 +27,8 @@ Basic concepts in Raider
 
 Now let's zoom in and look at the details. Instead of dealing with the
 states (*Unauthenticated*, *Login failed*, *MFA required*, and
-*Authenticated*), we define the concept of :term:`stages
-<stage>`, which describes the information exchange between
+*Authenticated*), we define the concept of :term:`Flows
+<Flow>`, which describes the information exchange between
 the client and the server containing one request and the respective
 response.
 
@@ -40,19 +40,19 @@ for an imaginary web application:
 .. image:: ../diagrams/detailed_authentication.png
 
 To describe the authentication process from the example defined above,
-we need three **stages**. The first one, *Initialization*, doesn't
-have any inputs, but creates the *Session cookie* and the *CSRF token*
-as outputs.
+we need three stages. The first one, *Initialization*, doesn't have
+any inputs, but creates the *Session cookie* and the *CSRF token* as
+outputs.
 
-Those outputs are passed to the next **stage**, *Login*, together with
+Those outputs are passed to the next stage, *Login*, together with
 user credentials. A request is built with those pieces of information,
 and the new outputs are generated. In this case we have the new *CSRF
 token*, an updated *session cookie*, and a new cookie identifying the
 user: *user cookie*.
 
-Depending on whether MFA is enabled or not, the third **stage**
+Depending on whether MFA is enabled or not, the third stage
 *Multi-factor authentication* might be skipped or executed. If it's
-enabled, the outputs from the previous **stage** get passed as inputs
+enabled, the outputs from the previous stage get passed as inputs
 to this one, the user is asked to input the next :term:`Factor`, and a
 new cookie is set proving the user has passed the checks and is
 properly authenticated.

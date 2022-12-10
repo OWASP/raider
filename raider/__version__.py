@@ -1,4 +1,4 @@
-# Copyright (C) 2022 DigeeX
+# Copyright (C) 2020-2022 DigeeX
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -22,4 +22,4 @@ __version__ = "0.3.0"
 __author__ = "Daniel Neagaru"
 __author_email__ = "daniel@digeex.de"
 __license__ = "GPLv3+"
-__copyright__ = "Copyright 2021 Daniel Neagaru"
+__copyright__ = "Copyright 2020-2022 Daniel Neagaru"

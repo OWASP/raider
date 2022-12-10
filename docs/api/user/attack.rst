@@ -11,3 +11,4 @@ Fuzzing
 
 .. autoclass:: Fuzz
    :members:
+   :undoc-members:

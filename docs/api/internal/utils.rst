@@ -1,7 +1,8 @@
 
-Main Raider class
------------------
+utils
+-----
 
 .. automodule:: raider.utils
    :members:
+   :undoc-members:
 
