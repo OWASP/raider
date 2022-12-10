@@ -60,7 +60,7 @@ running any further. Print the optional error message.
 
    (Error "Login failed.")
 
-.. autoclass:: Error
+.. autoclass:: Failure
    :members:
 
 

@@ -1,9 +1,6 @@
 Logger
 ------
 
-.. module:: raider
-
-
-.. automobule:: raider.logger
+.. automodule:: raider.logger
    :members:
 

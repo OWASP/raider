@@ -1,6 +1,6 @@
 FlowGraph
 ---------
 
-.. automodule:: raider.flowgraph
+.. autoclass:: raider.FlowGraph
    :members:
 
