@@ -1284,8 +1284,8 @@ testing = ["flake8 (<5)", "func-timeout", "jaraco.functools", "jaraco.itertools"
 
 [metadata]
 lock-version = "1.1"
-    python-versions = ">=3.8,<3.11"
-content-hash = "c933579fcbf601a70dada746035737dc6ae73b50434ec6cbe02ef05362e53d35"
+python-versions = ">=3.8,<3.11"
+content-hash = "35f0bccfd7de04f91838c84fa7dcdfaf4f0b98dba375a9d714ad4082797c5404"
 
 [metadata.files]
 alabaster = [
@@ -2133,6 +2133,7 @@ tomlkit = [
     {file = "tomlkit-0.11.6.tar.gz", hash = "sha256:71b952e5721688937fb02cf9d354dbcf0785066149d2855e44531ebdd2b65d73"},
 ]
 tox = [
+
     {file = "tox-4.0.5-py3-none-any.whl", hash = "sha256:e71aee9e77646791c00e226301d5ef8d26cf68ac46b1825d3d46ba538518c235"},
     {file = "tox-4.0.5.tar.gz", hash = "sha256:11a2f5e18ac76b544f7006f6959821ec39bfe24e42cbf990fc0e212c1a07d092"},
 ]
