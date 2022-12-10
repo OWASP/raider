@@ -10,21 +10,15 @@ Glossary
     private information (:term:`factor <Factor>`) such as a
     password. 
 
-    In **Raider** the authentication process is defined by a series of
-    :term:`Flow objects <Flow>`.  Those are extracted from the
-    :ref:`_authentication<var_authentication>` variable in the
-    :term:`hyfiles <hyfiles>`, and stored inside an
-    :class:`Authentication <raider.authentication.Authentication>`
-    object. It's also accessible from the :class:`Raider <raider.Raider>`
-    directly:
+    In **Raider** the authentication process can be defined by a
+    series of :term:`Flow objects <Flow>` interlinked with each
+    other. :term:`FlowGrahps <FlowGraph>` are used for that, which
+    contains a pointer to the start Flow, and an optional pointer to a
+    test Flow.
 
-    .. code-block:: python
-
-         >>> import raider
-	 >>> app = raider.Raider("my_app")
-	 >>> app.authentication
-	 <raider.authentication.Authentication object at 0x7fbf25842dc0>
-
+    Those are extracted by reading variables from the :term:`hyfiles
+    <hyfile>` and stored in a :class:`FlowStore <raider.FlowStore>`
+    object.
 
   Factor
     A factor can be *something the user knows* (passwords, security
@@ -34,10 +28,10 @@ Glossary
 
   Finite state machine
     A mathematical model of computation abstracting a process that can
-    be only in one of a finite number of *states* at any given
-    time. Check the `Wikipedia article
+    be only in one of a finite number of :term:`States
+    <State/Stateful>` at any given time. Check the `Wikipedia article
     <https://en.wikipedia.org/wiki/Finite-state_machine>`_ for more
-    information, since it explains this better than me anyways.
+    information.
 
   State/Stateful
     A system is described as *stateful*, if it is designed to remember
@@ -57,7 +51,9 @@ Glossary
   FlowGraph
 
     A **Raider** class implementing the a :term:`stateful
-    <State/Stateful>` HTTP process. It
+    <State/Stateful>` HTTP process. It's basically a pointer to one
+    starting Flow from where Raider should start running and follow
+    the Next links.
 
     To create a :class:`FlowGraph <raider.flow.FlowGraph>` object, you
     need to give it a start :class:`Flow <raider.flow.Flow>` object,
