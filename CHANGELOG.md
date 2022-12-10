@@ -1,6 +1,11 @@
 ## Release history
 
-### 0.3.0 - beta1 (2021-08-23)
+### 0.3.1 - beta2 (2022-12-10)
+
+Minor bugfix release. Documentation being updated.
+
+
+### 0.3.0 - beta1 (2022-12-04)
 
 Besides outdated documentation, Raider is now ready to be considered a
 beta quality software. Many things have changed, and many are still
