@@ -1,6 +1,6 @@
 [tool.poetry]
     name = "raider"
-    version = "0.3.0"
+    version = "0.3.1"
     description = "Web authentication testing framework"
     authors = ["Daniel Neagaru <daniel@digeex.de>"]
     packages = [
@@ -8,9 +8,9 @@
     ]
     license = "GPL-3.0-or-later"
     readme = "README.md"
-    homepage = "https://github.com/OWASP/raider"
+    homepage = "https://raiderauth.com/"
     repository = "https://github.com/OWASP/raider"
-    documentation = "https://raider.readthedocs.io/en/latest/"
+    documentation = "https://docs.raiderauth.com/en/latest/"
     include = [
       "LICENSE",
       "CHANGELOG.md",
