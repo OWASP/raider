@@ -22,6 +22,9 @@ meaning it can be infinitely extended with actual code. Since all
 configuration is stored in cleartext, reproducing, sharing or
 modifying attacks becomes easy.
 
+![Example hylang configuration](./ext/config.png)
+
+
 # Installation
 
 **Raider** is available on PyPi:
@@ -39,3 +42,6 @@ $ poetry shell
 ```
 
 
+# Graph-like architecture
+
+![Flows and FlowGraphs](./ext/graph.png)
