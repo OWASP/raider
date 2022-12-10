@@ -1,6 +1,12 @@
 ![Raider logo](./ext/logo.png)
 
+# Quick links
+
 - [Documentation](https://docs.raiderauth.com/en/latest/).
+- [Installation](https://docs.raiderauth.com/en/latest/overview/install.html).
+- [FAQ](https://docs.raiderauth.com/en/latest/overview/faq.html).
+- [Getting started](https://docs.raiderauth.com/en/latest/tutorials/getting_started.html).
+- [Architecture](https://docs.raiderauth.com/en/latest/case_studies/architecture.html)
 - [Discussions](https://github.com/OWASP/raider/discussions).
 - [Issues](https://github.com/OWASP/raider/issues).
 
@@ -25,26 +31,18 @@ modifying attacks becomes easy.
 ![Example hylang configuration](./ext/config.png)
 
 
-# Installation
-
-**Raider** is available on PyPi:
-
-```
-$ pip install  raider
-```
-
-If you would like to test the latest code, you can do so by clonnig
-this repository and running it inside poetry:
-
-```
-$ git clone https://github.com/OWASP/raider
-$ poetry shell
-```
-
-
 # Graph-like architecture
+
+Raider defines a DSL to describe the information flow between the
+client and the server for HTTP processes. Each step of the process is
+described by a Flow, which contains the Request with inputs, Response
+with outputs, and arbitrary actions including links to other Flows:
 
 ![Flows](./ext/raider_flows.png)
 
+Chaining several Flows together can be used to simulate any stateful
+HTTP process. FlowGraphs indicate the starting point. They can be
+placed on any Flow. A FlowGraphs runs all Flows in the link until
+Success/Failure is returned or if there are no more links.
 
 ![Flows and FlowGraphs](./ext/graph.png)
