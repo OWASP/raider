@@ -3,6 +3,8 @@
 Architecture
 ============
 
+To explain Raider's architecture, we'll be modelling an authentication
+process.
 
 Abstracting the authentication process
 --------------------------------------
@@ -44,6 +46,9 @@ we need three stages. The first one, *Initialization*, doesn't have
 any inputs, but creates the *Session cookie* and the *CSRF token* as
 outputs.
 
+Raider Flows
+------------
+
 Those outputs are passed to the next stage, *Login*, together with
 user credentials. A request is built with those pieces of information,
 and the new outputs are generated. In this case we have the new *CSRF
@@ -57,15 +62,15 @@ to this one, the user is asked to input the next :term:`Factor`, and a
 new cookie is set proving the user has passed the checks and is
 properly authenticated.
 
-In **Raider**, stages are implemented using :term:`Flow
-<Flow>` objects. The authentication process consists of a
-series of Flows connected to each other. Each one accepts inputs and
-generates outputs. In addition to that, Flow objects implement
-:term:`Operations <operation>` which can be used to run
-various actions upon receiving the response, but most importantly
-they're used to control the authentication process by conditionally or
-unconditionally defining the next stage. So for example one can jump
-to stage X if the HTTP response code is 200 or to stage Y if it's 403.
+In **Raider**, those stages are implemented using :term:`Flow <Flow>`
+objects. The authentication process consists of a series of Flows
+connected to each other. Each one accepts inputs and generates
+outputs. In addition to that, Flow objects implement :term:`Operations
+<operation>` which can be used to run various actions upon receiving
+the response, but most importantly they're used to control the
+authentication process by conditionally or unconditionally defining
+the next stage. So for example one can jump to stage X if the HTTP
+response code is 200 or to stage Y if it's 403.
 
 
 .. uml:: ../diagrams/raider_flows.uml
@@ -89,6 +94,13 @@ be executed. The primary function of operations is to define which Flow
 comes next. But they can do anything, and *Raider* :ref:`makes it easy
 to write new operations <operations_api>`.
 
+Graph-like structure
+--------------------
+
+Chaining several Flows together can be used to simulate any stateful
+HTTP process. FlowGraphs indicate the starting point. They can be
+placed on any Flow. A FlowGraphs runs all Flows in the link until
+Success/Failure is returned or if there are no more links.
 
 .. uml:: ../diagrams/graph.uml
 	 
