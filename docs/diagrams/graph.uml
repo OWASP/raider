@@ -4,8 +4,8 @@ digraph finite_state_machine {
 	node [fontname="Helvetica,Arial,sans-serif"]
 	edge [fontname="Helvetica,Arial,sans-serif"]
 	rankdir=TB;
-	node [shape = doublecircle]; Flow0 Flow3 Flow4 Flow8 Flow9 Flow12 Flow13 Flow15;
-	node [shape = circle]; Flow1 Flow2 Flow5 Flow6 Flow7 Flow10 Flow11 Flow14;
+	node [shape = doublecircle]; Flow0 Flow3 Flow4 Flow8 Flow9 Flow10 Flow12 Flow13 Flow15;
+	node [shape = circle]; Flow1 Flow2 Flow5 Flow6 Flow7 Flow11 Flow14;
 
 	Success1 [label = "Success", shape = box color = dodgerblue];
 	Success2 [label = "Success", shape = box color = dodgerblue];

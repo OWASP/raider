@@ -44,4 +44,7 @@ $ poetry shell
 
 # Graph-like architecture
 
+![Flows](./ext/raider_flows.png)
+
+
 ![Flows and FlowGraphs](./ext/graph.png)
