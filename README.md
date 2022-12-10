@@ -16,9 +16,9 @@ other stages. Thus, a graph-like structure is created.
 
 Raider's configuration is inspired by Emacs. Hylang is used, which is
 LISP on top of Python. LISP is used because of its "Code is Data, Data
-is Code" property. It would also allow generating configuration
-automatically easily in the future. Flexibility is in its DNA, meaning
-it can be infinitely extended with actual code. Since all
+is Code" property. With the magic of LISP macros generating
+configuration automatically becomes easy. Flexibility is in its DNA,
+meaning it can be infinitely extended with actual code. Since all
 configuration is stored in cleartext, reproducing, sharing or
 modifying attacks becomes easy.
 
