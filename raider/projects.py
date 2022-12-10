@@ -181,15 +181,16 @@ class Project:
             if isinstance(value, FlowGraph):
                 self.flowstore.add_flowgraph(key, value)
 
-        first_flow = self.flowstore.values[0]
-        first_flow_name = self.flowstore.get_flow_name_by_flow(first_flow)
-        for hyfile, flows in self.flows.items():
-            if first_flow_name in flows:
-                first_flow_hyfile = hyfile
-
-        self.flowstore.add_flowgraph("DEFAULT", FlowGraph(first_flow))
-        self.flowgraphs[first_flow_hyfile].insert(0, "DEFAULT")
-
+        if self.flowstore.values:
+            first_flow = self.flowstore.values[0]
+            first_flow_name = self.flowstore.get_flow_name_by_flow(first_flow)
+            for hyfile, flows in self.flows.items():
+                if first_flow_name in flows:
+                    first_flow_hyfile = hyfile
+    
+            self.flowstore.add_flowgraph("DEFAULT", FlowGraph(first_flow))
+            self.flowgraphs[first_flow_hyfile].insert(0, "DEFAULT")
+    
         self.loaded = True
 
         return shared_locals
