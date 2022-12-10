@@ -50,8 +50,7 @@ yourself in the foot and break something on your system.
 Features
 --------
 
-**Raider** has the goal to support most of the modern HTTP features,
- and here are some of its most important features:
+Here are some of its most important features:
 
 * A real programming language for configuration instead of a static file
 * Infinitely extensible, easy to write custom operations and plugins

@@ -2,6 +2,6 @@
 Raider
 ------
 
-.. autoclass:: Raider
+.. autoclass:: raider.Raider
    :members:
 
