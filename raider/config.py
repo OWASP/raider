@@ -144,7 +144,9 @@ class Config:
     def active_project(self):
         if self.output.get("active_project"):
             return self.output.get("active_project", None)
-        return list_projects[0]
+        if list_projects():
+            return list_projects()[0]
+        return None
 
     @active_project.setter
     def active_project(self, value: str):
