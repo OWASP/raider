@@ -1,5 +1,30 @@
 ## Release history
 
+### 0.3.0 - beta1 (2021-08-23)
+
+Besides outdated documentation, Raider is now ready to be considered a
+beta quality software. Many things have changed, and many are still
+being planned in the near future after the documentation gets
+updated. Raider started as a framework focused on testing and
+automating authentication processes, however it has evolved and now it
+can be used for all kinds of stateful HTTP processes.
+
+Some major things that have changed since last release are:
+
+* Raider now has a CLI interface (not fully complete)
+* Graph-like architecture, and there's no need to distinguish between
+* authentication Flows and regular Flows
+* Logging added everywhere
+* New Plugins and Operations
+* No more special variables
+* Simplified Request definitions
+* Fixed many bugs and implemented many smaller features
+
+The documentation is still being worked on, so if you run into issues,
+you will have to figure it out from the source code, or wait a little
+until we update the documentation.
+
+
 ### 0.2.2 - alpha3 (2021-08-23)
 
 * Split plugins into common, basic, modifiers and parsers.
