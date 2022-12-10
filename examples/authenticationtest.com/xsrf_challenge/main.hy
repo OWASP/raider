@@ -18,21 +18,16 @@
 
 (setv initialize_session
       (Flow
-        
-        (Request
-          :url "https://authenticationtest.com/xsrfChallenge/"
+        (Request.get "https://authenticationtest.com/xsrfChallenge/"
           :method "GET")
         :operations [(Print csrf_token)
-                     (NextStage "login")]
+                     (Next "login")]
         :outputs [csrf_token
                   session_id]))
 
 (setv login
       (Flow
-        
-        (Request
-          :url "https://authenticationtest.com/login/?mode=xsrfChallenge"
-          :method "POST"
+        (Request.post "https://authenticationtest.com/login/?mode=xsrfChallenge"
           :cookies [session_id]
           :data {"email" username
                  "password" password

@@ -11,32 +11,22 @@
 
 (setv initialize_session
       (Flow
-        
-        (Request
-          :url "https://authenticationtest.com/multiStepAuth/"
-          :method "GET")
-        :operations [(NextStage "send_login")]
+        (Request.get "https://authenticationtest.com/multiStepAuth/")
+        :operations [(Next "send_login")]
         :outputs [session_id]))
-
 
 (setv send_login
       (Flow
-        
-        (Request
-          :url "https://authenticationtest.com/multiStepAuth/?step=2"
-          :method "POST"
+        (Request.post "https://authenticationtest.com/multiStepAuth/?step=2"
           :cookies [session_id]
           :data {"email" username})
         :operations [(Print.headers)
-                     (NextStage "send_password")]))
+                     (Next "send_password")]))
 
 
 (setv send_password
       (Flow
-        
-        (Request
-          :url "https://authenticationtest.com/login/?mode=multiChallenge"
-          :method "POST"
+        (Request.post "https://authenticationtest.com/login/?mode=multiChallenge"
           :cookies [session_id]
           :data {"email" username
                  "password" password})

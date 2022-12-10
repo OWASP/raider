@@ -1,11 +1,9 @@
 ;; Gets a file from the nextcloud user's storage.
 (setv get_file
       (Flow
-        
-        (Request
-          :method "GET"
+        (Request.get
           ;; Prompt the user for the file path and gets its webdav url
-          :url (Combine base_url "/remote.php/webdav/" (Prompt "Filepath:"))
+          (Combine base_url "/remote.php/webdav/" (Prompt "Filepath:"))
           :cookies [session_id
                     csrf_token
                     (Cookie "__Host-nc_sameSiteCookielax" "true")
@@ -17,10 +15,8 @@
 ;; First you need the request_token you get on the health app page.
 (setv get_health_request_token
       (Flow
-        
-        (Request
-          :method "GET"
-          :url (Combine base_url "/apps/health/")
+        (Request.get
+          (Combine base_url "/apps/health/")
           :cookies [session_id
                     csrf_token
                     nc_session_id
@@ -36,10 +32,8 @@
 ;; testing with something like this:
 (setv submit_weight
       (Flow
-        
-        (Request
-          :method "POST"
-          :url (Combine base_url "/apps/health/weight/dataset/person/1")
+        (Request.post
+          (Combine base_url "/apps/health/weight/dataset/person/1")
           ;; Add the request_tokens as a HTTP header (required for
           ;; request to work)
           :headers [(Header.from_plugin request_token "requesttoken")]
@@ -50,10 +44,7 @@
                     nc_token
                     (Cookie "__Host-nc_sameSiteCookielax" "true")
                     (Cookie "__Host-nc_sameSiteCookiestrict" "true")]
-          :data
-          (PostBody
-            ;; Sends body as a Json encoded data
-            :encoding "json"
-            :data {"date" "2022-06-15"
-                   "weight" "71.9"}))
+          :json
+          {"date" "2022-06-15"
+           "weight" "71.9"})
         :operations [(Print.body)]))

@@ -20,24 +20,23 @@
 ;; authentication). In this case it's the `login` Flow.
 (setv login
       (Flow
-         (Request
-                   ;; Sends a POST request.
-                   :method "POST"
-                   ;; To this path, built by combining the base URL
-                   ;; with the absolute path.
-                   :url (Combine base_url "/ghost/api/v3/admin/session")
-                   ;; Only username and password needed in POST body
-                   :data
-                   {"password" password
-                    "username" username})
-        ;; Extracts the output from `session_id` (Cookie) to be used
-        ;; in further requests.
-        :outputs [session_id]
-        ;; If server responds with HTTP 404, it means the login
-        ;; failed, so Raider quits with an error message.
-        :operations [(Http
-                       :status 404
-                       :action (Error "Login failed"))]))
+         (Request.post
+           ;; Sends a POST request.
+           ;; To this path, built by combining the base URL
+           ;; with the absolute path.
+           (Combine base_url "/ghost/api/v3/admin/session")
+           ;; Only username and password needed in POST body
+           :data
+           {"password" password
+            "username" username})
+         ;; Extracts the output from `session_id` (Cookie) to be used
+         ;; in further requests.
+         :outputs [session_id]
+         ;; If server responds with HTTP 404, it means the login
+         ;; failed, so Raider quits with an error message.
+         :operations [(Http
+                        :status 404
+                        :action (Error "Login failed"))]))
 
 
 ;; Defines a new Flow object to get the user's information. Doesn't
@@ -45,34 +44,31 @@
 ;; not an Flow one.
 (setv get_user_info
       (Flow
-         (Request
-                   ;; Sends a GET request.
-                   :method "GET"
-                   ;; To this path, built by combining the base URL
-                   ;; with the absolute path.
-                   :url (Combine base_url "/ghost/api/canary/admin/users/me/")
-                   ;; Using the `session_id` cookie we got from the
-                   ;; `login` Flow.
-                   :cookies [session_id]
-                   ;; Data to include in the GET query
-                   :data {"include" "roles"})
-        ;; Just print the response body.
-        :operations [(Print.body)]))
+         (Request.get
+           ;; Sends a GET request.
+           ;; To this path, built by combining the base URL
+           ;; with the absolute path.
+           (Combine base_url "/ghost/api/canary/admin/users/me/")
+           ;; Using the `session_id` cookie we got from the
+           ;; `login` Flow.
+           :cookies [session_id]
+           ;; Data to include in the GET query
+           :data {"include" "roles"})
+         ;; Just print the response body.
+         :operations [(Print.body)]))
 
 ;; Defines a new Flow object to get the existing tags.
 (setv get_tags
       (Flow
-         (Request
-                   :method "GET"
-                   :url (Combine base_url "/ghost/api/v3/admin/tags/?limit=all")
-                   :cookies [session_id])
+         (Request.get
+           (Combine base_url "/ghost/api/v3/admin/tags/?limit=all")
+           :cookies [session_id])
         :operations [(Print.body)]))
 
 ;; Defines a new Flow object to get the existing posts.
 (setv get_posts
       (Flow
-         (Request
-                   :method "GET"
-                   :url (Combine base_url "/ghost/api/canary/admin/posts/")
-                   :cookies [session_id])
-        :operations [(Print.body)]))
+         (Request.get
+           (Combine base_url "/ghost/api/canary/admin/posts/")
+           :cookies [session_id])
+         :operations [(Print.body)]))

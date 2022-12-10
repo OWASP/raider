@@ -2,11 +2,10 @@
 ;; authentication). In this case it's the `initialization` Flow.
 (setv initialization
       (Flow
-         (Request
-                   ;; Sends a GET request.
-                   :method "GET"
-                   ;; To https://ghost.server.url/about.
-                   :url (Combine base_url "/about"))
+        (Request.get
+          ;; Sends a GET request.
+          ;; To https://ghost.server.url/about.
+          (Combine base_url "/about"))
         ;; Extract the csrf_token using Html and mastodon_session using
         ;; Cookie objects.
         :outputs [csrf_token mastodon_session]
@@ -22,7 +21,7 @@
                        :status 200
                        :action
                        ;; Go to `login` stage if yes
-                       (NextStage "login")
+                       (Next "login")
                        :otherwise
                        ;; Quit with an error if no
                        (Error "Cannot initialize session"))]))
@@ -30,12 +29,10 @@
 ;; Defines the second Flow object called `login`.
 (setv login
       (Flow
-        
-        (Request
+        (Request.post
           ;; Sends a POST request
-          :method "POST"
           ;; To https://ghost.server.url/auth/sign_in.
-          :url (Combine base_url "/auth/sign_in")
+          (Combine base_url "/auth/sign_in")
           ;; Only `mastodon_session` cookie is needed.
           :cookies [mastodon_session]
           ;; Sends the csrf_token together with the username and
@@ -57,7 +54,7 @@
                        ;; Goes to the next stage if MFA is enabled.
                        :regex "Enter the two-factor code"
                        :action
-                       (NextStage "multi_factor"))
+                       (Next "multi_factor"))
                      (Http
                        ;; If no MFA user is authenticated
                        :status 302
@@ -68,12 +65,10 @@
 ;; Defines the last Flow object for MFA.
 (setv multi_factor
       (Flow
-        
-        (Request
+        (Request.popst
           ;; Sends a POST request
-          :method "POST"
           ;; To https://ghost.server.url/auth/sign_in.
-          :url (Combine base_url "/auth/sign_in")
+          (Combine base_url "/auth/sign_in")
           ;; Using three cookies
           :cookies [mastodon_session
                     session_id
@@ -89,6 +84,6 @@
                      ;; Repeat the stage if MFA failed
                      :regex "Invalid two-factor code"
                      :action
-                     (NextStage "multi_factor")
+                     (Next "multi_factor")
                      :otherwise
                      (Print "Authenticated successfully"))]))

@@ -26,12 +26,9 @@
 
 (setv initialize_session
       (Flow
-        
-        (Request
-          :url "https://authenticationtest.com/dynamicChallenge/"
-          :method "GET")
+        (Request.get "https://authenticationtest.com/dynamicChallenge/")
         :operations [(Print email_field password_field)
-                     (NextStage "login")]
+                     (Next "login")]
         :outputs [email_field
                   password_field
                   session_id]))

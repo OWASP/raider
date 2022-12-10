@@ -8,9 +8,6 @@
 
 (setv complex_form_auth
       (Flow
-        
-        (Request
-          :url "https://authenticationtest.com/HTTPAuth/"
-          :method "GET"
+        (Request.get "https://authenticationtest.com/HTTPAuth/"
           :headers [(Header.basicauth "user" "pass")])
         :operations [(Print.headers ["Location"])]))

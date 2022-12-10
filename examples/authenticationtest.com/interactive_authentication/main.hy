@@ -17,21 +17,15 @@
 
 (setv get_captcha
       (Flow
-        
-        (Request
-          :url "https://authenticationtest.com/bootstrapAuth/"
-          :method "GET")
+        (Request.get "https://authenticationtest.com/bootstrapAuth/")
         :operations [(Print captcha)
-                     (NextStage "interactive_auth")]
+                     (Next "interactive_auth")]
         :outputs [captcha
                   session_id]))
 
 (setv interactive_auth
       (Flow
-        
-        (Request
-          :url "https://authenticationtest.com/login/?mode=bootstrapAuth"
-          :method "POST"
+        (Request.post "https://authenticationtest.com/login/?mode=bootstrapAuth"
           :cookies [session_id]
           :data {"email" username
                  "password" password

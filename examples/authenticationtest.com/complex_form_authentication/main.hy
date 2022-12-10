@@ -8,10 +8,8 @@
 
 (setv complex_form_auth
       (Flow
-        
-        (Request
-          :url "https://authenticationtest.com/login/?mode=complexAuth"
-          :method "POST"
+        (Request.post
+          "https://authenticationtest.com/login/?mode=complexAuth"
           :data {"email" username
                  "password" password
                  "selectLogin" "yes"

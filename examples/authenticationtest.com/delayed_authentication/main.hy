@@ -8,10 +8,8 @@
 
 (setv simple_form_auth
       (Flow
-        
-        (Request
-          :url "https://authenticationtest.com/login/?mode=delayChallenge"
-          :method "POST"
+        (Request.post
+          "https://authenticationtest.com/login/?mode=delayChallenge"
           :data {"email" username
                  "password" password})
         :operations [(Print.headers ["Location"])]))

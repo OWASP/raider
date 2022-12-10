@@ -17,10 +17,10 @@
     (import os)
     ;; Runs `pass otp path/to/password/entry` and reads its value
     (setv self.value
-          ((. ((. (os.popen
-                    (+ "pass otp " self.path))
-                  read))
-              strip)))
+          ((.strip
+             ((.read
+                (os.popen
+                  (+ "pass otp " self.path)))))))
     (return self.value)))
 
 

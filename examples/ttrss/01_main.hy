@@ -19,9 +19,7 @@
 ;; First Login Flow
 (setv login
       (Flow
-        
-        (Request
-          :method "POST"
+        (Request.post
           :url (Combine base_url "/public.php")
           :data
           ;; Sends credentials.
@@ -38,19 +36,17 @@
            :status 200 ;; ttrss responds with 200 when MFA is enabled
            :action
            [(Print "Multi-factor authentication is enabled.")
-            (NextStage "multi_factor")]
+            (Next "multi_factor")]
            :otherwise
            [(Print "Multi-factor authentication is disabled.")
-            (NextStage "main_page")])]))
+            (Next "main_page")])]))
 
 ;; Runs MFA request, sending the MFA code prompted from the user, and
 ;; goes to main page upon finishing.
 (setv multi_factor
       (Flow
-        
-        (Request
-          :method "POST"
-          :path "/public.php"
+        (Request.post
+          (with-baseurl "/public.php")
           :data
           {"op" "login"
            "login" username
@@ -61,16 +57,13 @@
            "profile" 0
            "otp" mfa_code})
         :outputs [ttrss_sid]
-        :operations [(NextStage "main_page")]))
+        :operations [(Next "main_page")]))
 
 ;; Go to main page to see if user is authenticated.  Flow type since
 ;; it doesn't affect the authentication state.
 (setv main_page
       (Flow
-        
-        (Request
-          :url (Combine base_url "/")
-          :method "GET"
+        (Request.get (Combine base_url "/")
           :cookies [ttrss_sid])
         :outputs [csrf_token]
         :operations [(Grep
@@ -81,10 +74,8 @@
 ;; Define request that'll return the list of feeds.
 (setv get_feeds
       (Flow
-        
-        (Request
-          :url (Combine base_url "/backend.php")
-          :method "POST"
+        (Request.post
+          (Combine base_url "/backend.php")
           :cookies [ttrss_sid]
           :data
           {"op" "feeds"
@@ -100,10 +91,8 @@
 ;; Another Flow to oget the list of labels
 (setv get_labels
       (Flow
-        
-        (Request
-          :url (Combine base_url "/backend.php")
-          :method "GET"
+        (Request.get
+          (Combine base_url "/backend.php")
           :cookies [ttrss_sid]
           :data
           {"op" "pref-labels"
