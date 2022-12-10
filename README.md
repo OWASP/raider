@@ -2,7 +2,7 @@
 
 # Quick links
 
-* [Website](https://raiderauth.com/)
+- [Website](https://raiderauth.com/).
 - [Documentation](https://docs.raiderauth.com/en/latest/).
 - [Installation](https://docs.raiderauth.com/en/latest/overview/install.html).
 - [FAQ](https://docs.raiderauth.com/en/latest/overview/faq.html).
@@ -10,7 +10,7 @@
 - [Architecture](https://docs.raiderauth.com/en/latest/case_studies/architecture.html)
 - [Discussions](https://github.com/OWASP/raider/discussions).
 - [Issues](https://github.com/OWASP/raider/issues).
-- [Twitter](https://twitter.com/raiderauth)
+- [Twitter](https://twitter.com/raiderauth).
 
 # What is Raider
 
@@ -21,21 +21,6 @@ the client-server information exchange as a finite state machine. Each
 step comprises one request with inputs, one response with outputs,
 arbitrary actions to do on the response, and conditional links to
 other stages. Thus, a graph-like structure is created.
-
-Raider's configuration is inspired by Emacs. Hylang is used, which is
-LISP on top of Python. LISP is used because of its "Code is Data, Data
-is Code" property. With the magic of LISP macros generating
-configuration automatically becomes easy. Flexibility is in its DNA,
-meaning it can be infinitely extended with actual code. 
-You can use it for example to create, store, reproduce, and share
-proof-of-concepts easily for HTTP attacks. With Raider you can also
-search through your Projects, filter by hyfile, Flows, FlowGraphs,
-etc... Then you run either just one step, or a chain of steps, so you
-can automate and run tests on any HTTP process.
-
-
-![Example hylang configuration](https://raiderauth.com/images/illustrations/config.png)
-
 
 # Graph-like architecture
 
@@ -52,3 +37,32 @@ placed on any Flow. A FlowGraphs runs all Flows in the link until
 Success/Failure is returned or if there are no more links.
 
 ![Flows and FlowGraphs](https://raiderauth.com/images/illustrations/graph.png)
+
+# Configuration
+
+Raider's configuration is inspired by Emacs. Hylang is used, which is
+LISP on top of Python. LISP is used because of its "Code is Data, Data
+is Code" property. With the magic of LISP macros generating
+configuration automatically becomes easy. Flexibility is in its DNA,
+meaning it can be infinitely extended with actual code. 
+You can use it for example to create, store, reproduce, and share
+proof-of-concepts easily for HTTP attacks. With Raider you can also
+search through your Projects, filter by hyfile, Flows, FlowGraphs,
+etc... Then you run either just one step, or a chain of steps, so you
+can automate and run tests on any HTTP process.
+
+
+![Example hylang configuration](https://raiderauth.com/images/illustrations/config.png)
+
+
+# Command line interface
+
+You can use it for example to create, store, reproduce, and share
+proof-of-concepts easily for HTTP attacks. With Raider you can also
+search through your Projects, filter by hyfile, Flows, FlowGraphs,
+etc... Then you run either just one step, or a chain of steps, so you
+can automate and run tests on any HTTP process.
+
+You can also search through your Projects, filter by hyfile, Flows,
+FlowGraphs, etc… Then you run either just one step, or a chain of
+steps, so you can automate and run tests the HTTP process.
