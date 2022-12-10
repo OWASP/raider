@@ -39,19 +39,36 @@ Glossary
     <https://en.wikipedia.org/wiki/Finite-state_machine>`_ for more
     information, since it explains this better than me anyways.
 
+  State/Stateful
+    A system is described as *stateful*, if it is designed to remember
+    preceding events or user interactions, and the remembered
+    information is called the **State** of the system.
+
   Flow
-    A **Raider** class implementing :term:`stages <Stage>`. To create a
-    :class:`Flow <raider.flow.Flow>` object, you need to give it a name,
-    a :class:`Request <raider.request.Request>` object, and optionally
-    outputs and :term:`operations <Operation>`.  Check the :ref:`Flow
+    A **Raider** class implementing the server-client information
+    exchange. It comprises one Request with inputs, one Response with
+    outputs, arbitrary actions to do on response, and conditional
+    links to other Flows. To create a :class:`Flow <raider.flow.Flow>`
+    object, you need to give it a a :class:`Request
+    <raider.request.Request>` object, and optionally outputs and
+    :term:`operations <Operation>`.  Check the :ref:`Flow
     configuration page <flows>` for more information.
 
-  Functions
-    A **Raider** class containing all :term:`Flows <Flow>` objects
-    that don't affect the :term:`authentication <Authentication>`
-    process. The :class:`Functions <raider.functions.Functions>`
-    object is extracted from the :ref:`_functions <var_functions>`
-    variable.
+  FlowGraph
+
+    A **Raider** class implementing the a :term:`stateful
+    <State/Stateful>` HTTP process. It
+
+    To create a :class:`FlowGraph <raider.flow.FlowGraph>` object, you
+    need to give it a start :class:`Flow <raider.flow.Flow>` object,
+    and optionally a test :class:`Flow <raider.flow.Flow>`. When you
+    run a FlowGraph instead of a Flow, Raider will follow all the Next
+    operations until the end, or when Success or Failure operation is
+    encountered. The FlowGraph's ``:completed`` attribute will be set
+    to True if it exited after an Success operation, and will stay as
+    False if Failure is encountered or if the chain of Flows ended
+    without any further Next links. Check the :ref:`FlowGraph
+    configuration page <flowgraphs>` for more information.
 
   hyfiles
     The documentation uses the term **hyfiles** to refer to any
@@ -75,15 +92,14 @@ Glossary
     <raider.operations.Operation>` class.
 
     All defined Operations inside the :term:`Flow <Flow>` object will
-    stop running when the first :class:`NextStage
-    <raider.operations.NextStage>` Operation is encountered.
+    stop running when the first :class:`Next
+    <raider.operations.Next>` Operation is encountered.
 
     **Raider** comes with :ref:`some standard operations <operations>`,
     but it also gives the user the flexibility to :ref:`write their own
     Operations easily <operations_api>`.
 
   Plugin
-
     A piece of code that can be used to generate inputs for outgoing
     HTTP :term:`Requests <Request>`, and/or extract outputs from
     incoming term:`Responses <Response>`. All plugins inherit from
@@ -101,9 +117,9 @@ Glossary
     Plugins easily <plugin_api>`.
 
   Project
-    To avoid confusion with the :class:`Application
-    <raider.application.Application>` class, **Raider** uses the term
-    Project to refer to an application, with existing :term:`hyfiles`.
+    Raider uses the term Project to refer to an application, with
+    existing :term:`hyfiles`. Those are stored in
+    ``~/.config/raider/projects/`` directory.
 
   Request
     A HTTP request with the defined inputs. In **Raider** it's
@@ -122,8 +138,3 @@ Glossary
     When the :term:`Flow <Flow>` object containing this response is
     received and processed, the :term:`Operations <Operation>` are
     executed.
-
-  Stage
-    A **Raider** concept describing the information exchange between
-    the client and server, containing one :term:`request <Request>`
-    and the respective response.
