@@ -19,6 +19,7 @@
 from typing import List, Optional
 
 import requests
+import hy
 
 from raider.config import Config
 from raider.operations import Operation
@@ -140,7 +141,11 @@ class Flow:
 
         if self.operations:
             for item in self.operations:
-                next_flow = item.run(self.pconfig, self.response)
+                if isinstance(item, hy.models.Expression):
+                    hy.eval(item)
+                else:
+                    next_flow = item.run(self.pconfig, self.response)
+
                 if next_flow or isinstance(next_flow, bool):
                     break
 
