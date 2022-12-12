@@ -1,0 +1,28 @@
+
+digraph finite_state_machine {
+	fontname="Helvetica,Arial,sans-serif"
+	node [fontname="Helvetica,Arial,sans-serif"]
+	edge [fontname="Helvetica,Arial,sans-serif"]
+	rankdir=TB;
+	node [shape = circle];
+
+	Flow0 -> Flow1 [label = "Next", labelfloat = true];
+	Flow1 -> Flow2 [label = "Next", labelfloat = true];
+	Flow2 -> Flow3 [label = "Next", labelfloat = true];
+
+	Flow4 -> Flow5 [label = "Next", labelfloat = false];
+	Flow5 -> Flow6 [label = "Next", labelfloat = true];
+
+	Flow7
+
+	FlowGraph0 [shape = none];
+	FlowGraph0 -> Flow0;
+
+	FlowGraph1 [shape = none];
+	FlowGraph1 -> Flow2;
+
+	FlowGraph2 [shape = none];
+	FlowGraph2 -> Flow4;
+
+
+}
