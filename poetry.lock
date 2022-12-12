@@ -1180,7 +1180,7 @@ python-versions = ">=3.6"
 
 [[package]]
 name = "tox"
-version = "4.0.5"
+version = "4.0.8"
 description = "tox is a generic virtualenv management and test command line tool"
 category = "dev"
 optional = false
@@ -1284,8 +1284,8 @@ testing = ["flake8 (<5)", "func-timeout", "jaraco.functools", "jaraco.itertools"
 
 [metadata]
 lock-version = "1.1"
-    python-versions = ">=3.8,<3.11"
-content-hash = "28629f7e9bd959fa6d888475d7afe798e05b85951649068ed37f8e5bb3a369c6"
+python-versions = ">=3.8,<3.11"
+content-hash = "e4a0f6a1b98646323e73f8268f8cb985aa3daf4cf873181bb88a3e8229a9d040"
 
 [metadata.files]
 alabaster = [
@@ -2133,8 +2133,8 @@ tomlkit = [
     {file = "tomlkit-0.11.6.tar.gz", hash = "sha256:71b952e5721688937fb02cf9d354dbcf0785066149d2855e44531ebdd2b65d73"},
 ]
 tox = [
-    {file = "tox-4.0.5-py3-none-any.whl", hash = "sha256:e71aee9e77646791c00e226301d5ef8d26cf68ac46b1825d3d46ba538518c235"},
-    {file = "tox-4.0.5.tar.gz", hash = "sha256:11a2f5e18ac76b544f7006f6959821ec39bfe24e42cbf990fc0e212c1a07d092"},
+    {file = "tox-4.0.8-py3-none-any.whl", hash = "sha256:da0899154e8b38e807a74adb53c331efc05a5790e4a717f9bd2e7c80c8e04c48"},
+    {file = "tox-4.0.8.tar.gz", hash = "sha256:4f282bcdea8abab26ccdfccbdd770899bb9b660b6e0a68814da83b5401ea41d6"},
 ]
 traitlets = [
     {file = "traitlets-5.7.0-py3-none-any.whl", hash = "sha256:61832ea7b7f910f5745e27e9bb269a181fd15af76027d99560299209d5b17c94"},
