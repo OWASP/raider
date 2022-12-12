@@ -11,6 +11,7 @@
 - [Discussions](https://github.com/OWASP/raider/discussions).
 - [Issues](https://github.com/OWASP/raider/issues).
 - [Twitter](https://twitter.com/raiderauth).
+- [Fediverse](https://infosec.exchange/@raiderauth).
 
 # What is Raider
 

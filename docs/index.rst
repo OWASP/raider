@@ -35,11 +35,11 @@ Welcome to Raider's documentation!
 
 .. toctree::
    :maxdepth: 1
-   :caption: Examples
+   :caption: HOWTOs
 
-   examples/writing_custom_operations
-   examples/writing_custom_plugins
-   examples/writing_macros
+   howtos/writing_custom_operations
+   howtos/writing_custom_plugins
+   howtos/writing_macros
 
 .. toctree::
    :maxdepth: 1
