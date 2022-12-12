@@ -21,7 +21,6 @@ def add_new_parser(parser) -> None:
 
 def run_new_command(args):
     raider = Raider()
-    logger = raider.logger
     project_dir = get_project_dir(args.project)
     if os.path.isdir(project_dir):
         raider.logger.info(
