@@ -1,6 +1,6 @@
 [tool.poetry]
     name = "raider"
-    version = "0.3.1"
+    version = "0.3.2"
     description = "Web authentication testing framework"
     authors = ["Daniel Neagaru <daniel@digeex.de>"]
     packages = [
@@ -14,9 +14,13 @@
     include = [
       "LICENSE",
       "CHANGELOG.md",
-      "docs/**/*",
+      "docs",
       "examples",
-      "scripts"
+      "ext",
+    ]
+    exclude = [
+      "docs/_build/*",
+      "*~",
     ]
     keywords = ["authentication", "security", "raider", "digeex", "hy"]
     classifiers = [
@@ -50,6 +54,7 @@
     ipython = "^8.4.0"
     pkce = "^1.0.3"
     igraph = "^0.10.2"
+    requests-toolbelt = "^0.10.1"
 
 [tool.poetry.dev-dependencies]
     mypy = "^0.991"

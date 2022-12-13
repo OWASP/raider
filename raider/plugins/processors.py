@@ -104,7 +104,7 @@ class B64encode(Processor):
             original = self.plugins[0].value
         else:
             original = self.original
-            
+
         if original:
             encoded = base64.b64encode(original.encode("utf-8")).decode(
                 "utf-8"

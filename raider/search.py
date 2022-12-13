@@ -40,9 +40,13 @@ class Search:
                 for hyfile in list(results[project]):
                     flows = results[project][hyfile]["flows"]
                     flowgraphs = results[project][hyfile]["flowgraphs"]
-                    if any([(not self.print_flows_enabled and not flowgraphs),
+                    if any(
+                        [
+                            (not self.print_flows_enabled and not flowgraphs),
                             (not self.print_flowgraphs_enabled and not flows),
-                            (not flows and not flowgraphs)]):
+                            (not flows and not flowgraphs),
+                        ]
+                    ):
                         del self.matches.results[project][hyfile]
 
                 if not results[project]:
@@ -62,18 +66,29 @@ class Search:
                 if hyfile in hyfiles_flows:
                     project.print_hyfile(hyfile, spacing=hyfiles_padding)
                     if self.print_flowgraphs_enabled:
-                        for flowgraph_id in hyfiles_flows[hyfile]["flowgraphs"]:
+                        for flowgraph_id in hyfiles_flows[hyfile][
+                            "flowgraphs"
+                        ]:
                             flowgraphs_padding = hyfiles_padding + 4
                             flowgraph = flowstore.flowgraphs[flowgraph_id]
                             start_flow = flowgraph.start
-                            start_flow_name = flowstore.get_flow_name_by_flow(start_flow)
+                            start_flow_name = flowstore.get_flow_name_by_flow(
+                                start_flow
+                            )
                             if flowgraph.test:
-                                test_flow_name = flowstore.get_flow_name_by_flow(flowgraph.test)
+                                test_flow_name = (
+                                    flowstore.get_flow_name_by_flow(
+                                        flowgraph.test
+                                    )
+                                )
                             else:
                                 test_flow_name = None
 
                             project.print_flowgraph(
-                                flowgraph_id, start_flow_name, test_flow_name, spacing=flowgraphs_padding
+                                flowgraph_id,
+                                start_flow_name,
+                                test_flow_name,
+                                spacing=flowgraphs_padding,
                             )
                     if self.print_flows_enabled:
                         for flow in hyfiles_flows[hyfile]["flows"]:

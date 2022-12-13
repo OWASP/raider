@@ -128,10 +128,7 @@ class Plugin:
         else:
             self.function = function
 
-    def get_value(
-        self,
-        pconfig
-    ) -> Optional[str]:
+    def get_value(self, pconfig) -> Optional[str]:
         """Gets the ``value`` from the :class:`Plugin`.
 
         Depending on the :class:`Plugin's <Plugin>` flags, extract and
@@ -209,9 +206,7 @@ class Plugin:
         else:
             logging.warning("Couldn't extract name: %s", str(self.name))
 
-    def extract_value_from_userdata(
-        self, pconfig
-    ) -> Optional[str]:
+    def extract_value_from_userdata(self, pconfig) -> Optional[str]:
         """Extracts the :class:`Plugin` ``value`` from userdata.
 
         Given a dictionary with the userdata, return its ``value`` with the

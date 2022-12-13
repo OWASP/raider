@@ -108,9 +108,7 @@ class FlowStore:
             return []
         return self.flows.vs[::]["object"]
 
-    def run_flow(
-        self, pconfig, flow_id: Union[int, str]
-    ) -> Optional[str]:
+    def run_flow(self, pconfig, flow_id: Union[int, str]) -> Optional[str]:
         """Runs one authentication Flow.
 
         First, the Flow object of the specified flow is identified,
@@ -154,9 +152,7 @@ class FlowStore:
                     pconfig.active_user.set_cookie(item)
                 elif isinstance(item, Plugins.Header):
                     pconfig.active_user.set_header(item)
-                elif isinstance(
-                    item, Plugins.Plugin
-                ):
+                elif isinstance(item, Plugins.Plugin):
                     pconfig.active_user.set_data(item)
 
         operations_result = flow.run_operations()
@@ -185,9 +181,9 @@ class FlowStore:
             next_flow = self.run_flow(pconfig, next_flow)
 
         if not next_flow:
-            self.logger.critical("FlowGraph "
-                                 + name
-                                 + " didn't return (Success). Exiting!")
+            self.logger.critical(
+                "FlowGraph " + name + " didn't return (Success). Exiting!"
+            )
             sys.exit()
 
         if test and flowgraph.test:
@@ -198,6 +194,7 @@ class FlowStore:
                 flowgraph.completed = result
                 self.logger.info("FlowGraph.completed = " + str(result))
             else:
-                self.logger.critical("FlowGraph's test flow must return (Success) or (Failure)")
+                self.logger.critical(
+                    "FlowGraph's test flow must return (Success) or (Failure)"
+                )
                 sys.exit()
-    

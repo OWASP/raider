@@ -17,13 +17,13 @@
 """Request class used to handle HTTP.
 """
 
+import json
 import logging
 import sys
 import urllib
-import json
 from copy import deepcopy
-from typing import Any, Dict, List, Optional, Union
 from functools import partial
+from typing import Any, Dict, List, Optional, Union
 
 import requests
 from urllib3.exceptions import InsecureRequestWarning
@@ -53,6 +53,7 @@ def prompt_empty_key(element: str, name: str):
     )
     return key
 
+
 def prompt_empty_value(element: str, name: str):
     value = input(
         colors["GREEN-BLACK-B"]
@@ -69,6 +70,7 @@ def prompt_empty_value(element: str, name: str):
     )
     return value
 
+
 def get_empty_plugin_name(plugin):
     if isinstance(plugin, Cookie):
         return prompt_empty_value("Cookie name", plugin.name)
@@ -76,6 +78,7 @@ def get_empty_plugin_name(plugin):
         return prompt_empty_value("Header name", plugin.name)
     else:
         return prompt_empty_value("Plugin name", plugin.name)
+
 
 def get_empty_plugin_value(plugin, name):
     if isinstance(plugin, Cookie):
@@ -85,9 +88,8 @@ def get_empty_plugin_value(plugin, name):
     else:
         return prompt_empty_value("Plugin", name)
 
-def process_cookies(
-    raw_cookies: CookieStore, pconfig
-) -> Dict[str, str]:
+
+def process_cookies(raw_cookies: CookieStore, pconfig) -> Dict[str, str]:
     """Process the raw cookies and replace with the real data."""
     cookies = raw_cookies.to_dict().copy()
     for key in raw_cookies:
@@ -109,9 +111,7 @@ def process_cookies(
     return cookies
 
 
-def process_headers(
-    raw_headers: HeaderStore, pconfig
-) -> Dict[str, str]:
+def process_headers(raw_headers: HeaderStore, pconfig) -> Dict[str, str]:
     """Process the raw headers and replace with the real data."""
     headers = raw_headers.to_dict().copy()
     headers.update({"user-agent": pconfig.user_agent})
@@ -134,9 +134,7 @@ def process_headers(
     return headers
 
 
-def process_data(
-    raw_data: Dict[str, DataStore], pconfig
-) -> Dict[str, str]:
+def process_data(raw_data: Dict[str, DataStore], pconfig) -> Dict[str, str]:
     """Process the raw HTTP data and replace with the real data."""
 
     def traverse_dict(data: Dict[str, Any], pconfig) -> None:
@@ -208,15 +206,8 @@ class Request:
 
     """
 
-    def __init__(
-        self,
-        function,
-        url: str,
-        method: str,
-        **kwargs
-    ) -> None:
-        """Initializes the Request object.
-        """
+    def __init__(self, function, url: str, method: str, **kwargs) -> None:
+        """Initializes the Request object."""
         self.method = method
         self.function = function
         self.url = url
@@ -237,86 +228,50 @@ class Request:
 
     @classmethod
     def get(cls, url, **kwargs) -> "Request":
-        return cls(function=requests.get,
-                   url=url,
-                   method="GET",
-                   **kwargs)
-
+        return cls(function=requests.get, url=url, method="GET", **kwargs)
 
     @classmethod
     def post(cls, url, **kwargs) -> "Request":
-        return cls(function=requests.post,
-                   url=url,
-                   method="POST",
-                   **kwargs)
+        return cls(function=requests.post, url=url, method="POST", **kwargs)
 
     @classmethod
     def put(cls, url, **kwargs) -> "Request":
-        return cls(function=requests.put,
-                   url=url,
-                   method="PUT",
-                   **kwargs)
-
+        return cls(function=requests.put, url=url, method="PUT", **kwargs)
 
     @classmethod
     def patch(cls, url, **kwargs) -> "Request":
-        return cls(function=requests.patch,
-                   url=url,
-                   method="PATCH",
-                   **kwargs)
-
+        return cls(function=requests.patch, url=url, method="PATCH", **kwargs)
 
     @classmethod
     def head(cls, url, **kwargs) -> "Request":
-        return cls(function=requests.head,
-                   url=url,
-                   method="HEAD",
-                   **kwargs)
-
+        return cls(function=requests.head, url=url, method="HEAD", **kwargs)
 
     @classmethod
     def delete(cls, url, **kwargs) -> "Request":
-        return cls(function=requests.delete,
-                   url=url,
-                   method="DELETE",
-                   **kwargs)
+        return cls(
+            function=requests.delete, url=url, method="DELETE", **kwargs
+        )
 
     @classmethod
     def connect(cls, url, **kwargs) -> "Request":
-        function = partial(requests.request,
-                           method="CONNECT")
-        return cls(function=function,
-                   url=url,
-                   method="CONNECT",
-                   **kwargs)
+        function = partial(requests.request, method="CONNECT")
+        return cls(function=function, url=url, method="CONNECT", **kwargs)
 
     @classmethod
     def options(cls, url, **kwargs) -> "Request":
-        return cls(function=requests.options,
-                   url=url,
-                   method="OPTIONS",
-                   **kwargs)
+        return cls(
+            function=requests.options, url=url, method="OPTIONS", **kwargs
+        )
 
     @classmethod
     def trace(cls, url, **kwargs) -> "Request":
-        function = partial(requests.request,
-                           method="TRACE")
-        return cls(function=function,
-                   url=url,
-                   method="TRACE",
-                   **kwargs)
+        function = partial(requests.request, method="TRACE")
+        return cls(function=function, url=url, method="TRACE", **kwargs)
 
     @classmethod
     def custom(cls, method, url, **kwargs) -> "Request":
-        function = partial(requests.request,
-                           method=method)
-        return cls(function=function,
-                   url=url,
-                   method=method,
-                   **kwargs)
-    
-
-
+        function = partial(requests.request, method=method)
+        return cls(function=function, url=url, method=method, **kwargs)
 
     def list_inputs(self) -> Optional[Dict[str, Plugin]]:
         """Returns a list of request's inputs."""
@@ -414,10 +369,10 @@ class Request:
             params = None
 
         if self.kwargs.get("json"):
-            if isinstance(processed['json'], str):
-                json_data = json.loads(processed['json'])
+            if isinstance(processed["json"], str):
+                json_data = json.loads(processed["json"])
             else:
-                json_data = processed['json']
+                json_data = processed["json"]
         else:
             json_data = None
 
@@ -441,13 +396,14 @@ class Request:
                 params=params,
                 data=processed.get("data"),
                 json=json_data,
-                files=processed.get("multipart")
+                files=processed.get("multipart"),
             )
         except requests.exceptions.ProxyError:
             self.logger.critical("Cannot establish connection!")
             sys.exit()
 
         return req
+
 
 class Template(Request):
     """Template class to hold requests.
@@ -467,8 +423,7 @@ class Template(Request):
         data: Optional[Union[Dict[Any, Any]]] = None,
     ) -> None:
         """Initializes the template object."""
-        function = partial(requests.request,
-                           method=method)
+        function = partial(requests.request, method=method)
         super().__init__(
             function=function,
             method=method,

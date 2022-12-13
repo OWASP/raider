@@ -1,6 +1,6 @@
 import argparse
-
 import sys
+
 from raider import Raider
 from raider.utils import list_projects
 
@@ -8,7 +8,8 @@ from raider.utils import list_projects
 def add_run_parser(parser) -> None:
     run_parser = parser.add_parser("run", help="Run Flow or Flowgraph")
     run_parser.add_argument("project", nargs="?", help="Project name")
-    run_parser.add_argument("flows",
+    run_parser.add_argument(
+        "flows",
         nargs="?",
         const="DEFAULT",
         default="DEFAULT",
@@ -40,11 +41,8 @@ def run_run_command(args: argparse.Namespace) -> None:
     if raider.project:
         raider.project.load()
     else:
-        raider.logger.critical(
-            args.project + " doesn't exist. Cannot run!"
-        )
+        raider.logger.critical(args.project + " doesn't exist. Cannot run!")
         sys.exit()
-        
 
     raider.run(args.flows, args.test)
 

@@ -73,7 +73,7 @@ class ProjectConfig(Config):
             username = self.users.active_user
 
         return self.users[username]
-        
+
 
 class Project:
     """Class holding all the project related data.
@@ -152,9 +152,7 @@ class Project:
         shared_locals: Dict[str, Any]
         shared_locals = {}
 
-        self.logger.debug(
-            "Loading hyfiles for %s project", self.name
-        )
+        self.logger.debug("Loading hyfiles for %s project", self.name)
         for hyfile in list_hyfiles(self.name):
             self.logger.debug("Loading data from %s", hyfile)
             env_old = shared_locals.copy()
@@ -187,10 +185,10 @@ class Project:
             for hyfile, flows in self.flows.items():
                 if first_flow_name in flows:
                     first_flow_hyfile = hyfile
-    
+
             self.flowstore.add_flowgraph("DEFAULT", FlowGraph(first_flow))
             self.flowgraphs[first_flow_hyfile].insert(0, "DEFAULT")
-    
+
         self.loaded = True
 
         return shared_locals
@@ -275,14 +273,28 @@ class Project:
     def print_flow(self, flow: str, spacing: int = 0) -> None:
         print(" " * spacing + "• " + (flow))
 
-    def print_flowgraph(self, flowgraph: str, start: str, test:str=None, spacing: int = 0) -> None:
+    def print_flowgraph(
+        self, flowgraph: str, start: str, test: str = None, spacing: int = 0
+    ) -> None:
         if test:
-            print(" " * spacing + "+ " + colored_text(flowgraph, "RED-BLACK-B")
-                  + " -> " + colored_text(start, "RESET")
-                  + " (" + colored_text(test, "GREEN-BLACK") + ")")
+            print(
+                " " * spacing
+                + "+ "
+                + colored_text(flowgraph, "RED-BLACK-B")
+                + " -> "
+                + colored_text(start, "RESET")
+                + " ("
+                + colored_text(test, "GREEN-BLACK")
+                + ")"
+            )
         else:
-            print(" " * spacing + "+ " + colored_text(flowgraph, "RED-BLACK-B")
-                  + " -> " + colored_text(start, "RESET"))
+            print(
+                " " * spacing
+                + "+ "
+                + colored_text(flowgraph, "RED-BLACK-B")
+                + " -> "
+                + colored_text(start, "RESET")
+            )
 
     @property
     def hyfiles(self):

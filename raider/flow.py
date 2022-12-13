@@ -18,8 +18,8 @@
 
 from typing import List, Optional
 
-import requests
 import hy
+import requests
 
 from raider.config import Config
 from raider.operations import Operation
@@ -124,7 +124,6 @@ class Flow:
                     for item in output.plugins:
                         item.get_value(pconfig)
                     output.get_value(pconfig)
-
 
     def run_operations(self) -> Optional[str]:
         """Runs the defined :class:`operations <raider.operations.Operation>`.

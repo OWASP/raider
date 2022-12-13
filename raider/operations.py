@@ -22,6 +22,7 @@ from functools import partial
 from typing import Any, Callable, List, Optional, Union
 
 import requests
+from requests_toolbelt.utils import dump
 
 from raider.plugins.common import Plugin
 from raider.utils import colored_text
@@ -134,7 +135,9 @@ class Operation:
         self.pconfig = None
         self.logger = None
 
-    def run(self, pconfig, response: requests.models.Response) -> Optional[str]:
+    def run(
+        self, pconfig, response: requests.models.Response
+    ) -> Optional[str]:
         """Runs the Operation.
 
         Runs the defined Operation, considering the "flags" set.
@@ -355,7 +358,7 @@ class Match(Operation):
             function=self.check_match,
             action=action,
             otherwise=otherwise,
-            flags=Operation.IS_CONDITIONAL | Operation.NEEDS_USERDATA
+            flags=Operation.IS_CONDITIONAL | Operation.NEEDS_USERDATA,
         )
 
     def check_match(self) -> bool:
@@ -369,8 +372,7 @@ class Match(Operation):
         else:
             value2 = self.args[1]
 
-        return (value1 == value2)
-            
+        return value1 == value2
 
     def __str__(self) -> str:
         """Returns a string representation of the Operation."""
@@ -385,10 +387,6 @@ class Match(Operation):
             + str(self.otherwise)
             + ")"
         )
-
-
-
-
 
 
 class Save(Operation):
@@ -568,6 +566,17 @@ class Print(Operation):
     def __str__(self) -> str:
         """Returns a string representation of the Print Operation."""
         return "(Print:" + str(self.args) + ")"
+
+    @classmethod
+    def all(cls) -> "Print":
+        """Classmethod to print the whole HTTP data."""
+        operation = cls(
+            function=lambda response: print(
+                dump.dump_all(response).decode("utf-8")
+            ),
+            flags=Operation.NEEDS_RESPONSE,
+        )
+        return operation
 
     @classmethod
     def body(cls) -> "Print":

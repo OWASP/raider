@@ -78,7 +78,7 @@ class Raider:
         self.projects = Projects(self.gconfig, self._project_name)
         self._flags = flags
 
-    def run(self, flows:str, test:bool = False):
+    def run(self, flows: str, test: bool = False):
         self.project.load()
         for name in flows.split(","):
             if self.flowstore.is_flow(name):
