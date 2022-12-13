@@ -1,4 +1,4 @@
-![Raider logo](./ext/logo.png)
+![Raider logo](https://raiderauth.com/images/logo/logo.png)
 
 # Quick links
 
@@ -7,7 +7,7 @@
 - [Installation](https://docs.raiderauth.com/en/latest/overview/install.html).
 - [FAQ](https://docs.raiderauth.com/en/latest/overview/faq.html).
 - [Getting started](https://docs.raiderauth.com/en/latest/tutorials/getting_started.html).
-- [Architecture](https://docs.raiderauth.com/en/latest/case_studies/architecture.html)
+- [Architecture](https://docs.raiderauth.com/en/latest/case_studies/architecture.html).
 - [Discussions](https://github.com/OWASP/raider/discussions).
 - [Issues](https://github.com/OWASP/raider/issues).
 - [Twitter](https://twitter.com/raiderauth).

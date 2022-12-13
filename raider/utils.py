@@ -73,6 +73,10 @@ def get_config_dir() -> str:
       A string with the path of the configuration directory.
 
     """
+    envpath = os.getenv("RAIDERPATH")
+    if envpath:
+        return envpath
+    
     confdir = os.path.expanduser("~/.config")
     raider_conf = os.path.join(confdir, "raider")
     os.makedirs(raider_conf, exist_ok=True)
