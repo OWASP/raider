@@ -1,5 +1,11 @@
 ## Release history
 
+### 0.3.2 - beta3 (2022-12-13)
+
+* Added Print.all Operation to print all HTTP data (request+response)
+* Add the option to run quoted hylang code as operation
+* Clean cache files and other unnecessary stuff from the final package
+
 ### 0.3.1 - beta2 (2022-12-10)
 
 Minor bugfix release. Documentation being updated.
