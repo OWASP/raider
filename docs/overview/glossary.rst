@@ -98,7 +98,7 @@ Glossary
   Plugin
     A piece of code that can be used to generate inputs for outgoing
     HTTP :term:`Requests <Request>`, and/or extract outputs from
-    incoming term:`Responses <Response>`. All plugins inherit from
+    incoming :term:`Responses <Response>`. All plugins inherit from
     :class:`Plugin <raider.plugins.common.Plugin>` class.
 
     When used inside a :term:`Request <Request>`, Plugins acts as input

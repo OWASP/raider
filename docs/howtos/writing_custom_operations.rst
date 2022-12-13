@@ -1,3 +1,5 @@
+.. _custom_operations:
+
 Writing Custom Operations
 =========================
 

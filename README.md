@@ -15,13 +15,15 @@
 
 # What is Raider
 
-This is a framework initially designed to test and automate the
-authentication process for web applications, and by now it has evolved
-and can be used for all kinds of stateful HTTP processes. It abstracts
-the client-server information exchange as a finite state machine. Each
-step comprises one request with inputs, one response with outputs,
-arbitrary actions to do on the response, and conditional links to
-other stages. Thus, a graph-like structure is created.
+OWASP Raider was developed with the goal to improve web authentication
+testing. By now it has evolved and can be used for all kinds of
+stateful HTTP processes.  It abstracts the client-server information
+exchange as a finite state machine. Each step comprises one request
+with inputs, one response with outputs, arbitrary actions to do on the
+response, and conditional links to other stages. Thus, a graph-like
+structure is created. Raider allows you to simulate complex systems
+while allowing you to control each piece of data you get in and out of
+the system.
 
 # Graph-like architecture
 

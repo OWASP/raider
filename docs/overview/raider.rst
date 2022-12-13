@@ -21,30 +21,30 @@ can automate and run tests the HTTP process.
 How does Raider work?
 ---------------------
 
-**Raider** treats the authentication as a :term:`finite state
-machine`. Each authentication step is a different :term:`stage`, with
-its own inputs and outputs. Those can be cookies, headers, CSRF
-tokens, or other pieces of information.
+**Raider** treats the HTTP process as a :term:`finite state
+machine`. Each step is a different :term:`Flow`, with its own inputs
+and outputs. Those can be cookies, headers, CSRF tokens, or other
+pieces of information.
 
 Each application needs its own configuration directory for **Raider**
-to work. The configuration is written in `Hylang
+to work. The configuration is written in `hylang
 <https://docs.hylang.org/>`_. The language choice was done for
-multiple reasons, mainly because it's a Lisp dialect embedded in
+multiple reasons, mainly because it's a LISP dialect embedded in
 Python.
 
-:ref:`Using Lisp was necessarily <why_lisp>` since sometimes the
-authentication can get quite complex, and using a static configuration
-file would've not been enough to cover all the details. Lisp makes it
-easy to combine code and data, which is exactly what was needed here.
+:ref:`Using LISP was necessarily <why_lisp>` since sometimes the HTTP
+processes can get quite complex, and using a static configuration file
+would've not been enough to cover all the details. LISP makes it easy
+to combine code and data, which is exactly what was needed here.
 
 By using a real programming language as a configuration file gives
 **Raider** a lot of power, and :ref:`with great power comes great
-responsibility <faq_eval>`. Theoretically one can write entire malware inside the
-application configuration file, which means you should be careful
-what's being executed, and **not to use configuration files from
-sources you don't trust**. **Raider** will evaluate everything inside
-the ``.hy`` files, which means if you're not careful you could shoot
-yourself in the foot and break something on your system.
+responsibility <faq_eval>`. Theoretically one can write entire malware
+inside the application configuration file, which means you should be
+careful what's being executed, and **not to use configuration files
+from sources you don't trust**. **Raider** will evaluate everything
+inside the ``.hy`` files, which means if you're not careful you could
+shoot yourself in the foot and break something on your system.
 
 
 Features
