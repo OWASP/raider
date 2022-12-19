@@ -25,7 +25,7 @@
                     (Cookie "__Host-nc_sameSiteCookielax" "true")
                     (Cookie "__Host-nc_sameSiteCookiestrict" "true")])
         :outputs [request_token]
-        :operations [(NextStage "submit_weight")]))
+        :operations [(Next "submit_weight")]))
 
 
 ;; For example if you want to submit the weight, you'd start by

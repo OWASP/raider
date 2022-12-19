@@ -1,75 +1,55 @@
-
-digraph finite_state_machine {
+@startuml
+digraph finiteStateMachine {
 	fontname="Helvetica,Arial,sans-serif"
 	node [fontname="Helvetica,Arial,sans-serif"]
 	edge [fontname="Helvetica,Arial,sans-serif"]
-	rankdir=TB;
+	rankdir=LR;
 	node [shape = doublecircle]; Flow0 Flow3 Flow4 Flow8 Flow9 Flow10 Flow12 Flow13 Flow15;
 	node [shape = circle]; Flow1 Flow2 Flow5 Flow6 Flow7 Flow11 Flow14;
-
 	Success1 [label = "Success", shape = box color = dodgerblue];
 	Success2 [label = "Success", shape = box color = dodgerblue];
 	Success3 [label = "Success", shape = box color = dodgerblue];
 	Failure1 [label = "Failure", shape = box, color = firebrick2];
 	Failure2 [label = "Failure", shape = box, color = firebrick2];
 	Failure3 [label = "Failure", shape = box, color = firebrick2];
-
 	Flow0 -> Flow1 [label = "Next", labelfloat = true];
 	Flow0 -> Flow2 [label = "Next", labelfloat = true];
-
 	Flow1 -> Flow3 [label = "Next", labelfloat = true];
-
 	Flow2 -> Flow6 [label = "Next", labelfloat = true];
 	Flow2 -> Flow5 [label = "Next", labelfloat = true];
 	Flow2 -> Flow4 [label = "Next", labelfloat = true];
-
 	Flow3 -> Success1 [color = dodgerblue];
 	Flow3 -> Failure1 [color = firebrick2];
-
 	Flow5 -> Flow7 [label = "Next", labelfloat = false];
 	Flow5 -> Flow5 [label = "Next", labelfloat = true];
 	Flow5 -> Failure1 [color = firebrick2];
-
 	Flow6 -> Flow6 [label = "Next", labelfloat = true];
 	Flow6 -> Flow5 [label = "Next", labelfloat = true];
 	Flow6 -> Success1 [color = dodgerblue];
 	Flow6 -> Failure1 [color = firebrick2];
-
 	Flow7 -> Flow8 [label = "Next", labelfloat = true];
 	Flow7 -> Flow5 [label = "Next", labelfloat = true];
-
 	Flow8 -> Flow6 [label = "Next", labelfloat = true];
 	Flow8 -> Flow5 [label = "Next", labelfloat = false];
 	Flow8 -> Success1 [color = dodgerblue];
 	Flow8 -> Failure1 [color = firebrick2];
-
 	Flow9 -> Success2 [color = dodgerblue];
 	Flow9 -> Failure2 [color = firebrick2];
-
 	Flow10 -> Flow11 [label = "Next", labelfloat = true];
 	Flow11 -> Flow12 [label = "Next", labelfloat = true];
 	Flow10 -> Flow14 [label = "Next", labelfloat = true];
 	Flow10 -> Flow13 [label = "Next", labelfloat = true];
-
 	Flow12 -> Success3 [color = dodgerblue];
 	Flow12 -> Failure3 [color = firebrick2];
-
 	Flow13 -> Success3 [color = dodgerblue];
-	
 	Flow14 -> Flow15 [label = "Next", labelfloat = true];
-
 	Flow15 -> Success3 [color = dodgerblue];
 	Flow15 -> Failure3 [color = firebrick2];
-
-
 	FlowGraph1 [shape = none];
 	FlowGraph1 -> Flow0;
-
 	FlowGraph2 [shape = none];
 	FlowGraph2 -> Flow10;
-
 	FlowGraph3 [shape = none];
 	FlowGraph3 -> Flow5;
-
-
 }
+@enduml

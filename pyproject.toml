@@ -1,7 +1,7 @@
 [tool.poetry]
     name = "raider"
     version = "0.3.2"
-    description = "Web authentication testing framework"
+    description = "OWASP Raider: a novel framework for manipulating the HTTP processes of persistent sessions."
     authors = ["Daniel Neagaru <daniel@digeex.de>"]
     packages = [
       { include = "raider" }
@@ -22,7 +22,19 @@
       "docs/_build/*",
       "*~",
     ]
-    keywords = ["authentication", "security", "raider", "digeex", "hy"]
+    keywords = [
+    "python",
+    "fsm",
+    "finite-state-machine",
+    "owasp",
+    "authentication",
+    "authorization",
+    "security",
+    "raider",
+    "digeex",
+    "hy",
+    "hylang",
+    "raiderauth"]
     classifiers = [
       "Development Status :: 4 - Beta",
       "Environment :: Console",

@@ -3,6 +3,7 @@
 # Quick links
 
 - [Website](https://raiderauth.com/).
+- [OWASP page](https://owasp.org/www-project-raider/).
 - [Documentation](https://docs.raiderauth.com/en/latest/).
 - [Installation](https://docs.raiderauth.com/en/latest/overview/install.html).
 - [FAQ](https://docs.raiderauth.com/en/latest/overview/faq.html).
@@ -10,8 +11,8 @@
 - [Architecture](https://docs.raiderauth.com/en/latest/case_studies/architecture.html).
 - [Discussions](https://github.com/OWASP/raider/discussions).
 - [Issues](https://github.com/OWASP/raider/issues).
-- [Twitter](https://twitter.com/raiderauth).
-- [Fediverse](https://infosec.exchange/@raiderauth).
+- [Twitter](@raiderauth).
+- [Fediverse](@raiderauth@infosec.exchange).
 
 # What is Raider
 
