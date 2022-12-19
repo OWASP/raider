@@ -60,14 +60,14 @@
     mypy = "^0.991"
     pre-commit = "^2.20.0"
     flake8 = "^5.0.4"
-    pylint = "^2.15.8"
+    pylint = "^2.15.9"
     black = "^22.12.0"
     isort = "^5.11.3"
     sphinxcontrib-needs = "^0.7.9"
     sphinx-autodoc-typehints = "^1.18.3"
     sphinx-rtd-theme = "^1.0.0"
     sphinxcontrib-plantuml = "^0.24"
-    tox = "^4.0.11"
+    tox = "^4.0.14"
 
 [build-system]
     requires = ["poetry-core>=1.0.0"]
