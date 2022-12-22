@@ -19,6 +19,7 @@
 from typing import Dict, List, Optional
 
 import igraph
+import sys
 
 from raider.config import Config
 from raider.flow import Flow
@@ -33,6 +34,7 @@ from raider.utils import (
     eval_file,
     eval_project_file,
     get_project_file,
+    get_project_dir,
     list_hyfiles,
     list_projects,
 )
@@ -149,6 +151,7 @@ class Project:
         if self.loaded:
             return
 
+        sys.path.append(get_project_dir(self.name))
         shared_locals: Dict[str, Any]
         shared_locals = {}
 
@@ -188,6 +191,7 @@ class Project:
 
             self.flowstore.add_flowgraph("DEFAULT", FlowGraph(first_flow))
             self.flowgraphs[first_flow_hyfile].insert(0, "DEFAULT")
+
 
         self.loaded = True
 

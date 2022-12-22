@@ -23,18 +23,19 @@
       "*~",
     ]
     keywords = [
-    "python",
-    "fsm",
-    "finite-state-machine",
-    "owasp",
     "authentication",
     "authorization",
-    "security",
-    "raider",
-    "digeex",
+    "finite-state-machine",
+    "fsm",
     "hy",
     "hylang",
-    "raiderauth"]
+    "lisp",
+    "owasp",
+    "python",
+    "raider",
+    "raiderauth",
+    "security",
+    ]
     classifiers = [
       "Development Status :: 4 - Beta",
       "Environment :: Console",
