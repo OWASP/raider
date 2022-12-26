@@ -345,8 +345,8 @@ class Header(Plugin):
         header = cls(
             name=name,
             value=parent_plugin.value,
+            function=lambda: parent_plugin.value,
             flags=Plugin.DEPENDS_ON_OTHER_PLUGINS,
         )
-        header.plugins = [parent_plugin]
-        header.function = lambda: header.plugins[0].value
+        header.plugins.append(parent_plugin)
         return header

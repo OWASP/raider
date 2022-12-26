@@ -273,6 +273,9 @@ class Cookie(Plugin):
         cookie = cls(
             name=name,
             value=parent_plugin.value,
+            function=lambda: parent_plugin.value,
             flags=Plugin.DEPENDS_ON_OTHER_PLUGINS,
         )
+        cookie.plugins.append(parent_plugin)
         return cookie
+
