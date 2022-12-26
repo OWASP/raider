@@ -1182,7 +1182,7 @@ python-versions = ">=3.6"
 
 [[package]]
 name = "tox"
-version = "4.0.16"
+version = "4.0.17"
 description = "tox is a generic virtualenv management and test command line tool"
 category = "dev"
 optional = false
@@ -2133,8 +2133,8 @@ tomlkit = [
     {file = "tomlkit-0.11.6.tar.gz", hash = "sha256:71b952e5721688937fb02cf9d354dbcf0785066149d2855e44531ebdd2b65d73"},
 ]
 tox = [
-    {file = "tox-4.0.16-py3-none-any.whl", hash = "sha256:1ba98d4a67b815403e616cf6ded707aeb0fadff10702928f9b990274c9703e9f"},
-    {file = "tox-4.0.16.tar.gz", hash = "sha256:968fc4e27110defdf15972893cb15fe1669f338c8408d8835077462fb07e07fe"},
+    {file = "tox-4.0.17-py3-none-any.whl", hash = "sha256:75d38f21cd7b7a6b90f199a6f84cc56fa5bec827606c106356a0be832630743f"},
+    {file = "tox-4.0.17.tar.gz", hash = "sha256:ff03d29669ce728a395bf6e4da6c3904787c0d3c982a94df9ba5d05f6c126bc4"},
 ]
 traitlets = [
     {file = "traitlets-5.8.0-py3-none-any.whl", hash = "sha256:c864831efa0ba6576d09b44884b34e41defc18c0d7e720b4a2d6698c842cab3e"},
