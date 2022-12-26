@@ -71,7 +71,7 @@
 
 [tool.poetry.dev-dependencies]
     mypy = "^0.991"
-    pre-commit = "^2.20.0"
+    pre-commit = "^2.21.0"
     flake8 = "^5.0.4"
     pylint = "^2.15.9"
     black = "^22.12.0"
