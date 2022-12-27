@@ -105,7 +105,10 @@ class Json(Plugin):
           found None will be returned.
 
         """
-        data = json.loads(text)
+        try:
+            data = json.loads(text)
+        except json.decoder.JSONDecodeError:
+            return None
 
         json_filter = parse_json_filter(self.extract)
         is_valid = True
