@@ -1,5 +1,12 @@
 ## Release history
 
+### 0.3.3 - beta4 (2022-12-27)
+Minor bugfix release.
+* Fix crash when JSON doesn't decode
+* Exit when (Failure) is returned while running multiple Flows from CLI
+* Cookie/Header .from_plugin didn't work after recent changes, this was fixed
+* Use RAIDERPATH environment variable
+
 ### 0.3.2 - beta3 (2022-12-13)
 
 * Added Print.all Operation to print all HTTP data (request+response)

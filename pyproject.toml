@@ -1,6 +1,6 @@
 [tool.poetry]
     name = "raider"
-    version = "0.3.2"
+    version = "0.3.3"
     description = "OWASP Raider: a novel framework for manipulating the HTTP processes of persistent sessions."
     authors = ["Daniel Neagaru <daniel@digeex.de>"]
     packages = [
