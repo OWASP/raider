@@ -57,9 +57,8 @@ def execute_actions(
     if isinstance(operations, list):
         for item in operations:
             output = item.run(pconfig, response)
-            if output:
+            if output or isinstance(output, bool):
                 return output
-
     return None
 
 
