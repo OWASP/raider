@@ -82,7 +82,10 @@ class Raider:
         self.project.load()
         for name in flows.split(","):
             if self.flowstore.is_flow(name):
-                self.flowstore.run_flow(self.pconfig, name)
+                result = self.flowstore.run_flow(self.pconfig, name)
+                if result == False:
+                    self.logger.critical("Flow returned (Failure). Exiting!")
+                    sys.exit()
             elif self.flowstore.is_flowgraph(name):
                 self.flowstore.run_flowgraph(self.pconfig, name, test)
             else:
