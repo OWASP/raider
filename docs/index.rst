@@ -30,6 +30,7 @@ Welcome to Raider's documentation!
    tutorials/prerequisites
    tutorials/getting_started
    tutorials/reddit
+   tutorials/authenticationtest.com
    tutorials/keycloak
    tutorials/juiceshop
 
