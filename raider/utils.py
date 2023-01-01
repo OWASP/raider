@@ -47,7 +47,7 @@ colors = {
 
 
 def colored_text(text: str, color: str):
-    return colors[color] + text + "\x1b[0m"
+    return colors[color] + text + colors['RESET']
 
 
 def default_user_agent() -> str:

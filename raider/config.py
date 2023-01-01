@@ -18,7 +18,6 @@
 
 import logging
 import os
-import sys
 from typing import Any, Dict
 
 from raider.logger import get_logger

@@ -3,20 +3,13 @@
 Reddit authentication
 =====================
 
-This section will include tutorials with examples to give you a
-starting point when building your own configuration.
-
 Preparation
 -----------
 
-Before you can use **Raider**, you have to set up the
-:term:`authentication` inside :term:`hyfiles`. To do that, you'll
-probably need to use a web proxy (`BurpSuite
-<https://portswigger.net/burp>`_, `ZAProxy
-<https://www.zaproxy.org/>`_, `mitmproxy <https://mitmproxy.org/>`_,
-etc...)  to see the :term:`requests <Request>` the application is
-generating, and identify all the important inputs and outputs for each
-request.
+.. note::
+   Before digging in, check the :ref:`Prerequisites <prerequisites>` page
+   first.
+
 
 After the traffic was captured, there will probably be lots of HTTP
 requests that are irrelevant to the authentication. Start by removing
@@ -24,20 +17,10 @@ all static files (.png, .js, .pdf, etc...). When you're left with a
 fewer requests to deal with, it's time to dive deeper and understand
 how the authentication works.
 
-At this point we assume *you already know* the basics of Python and
-Hylang so this documentation will not cover information that can be
-found somewhere else.
-
-This tutorial will show the authentication in use by Reddit at the
-time of writing this. It could be different in the future when you're
-reading this, if they update the way authentication works or change
-the HTML structure, so you will have to do this all by yourself
-anyways.
-
 The easiest way to start this is by going backwards starting with one
 authenticated request. This should be some kind of request that only
 works when the user is already authenticated. I choose the
-"unread_message_count" one for reddit, and the request looks like
+``unread_message_count`` one for reddit, and the request looks like
 this:
        
 .. code-block:: 
@@ -197,9 +180,8 @@ Now we translate the request in the **Raider** Request type:
        
 .. code-block:: hylang
    
-       (Request
-          :method "POST"
-          :url "https://www.reddit.com/login"
+       (Request.post
+          "https://www.reddit.com/login"
           :cookies [session_id]
           :data
           {"password" password
@@ -389,7 +371,7 @@ Finishing configuration
 -----------------------
 
 
-Adding one more function `get_nickname`, and the complete
+Adding one more Flow `get_nickname`, and the complete
 configuration file for reddit looks like this:
        
 
@@ -507,10 +489,8 @@ configuration file for reddit looks like this:
    (setv get_nickname
          (Flow
            :name "get_nickname"
-           :request (Request
-                      :method "GET"
-                      :cookies [session_id reddit_session]
-                      :path "/")
+           :request (Request.get base_url
+                      :cookies [session_id reddit_session])
            :outputs [nickname]
            :operations [(Print nickname)]))
 

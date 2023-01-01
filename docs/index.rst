@@ -1,7 +1,7 @@
 Welcome to Raider's documentation!
 ==================================
 
-.. note::
+.. warning::
    This documentation and the entire Raider framework is still work in
    progress. Many things are not finished, stuff is missing, other stuff
    is not working as expected, and so on...  Meanwhile, `read the source
