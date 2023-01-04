@@ -1,6 +1,8 @@
 (defmacro with-baseurl [#* items]
   `(do
-     (if (.endswith base_url "/")
+     (if (or
+           (.endswith base_url "/")
+           (.startswith (get ~items 0) "/"))
          (Combine base_url #*~items)
          (Combine base_url "/" #*~items))))
 

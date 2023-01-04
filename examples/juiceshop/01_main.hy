@@ -29,5 +29,5 @@
 
 (setv users
       (Users
-        [{"daniel@neagaru.com" "password"
+        [{"username@mail.com" "password"
           :answer "Security answer"}]))
