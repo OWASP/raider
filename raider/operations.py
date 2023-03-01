@@ -18,6 +18,7 @@
 
 import re
 import sys
+import hy
 from functools import partial
 from typing import Any, Callable, List, Optional, Union
 
@@ -56,9 +57,12 @@ def execute_actions(
 
     if isinstance(operations, list):
         for item in operations:
-            output = item.run(pconfig, response)
-            if output or isinstance(output, bool):
-                return output
+            if isinstance(item, hy.models.Expression):
+                hy.eval(item)
+            else:
+                output = item.run(pconfig, response)
+                if output or isinstance(output, bool):
+                    return output
     return None
 
 
