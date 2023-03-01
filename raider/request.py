@@ -32,7 +32,7 @@ from raider.plugins.basic.cookie import Cookie
 from raider.plugins.basic.file import File
 from raider.plugins.basic.header import Header
 from raider.plugins.common import Plugin
-from raider.structures import CookieStore, DataStore, HeaderStore
+from raider.structures import CookieStore, DataStore, ListStore, HeaderStore
 from raider.user import User
 from raider.utils import colors
 
@@ -169,9 +169,17 @@ def process_data(raw_data: Dict[str, DataStore], pconfig) -> Dict[str, str]:
         if isinstance(value, File):
             httpdata[key] = value.get_value(pconfig)
         else:
-            new_dict = value.to_dict().copy()
-            traverse_dict(new_dict, pconfig)
-            httpdata[key] = new_dict
+            if isinstance(value, ListStore):
+                list_values = []
+                for item in value:
+                    new_dict = item.to_dict().copy()
+                    traverse_dict(new_dict, pconfig)
+                    list_values.append(new_dict)
+                httpdata[key] = list_values
+            else:
+                new_dict = value.to_dict().copy()
+                traverse_dict(new_dict, pconfig)
+                httpdata[key] = new_dict
 
     return httpdata
 
@@ -223,7 +231,10 @@ class Request:
                 if isinstance(value, File):
                     data[key] = value
                 else:
-                    data[key] = DataStore(value)
+                    if isinstance(value, list):
+                        data[key] = ListStore(value)
+                    else:
+                        data[key] = DataStore(value)
         self.data = data
 
     @classmethod
