@@ -103,6 +103,28 @@ class DataStore:
 
         return data
 
+class ListStore:
+    def __init__(self, data: List[DataStore]) -> None:
+        self._index = -1
+        self._store = []
+        if data:
+            for item in data:
+                self._store.append(DataStore(item))
+        
+    def __iter__(self) -> Iterator[Any]:
+        """Iterator to yield the keys."""
+        for key in self._store:
+            yield key
+
+    def __next__(self) -> Any:
+        """Iterator to get the next element."""
+        self._index += 1
+        if self._index >= len(self._store):
+            self._index = -1
+            raise StopIteration
+
+        return self._store[self._index]
+
 
 class HeaderStore(DataStore):
     """Class storing the HTTP headers.
