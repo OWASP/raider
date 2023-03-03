@@ -79,7 +79,7 @@
     sphinxcontrib-needs = "^0.7.9"
     sphinx-autodoc-typehints = "^1.18.3"
     sphinx-rtd-theme = "^1.0.0"
-    sphinxcontrib-plantuml = "^0.24"
+    sphinxcontrib-plantuml = "^0.25"
     tox = "^4.4.6"
 
 [build-system]
