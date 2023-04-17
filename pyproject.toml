@@ -77,7 +77,7 @@
     black = "^23.3.0"
     isort = "^5.12.0"
     sphinxcontrib-needs = "^0.7.9"
-    sphinx-autodoc-typehints = "^1.18.3"
+    sphinx-autodoc-typehints = "^1.23.0"
     sphinx-rtd-theme = "^1.0.0"
     sphinxcontrib-plantuml = "^0.25"
     tox = "^4.4.12"
