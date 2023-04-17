@@ -74,7 +74,7 @@
     pre-commit = "^3.1.1"
     flake8 = "^5.0.4"
     pylint = "^2.17.2"
-    black = "^22.12.0"
+    black = "^23.3.0"
     isort = "^5.12.0"
     sphinxcontrib-needs = "^0.7.9"
     sphinx-autodoc-typehints = "^1.18.3"
