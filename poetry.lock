@@ -2064,13 +2064,13 @@ sphinx-data-viewer = ">=0.1.1,<0.2.0"
 
 [[package]]
 name = "sphinxcontrib-plantuml"
-version = "0.24.1"
+version = "0.25"
 description = "Sphinx \"plantuml\" extension"
 category = "dev"
 optional = false
 python-versions = "*"
 files = [
-    {file = "sphinxcontrib-plantuml-0.24.1.tar.gz", hash = "sha256:39d2e4bc40d5e093126129a144f56b6ee15f58cfa5048b5948e63a11aff3b586"},
+    {file = "sphinxcontrib-plantuml-0.25.tar.gz", hash = "sha256:8fde531d92d1cfc2817fe3647b3f2d07e76682c4a84889c04a53e831f7c54432"},
 ]
 
 [package.dependencies]
@@ -2377,4 +2377,4 @@ testing = ["big-O", "flake8 (<5)", "jaraco.functools", "jaraco.itertools", "more
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.8,<3.11"
-content-hash = "8c42464752ad5f9c9b146f75523319a8b5a937d74bdb1b7e694f2b1d8e8330ff"
+content-hash = "e647b64c155ebcb7580fb1638c85542659d24a92e30ca0d1ba2368fd2a12e863"
