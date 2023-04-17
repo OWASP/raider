@@ -70,17 +70,17 @@
     requests-toolbelt = "^0.10.1"
 
 [tool.poetry.dev-dependencies]
-    mypy = "^0.991"
+    mypy = "^1.2"
     pre-commit = "^3.1.1"
     flake8 = "^5.0.4"
-    pylint = "^2.16.2"
+    pylint = "^2.17.2"
     black = "^23.3.0"
     isort = "^5.12.0"
     sphinxcontrib-needs = "^0.7.9"
     sphinx-autodoc-typehints = "^1.18.3"
     sphinx-rtd-theme = "^1.0.0"
     sphinxcontrib-plantuml = "^0.24"
-    tox = "^4.4.6"
+    tox = "^4.4.12"
 
 [build-system]
     requires = ["poetry-core>=1.0.0"]

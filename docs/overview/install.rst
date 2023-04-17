@@ -9,7 +9,7 @@ The package is available in the `Python Package Index
 If you want to build *Raider* from source, you can do so easily. You
 will need to do that anyways if you want to contribute.
 
-First start by clonning the repository with ``git clone
+First start by cloning the repository with ``git clone
 https://github.com/OWASP/raider``.
 
 Using a python virtual environment is recommended to avoid weird
