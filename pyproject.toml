@@ -73,7 +73,7 @@
     mypy = "^1.2"
     pre-commit = "^3.2.2"
     flake8 = "^5.0.4"
-    pylint = "^2.17.2"
+    pylint = "^2.17.3"
     black = "^23.3.0"
     isort = "^5.12.0"
     sphinxcontrib-needs = "^0.7.9"
